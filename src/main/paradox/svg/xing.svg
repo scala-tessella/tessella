@@ -1,0 +1,71 @@
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-68.30127 -25.0 186.60254 179.133803" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <title>Tiling perimeter</title>
+    <desc>Invalid intersecting edges</desc>
+    <g style="stroke:none">
+      <title>Polygons</title>
+      <desc>Regular polygons</desc>
+      <g style="fill:hotpink">
+        <title>Regular 5-gons</title>
+        <desc>Regular polygons with 5 sides</desc>
+        <polygon points="50.0,50.0 93.30127,75.0 82.905686,123.90738 33.179591,129.133803 12.842759,83.45653"/>
+      </g>
+      <g style="fill:goldenrod">
+        <title>Regular 4-gons</title>
+        <desc>Regular polygons with 4 sides</desc>
+        <polygon points="50.0,50.0 50.0,0.0 0.0,0.0 0.0, 50.0"/>
+        <polygon points="0.0,50.0 -43.30127,75.0 -18.30127,118.30127 25.0,93.30127"/>
+      </g>
+      <g style="fill:yellow">
+        <title>Regular 3-gons</title>
+        <desc>Regular polygons with 3 sides</desc>
+        <polygon points="0.0,0.0 -43.30127,25.0 0.0,50.0"/>
+        <polygon points="-43.30127,75.0 -43.30127,25.0 0.0,50.0"/>
+        <polygon points="50.0,0.0 93.30127,25.0 50.0,50.0"/>
+        <polygon points="93.30127,75.0 93.30127,25.0 50.0,50.0"/>
+      </g>
+    </g>
+    <g style="stroke:black">
+      <title>Edges</title>
+      <desc>Sides of the regular polygons</desc>
+      <line x1="0.0" y1="0.0" x2="0.0" y2="50.0"/>
+      <line x1="0.0" y1="50.0" x2="-43.30127" y2="25.0"/>      
+      <line x1="0.0" y1="50.0" x2="-43.30127" y2="75.0"/>      
+      <line x1="50.0" y1="0.0" x2="50.0" y2="50.0"/>
+      <line x1="50.0" y1="50.0" x2="93.30127" y2="25.0"/>
+      <line x1="50.0" y1="50.0" x2="93.30127" y2="75.0"/>            
+    </g>
+    <polygon style="fill:none;stroke:blue;stroke-width:2" points="0.0,0.0 -43.30127,25.0 -43.30127,75.0 -18.30127,118.30127 25.0,93.30127 0.0,50.0 50.0,50.0 12.842759,83.45653 33.179591,129.133803 82.905686,123.90738 93.30127,75.0 93.30127,25.0 50.0,0.0"/>
+    <g style="fill:red;stroke:orangered">
+      <title>Perimeter intersections</title>
+      <desc>Perimeter edges intersecting</desc>
+      <circle cx="17.101985" cy="79.621506" r="5.0"/>
+      <circle cx="18.81563" cy="96.871818" r="5.0"/>
+    </g>
+    <g style="fill:#4a4a4a;text-anchor:middle;font-family:Arial,Helvetica,sans-serif">
+      <title>Perimeter node labels</title>
+      <desc>Each perimeter node showing its value</desc>
+      <text x="93.30127" y="25.0">5</text>
+      <text x="25.0" y="93.30127">10</text>
+      <text x="0.0" y="0.0">1</text>
+      <text x="-43.30127" y="25.0">6</text>
+      <text x="-18.30127" y="118.30127">9</text>
+      <text x="33.179591" y="129.133803">13</text>
+      <text x="50.0" y="0.0">2</text>
+      <text x="12.842759" y="83.45653">12</text>
+      <text x="-43.30127" y="75.0">7</text>
+      <text x="50.0" y="50.0">3</text>
+      <text x="82.905686" y="123.90738">11</text>
+      <text x="93.30127" y="75.0">8</text>
+      <text x="0.0" y="50.0">4</text>
+    </g>
+  </g>
+  <metadata>
+    <rdf:RDF>
+      <cc:Work>
+        <dc:source rdf:resource="https://github.com/scala-tessella/tessella">Tessella</dc:source>
+        <cc:license rdf:resource="https://www.apache.org/licenses/LICENSE-2.0"/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>

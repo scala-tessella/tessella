@@ -1,0 +1,84 @@
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-25.0 -50.0 236.60254 275.0" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <title>Tiling perimeter</title>
+    <desc>Invalid intersecting edges</desc>
+    <g style="stroke:none">
+      <title>Polygons</title>
+      <desc>Regular polygons</desc>
+      <g style="fill:grey">
+        <title>Regular 6-gons</title>
+        <desc>Regular polygons with 6 sides</desc>
+        <polygon points="50.0,0.0 50.0,50.0 93.30127,75.0 136.60254,50.0 136.60254,0.0 93.30127,-25.0"/>
+      </g>
+      <g style="fill:goldenrod">
+        <title>Regular 4-gons</title>
+        <desc>Regular polygons with 4 sides</desc>
+        <polygon points="50.0,50.0 50.0,0.0 0.0,0.0 0.0,50.0"/>
+        <polygon points="0.0,50.0 50.0,50.0 50.0,100.0 0.0,100.0"/>
+        <polygon points="0.0,150.0 50.0,150.0 50.0,100.0 0.0,100.0"/>
+        <polygon points="50.0,150.0 100.0,150.0 100.0,100.0 50.0,100.0"/>
+        <polygon points="186.60254,50.0 186.60254,0.0 136.60254,0.0 136.60254,50.0"/>
+        <polygon points="136.60254,50.0 186.60254,50.0 186.60254,100.0 136.60254,100.0"/>
+        <polygon points="136.60254,150.0 186.60254,150.0 186.60254,100.0 136.60254,100.0"/>
+        <polygon points="136.60254,200.0 186.60254,200.0 186.60254,150.0 136.60254,150.0"/>        
+        <polygon points="86.60254,150.0 136.60254,150.0 136.60254,200.0 86.60254,200.0"/>
+      </g>
+    </g>
+    <g style="stroke:black">
+      <title>Edges</title>
+      <desc>Sides of the regular polygons</desc>
+      <line x1="0.0" y1="50.0" x2="50.0" y2="50.0"/>      
+      <line x1="50.0" y1="0.0" x2="50.0" y2="50.0"/>
+      <line x1="0.0" y1="100.0" x2="50.0" y2="100.0"/>
+      <line x1="50.0" y1="100.0" x2="50.0" y2="150.0"/>
+      <line x1="136.60254" y1="0.0" x2="136.60254" y2="50.0"/>      
+      <line x1="136.60254" y1="50.0" x2="186.60254" y2="50.0"/>
+      <line x1="136.60254" y1="100.0" x2="186.60254" y2="100.0"/>
+      <line x1="136.60254" y1="150.0" x2="186.60254" y2="150.0"/>
+      <line x1="136.60254" y1="150.0" x2="136.60254" y2="200.0"/>
+    </g>        
+    <polygon style="fill:none;stroke:blue;stroke-width:2" points="0.0,0.0 0.0,50.0 0.0,100.0 0.0,150.0 50.0,150.0 100.0,150.0 100.0,100.0 50.0,100.0 50.0,50.0 93.30127,75.0 136.60254,50.0 136.60254,100.0 136.60254,150.0 86.60254,150.0 86.60254,200.0 136.60254,200.0 186.60254,200.0 186.60254,150.0 186.60254,100.0 186.60254,50.0 186.60254,0.0 136.60254,0.0 93.30127,-25.0 50.0,0.0"/>
+    <g style="fill:red;stroke:orangered">
+      <title>Perimeter intersections</title>
+      <desc>Perimeter edges intersecting</desc>
+      <circle cx="100.0" cy="150.0" r="5.0"/>
+      <circle cx="86.60254" cy="150.0" r="5.0"/>
+    </g>
+    <g style="fill:#4a4a4a;text-anchor:middle;font-family:Arial,Helvetica,sans-serif">
+      <title>Perimeter node labels</title>
+      <desc>Each perimeter node showing its value</desc>
+      <text x="0.0" y="100.0">5</text>
+      <text x="100.0" y="100.0">10</text>
+      <text x="86.60254" y="200.0">24</text>
+      <text x="93.30127" y="-25.0">14</text>
+      <text x="186.60254" y="150.0">20</text>
+      <text x="0.0" y="0.0">1</text>
+      <text x="50.0" y="100.0">6</text>
+      <text x="136.60254" y="200.0">21</text>
+      <text x="100.0" y="150.0">9</text>
+      <text x="136.60254" y="0.0">13</text>
+      <text x="50.0" y="0.0">2</text>
+      <text x="136.60254" y="100.0">17</text>
+      <text x="186.60254" y="200.0">22</text>
+      <text x="136.60254" y="50.0">12</text>
+      <text x="0.0" y="150.0">7</text>
+      <text x="50.0" y="50.0">3</text>
+      <text x="186.60254" y="100.0">18</text>
+      <text x="186.60254" y="50.0">16</text>
+      <text x="93.30127" y="75.0">11</text>
+      <text x="86.60254" y="150.0">23</text>
+      <text x="50.0" y="150.0">8</text>
+      <text x="136.60254" y="150.0">19</text>
+      <text x="0.0" y="50.0">4</text>
+      <text x="186.60254" y="0.0">15</text>
+    </g>
+  </g>
+  <metadata>
+    <rdf:RDF>
+      <cc:Work>
+        <dc:source rdf:resource="https://github.com/scala-tessella/tessella">Tessella</dc:source>
+        <cc:license rdf:resource="https://www.apache.org/licenses/LICENSE-2.0"/>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>
