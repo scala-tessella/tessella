@@ -4,8 +4,11 @@ Each `Tiling` object has a `toDOT(...)` method that returns a `String`
 in @link:[DOT](https://en.wikipedia.org/wiki/DOT_(graph_description_language)) { open=new } language,
 describing the undirected graph.
 
-This `Tiling.fromVertex(FullVertex.s("(3⁴.6)").vertex)`
+```scala
+import io.github.scala_tessella.tessella.conversion.DOT.*
 
+Tiling.fromFullVertex(FullVertex.s("(3⁴.6)")).toDot // """graph{...
+```
 ```raw
 <div style="width: 300px;">
 ```
@@ -16,7 +19,7 @@ This `Tiling.fromVertex(FullVertex.s("(3⁴.6)").vertex)`
 </div>
 ```
 
-is returned as:
+This `Tiling` is returned as:
 
 ```
 graph{

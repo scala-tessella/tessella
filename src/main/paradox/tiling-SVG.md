@@ -4,6 +4,12 @@ Each `Tiling` object has a `toSVG(...)` method that returns a
 [Scalable Vector Graphics](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) XML,
 describing the vector image.
 
+```scala
+import io.github.scala_tessella.tessella.conversion.SVG.*
+
+val uniform3gonal2: Tiling = Tiling.threeUniformTwoOne(4, 4).toOption.get
+uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE) // returns a SVG as scala.XML.Elem
+```
 ```raw
 <div style="width: 600px;">
 ```
@@ -20,6 +26,9 @@ Several parameters can be mixed to add one or more information layers.
 
 ### Node labels
 
+```scala
+uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.ALL)
+```
 ```raw
 <div style="width: 600px;">
 ```
@@ -32,6 +41,9 @@ Several parameters can be mixed to add one or more information layers.
 
 ### Animated node order
 
+```scala
+uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, showGrowth = true)
+```
 ```raw
 <div style="width: 600px;">
 ```
@@ -44,6 +56,9 @@ Several parameters can be mixed to add one or more information layers.
 
 ### Perimeter
 
+```scala
+uniform3gonal2.toSVG(showPerimeter = true, LabelledNodes = LabelledNodes.NONE)
+```
 ```raw
 <div style="width: 600px;">
 ```
@@ -56,6 +71,9 @@ Several parameters can be mixed to add one or more information layers.
 
 ### Polygons
 
+```scala
+uniform3gonal2.toSVG(showPerimeter = false, fillPolygons = true, LabelledNodes = LabelledNodes.NONE)
+```
 ```raw
 <div style="width: 600px;">
 ```
@@ -68,6 +86,9 @@ Several parameters can be mixed to add one or more information layers.
 
 ### Gonality
 
+```scala
+uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, markStyle = MarkStyle.GONALITY)
+```
 ```raw
 <div style="width: 600px;">
 ```
@@ -80,6 +101,9 @@ Several parameters can be mixed to add one or more information layers.
 
 ### Uniformity
 
+```scala
+uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, markStyle = MarkStyle.UNIFORMITY)
+```
 ```raw
 <div style="width: 600px;">
 ```

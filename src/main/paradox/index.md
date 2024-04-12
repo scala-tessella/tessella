@@ -6,8 +6,12 @@
 that helps to deal with finite unit-regular-polygon tessellations of a flat surface,
 a classical theme in the wider field of @link:[tessellations](https://en.wikipedia.org/wiki/Tessellation) { open=new } (or _tilings_).
 
+@@@ note
+
 See a [mathematical definition of tiling](tiling-definition.html)
 for a more accurate notion of the chosen constraints.
+
+@@@
 
 ```raw
 <div style="width: 400px;">
@@ -69,8 +73,12 @@ Each tessellation is internally described as an
 
 The graph describing the tessellation is a `Tiling` object.
 
+@@@ note
+
 An undirected graph is not always a valid `Tiling`,
 see [Tiling validation](tiling-validation.html).
+
+@@@
 
 ## Conversion
 
@@ -88,8 +96,12 @@ are already available from the `creation` subpackage.
 
 See [Regular](regular.html) and [SemiRegular](semiregular.html).
 
-## Deprecation warning
+## Deprecation
 
-**Tessella** is replacing the previous project at @link:[github.com/mcallisto/tessella](https://github.com/mcallisto/tessella) { open=new }, now deprecated.
+@@@ warning
+
+This library is replacing the previous project at @link:[github.com/mcallisto/tessella](https://github.com/mcallisto/tessella) { open=new }, now deprecated.
+
+@@@
 
 Read here about the [improvements](improvements.html).

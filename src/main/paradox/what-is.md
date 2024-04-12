@@ -18,7 +18,11 @@ Each polygon:
 * is **regular**, all its sides and all its angles equal.
 * has **unit size**, the length of each side is 1
 
+@@@ note
+
 Go to the next page for a more accurate [mathematical definition of tiling](tiling-definition.html) covering the whole 2-dimensional plane.
+
+@@@
 
 ## How to build a `Tiling`
 

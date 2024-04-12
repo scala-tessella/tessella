@@ -24,7 +24,15 @@ The countability condition ※1 excludes families in which every tile has zero a
 
 ## Additional conditions
 
-In this project, we only consider tiles which are closed topological disks, that is, its boundary is a single simple closed curve. Single means a curve whose ends join up to form a “loop”. Simple means that there are no crossings or branches. Therefore:
+In this project, we only consider tiles which are closed topological disks, that is, its boundary is a single simple closed curve.
+
+@@@ note
+
+_Single_ means a curve whose ends join up to form a “loop”. _Simple_ means that there are no crossings or branches.
+
+@@@
+
+Therefore:
 
 ※5 **Topological disks**: each tile T<sub><i>i</i></sub> in the tiling is a closed topological disk.
 
