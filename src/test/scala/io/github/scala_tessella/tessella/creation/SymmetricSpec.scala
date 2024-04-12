@@ -80,7 +80,7 @@ class SymmetricSpec extends AnyFlatSpec with SymmetryOps with SymmetricHelper wi
       5
   }
 
-    "An hexagon" can "be expanded by a single step to 8 variants" in {
+    "A hexagon" can "be expanded by a single step to 8 variants" in {
     val tilings: List[Tiling] =
       hexagon.expansionStep
 //    tilings.indices.foreach(index =>
@@ -109,7 +109,7 @@ class SymmetricSpec extends AnyFlatSpec with SymmetryOps with SymmetricHelper wi
       1
   }
 
-  "An hexagon" can "be expanded into a regular tessellation" in {
+  "A hexagon" can "be expanded into a regular tessellation" in {
     val tilings: List[Tiling] =
       hexagon.expansion(6, t => t.hedrality == 1)
         .filter(_.countSymmetries == 6)

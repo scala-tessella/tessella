@@ -6,14 +6,15 @@ can be created.
 
 ## 1, pattern [(3⁴.6)]
 
-`Tiling.triHexagonalHexoid(5)`
-
+```scala
+Tiling.triHexagonalHexoid(5)
+```
 ```raw
 <div style="width: 540px;">
 ```
-| ![hexHexOfSide3](svg/triHexHexoid.svg) |
-|--------------------------------------|
-| _Finite set of a **(3⁴.6)** tiling_  |
+| ![hexHexOfSide3](svg/triHexHexoid.svg)  |
+|-----------------------------------------|
+| _Finite set of a **(3⁴.6)** tiling_     |
 ```raw
 </div>
 ```
@@ -22,8 +23,9 @@ can be created.
 
 ### Fast method
 
-`Tiling.elongatedTriangular(6, 6)`
-
+```scala
+Tiling.elongatedTriangular(6, 6)
+```
 ```raw
 <div style="width: 400px;">
 ```
@@ -36,24 +38,26 @@ can be created.
 
 ### Slow method
 
-`Tiling.triSquareSquaroid(2)`
-
+```scala
+Tiling.triSquareSquaroid(2)
+```
 ```raw
 <div style="width: 360px;">
 ```
-| ![perimeter](svg/triSqrSquaroid.svg) |
-|--------------------------------------|
-| _Finite set of a **(3³.4²)** tiling_            |
+| ![perimeter](svg/triSqrSquaroid.svg)  |
+|---------------------------------------|
+| _Finite set of a **(3³.4²)** tiling_  |
 ```raw
 </div>
 ```
 
 ## 3, pattern [(3².4.3.4)]
 
-`Growth.growFull(FullVertex.s("(3².4.3.4)"), 44)`
-
+```scala
+Tiling.triSquareSquaroid2(3)
+```
 ```raw
-<div style="width: 360px;">
+<div style="width: 480px;">
 ```
 | ![labels](svg/triSqrSquaroid2.svg)      |
 |-----------------------------------------|
@@ -64,8 +68,9 @@ can be created.
 
 ## 4, pattern [(3.4.6.4)]
 
-`Tiling.triSquareHexagonalHexoid(3)`
-
+```scala
+Tiling.triSquareHexagonalHexoid(3)
+```
 ```raw
 <div style="width: 660px;">
 ```
@@ -80,8 +85,9 @@ can be created.
 
 ### Fast method
 
-`Tiling.triHexagonal(6, 6)`
-
+```scala
+Tiling.triHexagonal(6, 6)
+```
 ```raw
 <div style="width: 400px;">
 ```
@@ -94,13 +100,14 @@ can be created.
 
 ### Slow method
 
-`Tiling.triHexagonalHex(3)`
-
+```scala
+Tiling.triHexagonalHex(3)
+```
 ```raw
 <div style="width: 540px;">
 ```
-| ![labels](svg/triHexHex.svg)      |
-|-----------------------------------|
+| ![labels](svg/triHexHex.svg)              |
+|-------------------------------------------|
 | _Finite set of a **[(3.6.3.6)]** pattern_ |
 ```raw
 </div>
@@ -108,8 +115,9 @@ can be created.
 
 ## 6, pattern [(3.12²)]
 
-`Tiling.triDodecagonalHexoid(2)`
-
+```scala
+Tiling.triDodecagonalHexoid(2)
+```
 ```raw
 <div style="width: 600px;">
 ```
@@ -122,13 +130,14 @@ can be created.
 
 ## 7, pattern [(4.6.12)]
 
-`Tiling.squareHexDodecagonalHexoid(2)`
-
+```scala
+Tiling.squareHexDodecagonalHexoid(2)
+```
 ```raw
 <div style="width: 800px;">
 ```
-| ![labels](svg/sqrHexDodHexoid.svg)                 |
-|----------------------------------------------------|
+| ![labels](svg/sqrHexDodHexoid.svg)       |
+|------------------------------------------|
 | _Finite set of a **[(4.6.12)]** pattern_ |
 ```raw
 </div>
@@ -136,8 +145,9 @@ can be created.
 
 ## 8, pattern [(4.8²)]
 
-`Tiling.squareOctogonalSquaroid(4)`
-
+```scala
+Tiling.squareOctogonalSquaroid(4)
+```
 ```raw
 <div style="width: 660px;">
 ```

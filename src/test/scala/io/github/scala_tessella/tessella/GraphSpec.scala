@@ -329,7 +329,7 @@ class GraphSpec extends AnyFlatSpec with should.Matchers {
 //      Some((List(2--3, 3--4, 4--5, 1--5, 1--3, 1--2), List(Vector(1, 6, 5))))
 //  }
 //
-//  "An hexagon with two shared edges" can "be found" in {
+//  "A hexagon with two shared edges" can "be found" in {
 //    val t: Tiling =
 //      FullVertex.s("(6.6.6)").toTiling
 //    t.extractPerimeterPolygons shouldBe

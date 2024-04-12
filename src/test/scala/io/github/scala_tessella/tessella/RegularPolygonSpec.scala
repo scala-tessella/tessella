@@ -38,7 +38,7 @@ class RegularPolygonSpec extends AnyFlatSpec with Accuracy with should.Matchers 
       true
   }
 
-  "An hexagon" must "have an area" in {
+  "A hexagon" must "have an area" in {
     (Polygon(6).area ~= 6 * 0.43301270189221946) shouldBe
       true
   }

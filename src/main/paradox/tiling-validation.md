@@ -9,8 +9,8 @@ A `Tiling` instance that represents a valid tessellation is an undirected graph 
 ```raw
 <div style="width: 180px;">
 ```
-| ![non-compact](svg/non-compact.svg) |
-|-------------------------------------|
+| ![non-compact](svg/non-compact.svg)   |
+|---------------------------------------|
 | `Tiling` _with invalid labels_        |
 ```raw
 </div>
@@ -66,9 +66,9 @@ Vertex 1 has degree 7, not valid since the regular polygon with the smaller inte
 ```raw
 <div style="width: 260px;">
 ```
-| ![disconnect](svg/disconnect.svg) |
-|---------------------------|
-| `Tiling` _not connected_  |
+| ![disconnect](svg/disconnect.svg)   |
+|-------------------------------------|
+| `Tiling` _not connected_            |
 ```raw
 </div>
 ```
@@ -93,7 +93,7 @@ Vertices 1, 2, 3 are not connected to vertices 4, 5, 6
 
 @@@ warning { title='Failing' }
 
-Non adjacent polygons at vertex 1, the graph is only "thinly" connected
+Non-adjacent polygons at vertex 1, the graph is only "thinly" connected
 
 @@@
 
@@ -120,7 +120,7 @@ where a vertex on the perimeter of a tessellation must be less than full
 ```raw
 <div style="width: 280px;">
 ```
-| ![invalid-internal-vertex](svg/invalid-internal-vertex.svg) |
+| ![invalid-internal-vertex](svg/invalid-internal-vertex.svg)  |
 |--------------------------------------------------------------|
 | Invalid `Tiling` ________________________                    |
 ```raw
@@ -143,7 +143,7 @@ Same as above, but now vertex 5 is internal and must be exactly full
 ```
 @@@ warning { title='Failing' }
 
-Considered that the "hole" is an hexagon,
+Considered that the "hole" is a hexagon,
 the internal vertices 6, 7, 14, 15 are more than full
 and 10, 11 are less than full
 
@@ -156,9 +156,9 @@ and 10, 11 are less than full
 ```raw
 <div style="width: 320px;">
 ```
-| ![same-coords](svg/same-coords.svg) |
-|------------------------------------|
-| `Tiling` _with overlapping vertices_ |
+| ![same-coords](svg/same-coords.svg)   |
+|---------------------------------------|
+| `Tiling` _with overlapping vertices_  |
 ```raw
 </div>
 ```
@@ -174,8 +174,8 @@ Vertices 10 and 12 overlap
 ```raw
 <div style="width: 320px;">
 ```
-| ![xing](svg/xing.svg)            |
-|----------------------------------|
+| ![xing](svg/xing.svg)              |
+|------------------------------------|
 | `Tiling` _with intersecting sides_ |
 ```raw
 </div>

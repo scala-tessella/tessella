@@ -229,7 +229,7 @@ class TilingGrowthSpec extends AnyFlatSpec with Helper with should.Matchers {
       4
   }
 
-  "An hexagon" can "be repeatedly grown" in {
+  "A hexagon" can "be repeatedly grown" in {
     val grown =
       hexagon.growByPolygon(18, Polygon(6), List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(HIGHER_ORDINAL))
 //    saveFile(

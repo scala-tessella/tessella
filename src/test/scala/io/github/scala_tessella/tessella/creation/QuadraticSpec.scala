@@ -12,7 +12,7 @@ import org.scalatest.matchers.*
 
 class QuadraticSpec extends AnyFlatSpec with Helper with Quadratic with should.Matchers {
 
-  "An hexagon of triangles grown quadratically" can "have side 3" in {
+  "A hexagon of triangles grown quadratically" can "have side 3" in {
     Tiling.triangularHex(3).isRight shouldBe
       true
   }
