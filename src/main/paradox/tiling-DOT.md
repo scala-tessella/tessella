@@ -7,7 +7,7 @@ describing the undirected graph.
 ```scala
 import io.github.scala_tessella.tessella.conversion.DOT.*
 
-Tiling.fromFullVertex(FullVertex.s("(3⁴.6)")).toDot // """graph{...
+Tiling.fromFullVertex(FullVertex.s("(3⁴.6)")).toDot() // """graph{...
 ```
 ```raw
 <div style="width: 300px;">

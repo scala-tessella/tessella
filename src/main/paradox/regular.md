@@ -37,7 +37,7 @@ Tiling.triangleTriangle(4)
 ### Slow growth method
 
 ```scala
-TilingGrowth.growFull(FullVertex.s("(3⁶)"), 60) // same as Tiling.triangularHex(3)
+TilingGrowth.growFullVertex(FullVertex.s("(3⁶)"), 60) // same as Tiling.triangularHex(3)
 ```
 ```raw
 <div style="width: 600px;">
@@ -69,7 +69,7 @@ Tiling.squareNet(4, 4)
 ### Slow growth method
 
 ```scala
-TilingGrowth.growFull(FullVertex.s("(4⁴)"), 9) // same as Tiling.squareNet(3)
+TilingGrowth.growFullVertex(FullVertex.s("(4⁴)"), 9) // same as Tiling.squareNet(3)
 ```
 ```raw
 <div style="width: 360px;">
@@ -114,7 +114,7 @@ Tiling.hexTrianguloid(4)
 ### Slow growth method
 
 ```scala
-TilingGrowth.growFull(FullVertex.s("(6³)"), 19) // same as Tiling.hexagonalHexoid(3)
+TilingGrowth.growFullVertex(FullVertex.s("(6³)"), 19) // same as Tiling.hexagonalHexoid(3)
 ```
 ```raw
 <div style="width: 800px;">
