@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+<title>Tiling validation · Tessella</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content='Tilings by regular polygons'/>
+<link rel="canonical" href="https://github.com/scala-tessella/tessellatiling-validation.html"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/page.js"></script>
+<script type="text/javascript" src="js/warnOldVersion.js"></script>
+<script type="text/javascript" src="js/groups.js"></script>
+<script type="text/javascript" src="js/snippets.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/page.css"/>
+
+<!--
+<link rel="shortcut icon" href="images/favicon.ico" />
+-->
+</head>
+
+<body>
+<div class="off-canvas-wrapper">
+<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+
+<div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
+<nav class="off-canvas-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>Tessella
+</a>
+<div class="version-number">
+0.1.1
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="what-is.html" class="page">What is a <code>Tiling</code></a></li>
+  <li><a href="tiling-definition.html" class="page">Mathematical definition of tiling</a></li>
+  <li><a href="tiling-validation.html" class="active page"><code>Tiling</code> validation</a></li>
+  <li><a href="tiling-SVG.html" class="page">Conversion to SVG</a></li>
+  <li><a href="tiling-DOT.html" class="page">Conversion to DOT</a></li>
+  <li><a href="regular.html" class="page">Creation of regular tessellations</a></li>
+  <li><a href="semiregular.html" class="page">Creation of semi regular tessellations</a></li>
+  <li><a href="improvements.html" class="page">Improvements since previous project</a></li>
+  <li><a href="reference.html" class="page">Reference</a></li>
+  <li><a href="github.html" class="page">GitHub repository</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="off-canvas-content" data-off-canvas-content>
+
+<header class="site-header expanded row">
+<div class="small-12 column">
+<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"><svg class="svg-icon svg-icon-menu" version="1.1" id="Menu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve"> <path class="svg-icon-menu-path" fill="#53CDEC" d="M16.4,9H3.6C3.048,9,3,9.447,3,10c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,9.447,16.952,9,16.4,9z M16.4,13
+H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
+C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
+</a>
+<div class="title"><a href="index.html">Tessella</a></div>
+
+<!--
+<a href="https://www.example.com" class="logo show-for-medium">logo</a>
+-->
+</div>
+</header>
+
+<div class="expanded row">
+
+<div class="medium-3 large-2 show-for-medium column">
+<nav class="site-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>Tessella
+</a>
+<div class="version-number">
+0.1.1
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="what-is.html" class="page">What is a <code>Tiling</code></a></li>
+  <li><a href="tiling-definition.html" class="page">Mathematical definition of tiling</a></li>
+  <li><a href="tiling-validation.html" class="active page"><code>Tiling</code> validation</a></li>
+  <li><a href="tiling-SVG.html" class="page">Conversion to SVG</a></li>
+  <li><a href="tiling-DOT.html" class="page">Conversion to DOT</a></li>
+  <li><a href="regular.html" class="page">Creation of regular tessellations</a></li>
+  <li><a href="semiregular.html" class="page">Creation of semi regular tessellations</a></li>
+  <li><a href="improvements.html" class="page">Improvements since previous project</a></li>
+  <li><a href="reference.html" class="page">Reference</a></li>
+  <li><a href="github.html" class="page">GitHub repository</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="small-12 medium-9 large-10 column">
+<section class="site-content">
+
+<span id="version-warning"></span>
+
+<div class="page-header row">
+<div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">Tessella</a></li>
+  <li><code>Tiling</code> validation</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="page-content row">
+<div class="small-12 large-9 column" id="docs">
+<h1><a href="#tiling-validation" name="tiling-validation" class="anchor"><span class="anchor-link"></span></a><code>Tiling</code> validation</h1>
+<p>A <code>Tiling</code> instance that represents a valid tessellation is an undirected graph with the following properties.</p>
+<h2><a href="#labelling" name="labelling" class="anchor"><span class="anchor-link"></span></a>Labelling</h2>
+<h3><a href="#all-vertices-must-be-numbered-starting-from-1-and-increasing-by-one-with-no-gaps" name="all-vertices-must-be-numbered-starting-from-1-and-increasing-by-one-with-no-gaps" class="anchor"><span class="anchor-link"></span></a>All vertices must be numbered starting from 1 and increasing by one with no gaps</h3>
+<div style="width: 180px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/non-compact.svg" alt="non-compact" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Tiling</code> <em>with invalid labels</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.maybe(1--2, 1--4, 2--4).isRight // false
+</code></pre><div class="callout warning "><div class="callout-title">Failing</div>
+<p>Three only vertices must be labelled 1, 2 and 3</p></div>
+<h2><a href="#nodes-degree" name="nodes-degree" class="anchor"><span class="anchor-link"></span></a>Nodes degree</h2>
+<h3><a href="#all-vertices-must-be-connected-to-at-least-2-other-vertices-node-degree-2-" name="all-vertices-must-be-connected-to-at-least-2-other-vertices-node-degree-2-" class="anchor"><span class="anchor-link"></span></a>All vertices must be connected to at least 2 other vertices (node degree &gt;= 2)</h3>
+<div style="width: 220px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/1-degree.svg" alt="1-degree" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Tiling</code> <em>with invalid node degree 1</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.maybe(1--2, 1--3, 2--3, 3--4).isRight // false
+</code></pre><div class="callout warning "><div class="callout-title">Failing</div>
+<p>Vertex 4 has degree 1, is part of an open polygon</p></div>
+<h3><a href="#all-vertices-must-be-connected-to-at-most-6-other-vertices-node-degree-6-" name="all-vertices-must-be-connected-to-at-most-6-other-vertices-node-degree-6-" class="anchor"><span class="anchor-link"></span></a>All vertices must be connected to at most 6 other vertices (node degree &lt;= 6)</h3>
+<div style="width: 260px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/7-degree.svg" alt="7-degree" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Tiling</code> <em>with invalid node degree 7</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.maybe(1--2, 1--3, 1--4, 1--5, 1--6, 1--7, 1--8, 2--3, 2--7, 3--4, 4--5, 5--6, 6--8, 7--8).isRight // false
+</code></pre><div class="callout warning "><div class="callout-title">Failing</div>
+<p>Vertex 1 has degree 7, not valid since the regular polygon with the smaller interior angle, the regular triangle, fills the full angle with 6 units</p></div>
+<h2><a href="#nodes-connection" name="nodes-connection" class="anchor"><span class="anchor-link"></span></a>Nodes connection</h2>
+<h3><a href="#graph-must-be-connected" name="graph-must-be-connected" class="anchor"><span class="anchor-link"></span></a>Graph must be connected</h3>
+<div style="width: 260px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/disconnect.svg" alt="disconnect" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Tiling</code> <em>not connected</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.maybe(1--2, 1--3, 2--3, 4--5, 4--6, 5--6).isRight // false
+</code></pre><div class="callout warning "><div class="callout-title">Failing</div>
+<p>Vertices 1, 2, 3 are not connected to vertices 4, 5, 6</p></div>
+<h3><a href="#all-polygons-at-the-same-vertex-must-be-adjacent" name="all-polygons-at-the-same-vertex-must-be-adjacent" class="anchor"><span class="anchor-link"></span></a>All polygons at the same vertex must be adjacent</h3>
+<div style="width: 260px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/non-adjacent.svg" alt="non-adjacent" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Invalid <code>Tiling</code> ____________________ </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.maybe(1--2, 1--3, 1--4, 1--5, 2--3, 4--5).isRight // false
+</code></pre><div class="callout warning "><div class="callout-title">Failing</div>
+<p>Non-adjacent polygons at vertex 1, the graph is only &ldquo;thinly&rdquo; connected</p></div>
+<h2><a href="#angle-of-adjacent-polygons" name="angle-of-adjacent-polygons" class="anchor"><span class="anchor-link"></span></a>Angle of adjacent polygons</h2>
+<h3><a href="#total-interior-angle-of-the-adjacent-polygons-at-the-same-vertex-must-be-equal-or-less-than-a-full-circle" name="total-interior-angle-of-the-adjacent-polygons-at-the-same-vertex-must-be-equal-or-less-than-a-full-circle" class="anchor"><span class="anchor-link"></span></a>Total interior angle of the adjacent polygons at the same vertex must be equal or less than a full circle</h3>
+<div style="width: 280px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/invalid-perimeter-vertex.svg" alt="invalid-perimeter-vertex" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Invalid <code>Tiling</code> ________________________ </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.maybe(1--2, 1--4, 2--3, 2--5, 3--6, 4--5, 4--10, 5--6, 5--9, 5--11, 6--7, 7--8, 8--9, 10--11).isRight // false
+</code></pre><div class="callout warning "><div class="callout-title">Failing</div>
+<p>Three squares and a regular pentagon at vertex 5 make more than a full circle, where a vertex on the perimeter of a tessellation must be less than full</p></div>
+<div style="width: 280px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/invalid-internal-vertex.svg" alt="invalid-internal-vertex" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Invalid <code>Tiling</code> ________________________ </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.maybe(1--2, 1--4, 2--3, 2--5, 3--6, 4--5, 4--10, 5--6, 5--9, 6--7, 7--8, 8--9, 9--10).isRight // false
+</code></pre><div class="callout warning "><div class="callout-title">Failing</div>
+<p>Same as above, but now vertex 5 is internal and must be exactly full</p></div>
+<div style="width: 340px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/hole.svg" alt="hole" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Invalid <code>Tiling</code> ________________________________ </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.maybe(
+  1--2, 1--5, 2--3, 2--6, 3--4, 3--7, 4--8, 5--6, 5--9, 6--7, 6--10, 7--8, 7--11, 8--12, 9--10, 9--13, 10--14, 11--12,
+  11--15, 12--16, 13--14, 13--17, 14--15, 14--18, 15--16, 15--19, 16--20, 17--18, 18--19, 19--20
+).isRight // false
+</code></pre><div class="callout warning "><div class="callout-title">Failing</div>
+<p>Considered that the &ldquo;hole&rdquo; is a hexagon, the internal vertices 6, 7, 14, 15 are more than full and 10, 11 are less than full</p></div>
+<h2><a href="#spatial-requirements" name="spatial-requirements" class="anchor"><span class="anchor-link"></span></a>Spatial requirements</h2>
+<h3><a href="#any-two-vertices-must-not-overlap" name="any-two-vertices-must-not-overlap" class="anchor"><span class="anchor-link"></span></a>Any two vertices must not overlap</h3>
+<div style="width: 320px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/same-coords.svg" alt="same-coords" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Tiling</code> <em>with overlapping vertices</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.maybe(
+  1--2, 1--4, 1--6, 2--3, 2--5, 3--4, 3--5, 3--8, 3--12, 4--6, 4--7, 4--8, 5--8, 6--7, 7--9, 8--11, 9--10, 11--12
+).isRight // false
+</code></pre><div class="callout warning "><div class="callout-title">Failing</div>
+<p>Vertices 10 and 12 overlap</p></div>
+<h3><a href="#any-two-sides-must-not-intersect" name="any-two-sides-must-not-intersect" class="anchor"><span class="anchor-link"></span></a>Any two sides must not intersect</h3>
+<div style="width: 320px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/xing.svg" alt="xing" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Tiling</code> <em>with intersecting sides</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.maybe(
+  1--2, 1--4, 1--6, 2--3, 2--5, 3--4, 3--5, 3--8, 3--12, 4--6, 4--7, 4--8, 5--8, 6--7, 7--9, 8--11, 9--10, 11--13, 12--13
+).isRight // false
+</code></pre><div class="callout warning "><div class="callout-title">Failing</div>
+<p>Sides 3&ndash;12 intersecting with 4&ndash;10 and 9&ndash;10 with 12&ndash;13</p></div>
+<div style="width: 400px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/xing2.svg" alt="xing2" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Tiling</code> <em>with overlapping sides</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.maybe(
+  1--2, 1--4, 2--3, 2--14, 3--4, 3--6, 3--11, 4--5, 5--6, 5--7, 6--8, 6--10, 7--8, 8--9, 9--10, 11--12, 12--13, 12--16,
+  12--17, 13--14, 13--15, 15--16, 16--18, 17--18, 17--19, 17--21, 18--20, 19--20, 19--22, 21--22
+).isRight // false
+</code></pre><div class="callout warning "><div class="callout-title">Failing</div>
+<p>Sides 6&ndash;10 overlapping with 21&ndash;17 and 8&ndash;9 with 22&ndash;19</p></div>
+<div style="width: 400px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/xing3.svg" alt="xing3" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Tiling</code> <em>with overlapping sides</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.maybe(
+  1--2, 1--4, 2--3, 2--14, 3--4, 3--6, 3--11, 4--5, 5--6, 5--7, 6--8, 6--10, 7--8, 8--9, 9--10, 11--12, 12--13, 12--16,
+  12--17, 13--14, 13--15, 15--16, 16--18, 17--18, 17--19, 18--20, 19--20, 19--21, 19--23, 20--22, 21--22, 21--24, 23--24
+).isRight // false
+</code></pre><div class="callout warning "><div class="callout-title">Failing</div>
+<p>Sides 8&ndash;9 overlapping with 23&ndash;19</p></div>
+<div class="source-github">
+The source code for this page can be found <a href="https://github.com/scala-tessella/tessella/tree/master/src/main/paradox/tiling-validation.md">here</a>.
+</div>
+
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="tiling-SVG.html">Conversion to SVG</a></p>
+</div>
+</div>
+<div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="tiling-validation.html#tiling-validation" class="header"><code>Tiling</code> validation</a>
+  <ul>
+    <li><a href="tiling-validation.html#labelling" class="header">Labelling</a></li>
+    <li><a href="tiling-validation.html#nodes-degree" class="header">Nodes degree</a></li>
+    <li><a href="tiling-validation.html#nodes-connection" class="header">Nodes connection</a></li>
+    <li><a href="tiling-validation.html#angle-of-adjacent-polygons" class="header">Angle of adjacent polygons</a></li>
+    <li><a href="tiling-validation.html#spatial-requirements" class="header">Spatial requirements</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
+</div>
+</div>
+
+</section>
+</div>
+
+</div>
+
+<footer class="site-footer">
+
+<section class="site-footer-nav">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 medium-4 large-3 text-center column">
+<div class="nav-links">
+<ul>
+<!-- <li><a href="https://www.example.com/products/">Products</a> -->
+</ul>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+<section class="site-footer-base">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 text-center large-9 column">
+
+<!--
+<div class="copyright">
+<span class="text">&copy; 2024</span>
+<a href="https://www.example.com" class="logo">logo</a>
+</div>
+-->
+</div>
+
+</div>
+</div>
+</div>
+</section>
+</footer>
+
+</div>
+</div>
+</div>
+</body>
+
+<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript">jQuery(document).foundation();</script>
+<script type="text/javascript" src="js/magellan.js"></script>
+
+<style type="text/css">@import "lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
+<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '0.1.1', 'https://github.com/scala-tessella/tessella')});</script>
+
+
+</html>

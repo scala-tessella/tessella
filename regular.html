@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+<title>Creation of regular tessellations · Tessella</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content='Tilings by regular polygons'/>
+<link rel="canonical" href="https://github.com/scala-tessella/tessellaregular.html"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="js/page.js"></script>
+<script type="text/javascript" src="js/warnOldVersion.js"></script>
+<script type="text/javascript" src="js/groups.js"></script>
+<script type="text/javascript" src="js/snippets.js"></script>
+<link rel="stylesheet" type="text/css" href="lib/foundation/dist/foundation.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/page.css"/>
+
+<!--
+<link rel="shortcut icon" href="images/favicon.ico" />
+-->
+</head>
+
+<body>
+<div class="off-canvas-wrapper">
+<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+
+<div class="off-canvas position-left" id="off-canvas-menu" data-off-canvas>
+<nav class="off-canvas-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>Tessella
+</a>
+<div class="version-number">
+0.1.1
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="what-is.html" class="page">What is a <code>Tiling</code></a></li>
+  <li><a href="tiling-definition.html" class="page">Mathematical definition of tiling</a></li>
+  <li><a href="tiling-validation.html" class="page"><code>Tiling</code> validation</a></li>
+  <li><a href="tiling-SVG.html" class="page">Conversion to SVG</a></li>
+  <li><a href="tiling-DOT.html" class="page">Conversion to DOT</a></li>
+  <li><a href="regular.html" class="active page">Creation of regular tessellations</a></li>
+  <li><a href="semiregular.html" class="page">Creation of semi regular tessellations</a></li>
+  <li><a href="improvements.html" class="page">Improvements since previous project</a></li>
+  <li><a href="reference.html" class="page">Reference</a></li>
+  <li><a href="github.html" class="page">GitHub repository</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="off-canvas-content" data-off-canvas-content>
+
+<header class="site-header expanded row">
+<div class="small-12 column">
+<a href="#" class="off-canvas-toggle hide-for-medium" data-toggle="off-canvas-menu"><svg class="svg-icon svg-icon-menu" version="1.1" id="Menu" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve"> <path class="svg-icon-menu-path" fill="#53CDEC" d="M16.4,9H3.6C3.048,9,3,9.447,3,10c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,9.447,16.952,9,16.4,9z M16.4,13
+H3.6C3.048,13,3,13.447,3,14c0,0.553,0.048,1,0.6,1H16.4c0.552,0,0.6-0.447,0.6-1C17,13.447,16.952,13,16.4,13z M3.6,7H16.4
+C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.048,7,3.6,7z"/></svg>
+</a>
+<div class="title"><a href="index.html">Tessella</a></div>
+
+<!--
+<a href="https://www.example.com" class="logo show-for-medium">logo</a>
+-->
+</div>
+</header>
+
+<div class="expanded row">
+
+<div class="medium-3 large-2 show-for-medium column">
+<nav class="site-nav">
+<div class="nav-home">
+<a href="index.html" >
+<span class="home-icon">⌂</span>Tessella
+</a>
+<div class="version-number">
+0.1.1
+</div>
+</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="what-is.html" class="page">What is a <code>Tiling</code></a></li>
+  <li><a href="tiling-definition.html" class="page">Mathematical definition of tiling</a></li>
+  <li><a href="tiling-validation.html" class="page"><code>Tiling</code> validation</a></li>
+  <li><a href="tiling-SVG.html" class="page">Conversion to SVG</a></li>
+  <li><a href="tiling-DOT.html" class="page">Conversion to DOT</a></li>
+  <li><a href="regular.html" class="active page">Creation of regular tessellations</a></li>
+  <li><a href="semiregular.html" class="page">Creation of semi regular tessellations</a></li>
+  <li><a href="improvements.html" class="page">Improvements since previous project</a></li>
+  <li><a href="reference.html" class="page">Reference</a></li>
+  <li><a href="github.html" class="page">GitHub repository</a></li>
+</ul>
+</div>
+
+</nav>
+</div>
+
+<div class="small-12 medium-9 large-10 column">
+<section class="site-content">
+
+<span id="version-warning"></span>
+
+<div class="page-header row">
+<div class="medium-12 show-for-medium column">
+<div class="nav-breadcrumbs">
+<ul>
+  <li><a href="index.html">Tessella</a></li>
+  <li>Creation of regular tessellations</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="page-content row">
+<div class="small-12 large-9 column" id="docs">
+<h1><a href="#creation-of-regular-tessellations" name="creation-of-regular-tessellations" class="anchor"><span class="anchor-link"></span></a>Creation of regular tessellations</h1>
+<p>Finite sets of the 3 regular tessellations (see <a href="https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons#Regular_tilings" title="Wikipedia" target="_blank" rel="noopener noreferrer">Wikipedia</a>) can be created.</p>
+<h2><a href="#triangle-only-pattern-" name="triangle-only-pattern-" class="anchor"><span class="anchor-link"></span></a>Triangle only, pattern [(3⁶)]</h2>
+<h3><a href="#fast-reticulate-method" name="fast-reticulate-method" class="anchor"><span class="anchor-link"></span></a>Fast reticulate method</h3>
+<pre class="prettyprint"><code class="language-scala">Tiling.triangleNet(4, 4)
+</code></pre>
+<div style="width: 420px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/tri4x4Reticulate.svg" alt="tri4x4Reticulate" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>Finite set of a <strong>[(3⁶)]</strong> pattern</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.triangleTriangle(4)
+</code></pre>
+<div style="width: 420px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/triangleTriangleOfSide4.svg" alt="triangleTriangleOfSide4" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>Finite set of a <strong>[(3⁶)]</strong> pattern</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3><a href="#slow-growth-method" name="slow-growth-method" class="anchor"><span class="anchor-link"></span></a>Slow growth method</h3>
+
+<pre class="prettyprint"><code class="language-scala">TilingGrowth.growFullVertex(FullVertex.s(&quot;(3⁶)&quot;), 60) // same as Tiling.triangularHex(3)
+</code></pre>
+<div style="width: 600px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/triHexOfSide3.svg" alt="triHexOfSide3" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>Finite set of a <strong>[(3⁶)]</strong> pattern</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2><a href="#square-only-pattern-" name="square-only-pattern-" class="anchor"><span class="anchor-link"></span></a>Square only, pattern [(4⁴)]</h2>
+
+<h3><a href="#fast-reticulate-method" name="fast-reticulate-method" class="anchor"><span class="anchor-link"></span></a>Fast reticulate method</h3>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.squareNet(4, 4)
+</code></pre>
+<div style="width: 440px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/sqr4x4Reticulate.svg" alt="fast4" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>Finite set of a <strong>[(4⁴)]</strong> pattern</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3><a href="#slow-growth-method" name="slow-growth-method" class="anchor"><span class="anchor-link"></span></a>Slow growth method</h3>
+
+<pre class="prettyprint"><code class="language-scala">TilingGrowth.growFullVertex(FullVertex.s(&quot;(4⁴)&quot;), 9) // same as Tiling.squareNet(3)
+</code></pre>
+<div style="width: 360px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/sqr3x3Growth.svg" alt="sqr3x3Growth" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>Finite set of a <strong>[(4⁴)]</strong> pattern</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h2><a href="#hexagon-only-pattern-" name="hexagon-only-pattern-" class="anchor"><span class="anchor-link"></span></a>Hexagon only, pattern [(6³)]</h2>
+
+<h3><a href="#fast-reticulate-methods" name="fast-reticulate-methods" class="anchor"><span class="anchor-link"></span></a>Fast reticulate methods</h3>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.hexagonNet(4, 4)
+</code></pre>
+<div style="width: 640px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/hex4x4Reticulate.svg" alt="hex4x4Reticulate" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>Finite set of a <strong>[(6³)]</strong> pattern</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.hexTrianguloid(4)
+</code></pre>
+<div style="width: 640px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/hexTrianguloidOfSide4.svg" alt="hexTrianguloidOfSide4" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>Finite set of a <strong>[(6³)]</strong> pattern</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3><a href="#slow-growth-method" name="slow-growth-method" class="anchor"><span class="anchor-link"></span></a>Slow growth method</h3>
+
+<pre class="prettyprint"><code class="language-scala">TilingGrowth.growFullVertex(FullVertex.s(&quot;(6³)&quot;), 19) // same as Tiling.hexagonalHexoid(3)
+</code></pre>
+<div style="width: 800px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/hexHexOfSide3.svg" alt="hexHexOfSide3" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>Finite set of a <strong>[(6³)]</strong> pattern</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="source-github">
+The source code for this page can be found <a href="https://github.com/scala-tessella/tessella/tree/master/src/main/paradox/regular.md">here</a>.
+</div>
+
+<div class="nav-next">
+<p><strong>Next:</strong> <a href="semiregular.html">Creation of semi regular tessellations</a></p>
+</div>
+</div>
+<div class="large-3 show-for-large column" data-sticky-container>
+<nav class="sidebar sticky" data-sticky data-anchor="docs" data-sticky-on="large">
+<div class="page-nav">
+<div class="nav-title">On this page:</div>
+<div class="nav-toc">
+<ul>
+  <li><a href="regular.html#creation-of-regular-tessellations" class="header">Creation of regular tessellations</a>
+  <ul>
+    <li><a href="regular.html#triangle-only-pattern-" class="header">Triangle only, pattern [(3⁶)]</a></li>
+    <li><a href="regular.html#square-only-pattern-" class="header">Square only, pattern [(4⁴)]</a></li>
+    <li><a href="regular.html#hexagon-only-pattern-" class="header">Hexagon only, pattern [(6³)]</a></li>
+  </ul></li>
+</ul>
+</div>
+</div>
+</nav>
+</div>
+</div>
+
+</section>
+</div>
+
+</div>
+
+<footer class="site-footer">
+
+<section class="site-footer-nav">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 medium-4 large-3 text-center column">
+<div class="nav-links">
+<ul>
+<!-- <li><a href="https://www.example.com/products/">Products</a> -->
+</ul>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</section>
+
+<section class="site-footer-base">
+<div class="expanded row">
+<div class="small-12 large-offset-2 large-10 column">
+<div class="row site-footer-content">
+
+<div class="small-12 text-center large-9 column">
+
+<!--
+<div class="copyright">
+<span class="text">&copy; 2024</span>
+<a href="https://www.example.com" class="logo">logo</a>
+</div>
+-->
+</div>
+
+</div>
+</div>
+</div>
+</section>
+</footer>
+
+</div>
+</div>
+</div>
+</body>
+
+<script type="text/javascript" src="lib/foundation/dist/foundation.min.js"></script>
+<script type="text/javascript">jQuery(document).foundation();</script>
+<script type="text/javascript" src="js/magellan.js"></script>
+
+<style type="text/css">@import "lib/prettify/prettify.css";</style>
+<script type="text/javascript" src="lib/prettify/prettify.js"></script>
+<script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
+<script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
+<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '0.1.1', 'https://github.com/scala-tessella/tessella')});</script>
+
+
+</html>
