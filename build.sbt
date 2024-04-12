@@ -1,10 +1,11 @@
-import xerial.sbt.Sonatype._
+import xerial.sbt.Sonatype.*
 
-val scalatest = "org.scalatest" %% "scalatest" % "3.2.17" % "test"
+val scalatest = "org.scalatest" %% "scalatest" % "3.2.18" % "test"
 val scalacheck = "org.scalacheck" %% "scalacheck" % "1.17.0" % "test"
 
 enablePlugins(SitePreviewPlugin, ParadoxSitePlugin)
 enablePlugins(SiteScaladocPlugin)
+enablePlugins(GhpagesPlugin)
 
 ThisBuild / organization := "io.github.scala-tessella"
 ThisBuild / scalaVersion := "3.3.3"

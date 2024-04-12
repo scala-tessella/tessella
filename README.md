@@ -5,8 +5,8 @@ that helps to deal with finite unit-regular-polygon tessellations of a flat surf
 a classical theme in the wider field of [tessellations](https://en.wikipedia.org/wiki/Tessellation) (or _tilings_).
 
 | ![sqrHexDodHexoid](src/test/resources/outliers/sqrHexDodHexoid.svg) |
-|-----------------------------------------------------------------|
-| _SVG ouput for a `Tiling` of a [(4.6.12)] pattern_              |
+|---------------------------------------------------------------------|
+| _SVG output for a `Tiling` of a [(4.6.12)] pattern_                 |
 
 ## Tessellation as graph
 
@@ -21,7 +21,7 @@ The graph describing the tessellation is a `Tiling` object.
 
 Add the following dependency to your `build.sbt` file:
 ```scala
-libraryDependencies += "io.github.scala-tessella" %% "tessella" % "0.1.0"
+libraryDependencies += "io.github.scala-tessella" %% "tessella" % "0.1.1"
 ```
 
 ## Getting started
