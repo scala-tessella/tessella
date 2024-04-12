@@ -1,5 +1,9 @@
 # Tilings by regular polygons
 
+[![tessella Scala version support](https://index.scala-lang.org/scala-tessella/tessella/tessella/latest.svg?platform=jvm)](https://index.scala-lang.org/scala-tessella/tessella/tessella)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.scala-tessella/tessella_3.svg?label=Maven%20Central)](https://central.sonatype.com/search?q=tessella_3)
+[![CI](https://github.com/scala-tessella/tessella/actions/workflows/ci.yml/badge.svg)](https://github.com/scala-tessella/tessella/actions/workflows/ci.yml)
+
 **Tessella** is a Scala 3 library
 that helps to deal with finite unit-regular-polygon tessellations of a flat surface,
 a classical theme in the wider field of [tessellations](https://en.wikipedia.org/wiki/Tessellation) (or _tilings_).
