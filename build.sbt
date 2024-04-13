@@ -27,7 +27,7 @@ lazy val root = (project in file("."))
       "io.github.iltotore" %% "iron" % "2.5.0",
       "math.geom2d" % "javaGeom" % "0.11.1",
       "org.scala-lang.modules" %% "scala-xml" % "2.2.0",
-      "io.github.scala-tessella" %% "ring-seq" % "0.4.0",
+      "io.github.scala-tessella" %% "ring-seq" % "0.5.1",
       scalatest,
       scalacheck
     ),
