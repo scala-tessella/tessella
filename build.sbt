@@ -10,12 +10,12 @@ enablePlugins(GhpagesPlugin)
 ThisBuild / organization := "io.github.scala-tessella"
 ThisBuild / scalaVersion := "3.3.3"
 ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 lazy val root = (project in file("."))
   .settings(
     name := "tessella",
     description := "Tessellations by regular polygons",
-    version := "0.1.1",
     licenses := Seq("APL2" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
     description := "Tilings by regular polygons",
     sonatypeProjectHosting := Some(GitHubHosting("scala-tessella", "tessella", "mario.callisto@gmail.com")),
