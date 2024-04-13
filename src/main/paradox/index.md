@@ -44,7 +44,7 @@ import io.github.scala_tessella.tessella.Tiling.*
 Then you can write something like:
 
 ```scala
-Tiling.fromPolygon(5).toString // Tiling(List(1--2, 1--5, 2--3, 3--4, 4--5))
+Tiling.fromPolygon(5) // Tiling(1--2, 1--5, 2--3, 3--4, 4--5)
 Tiling.fromPolygon(7).graphNodes // List(1, 2, 3, 4, 5, 6, 7)
 Tiling.fromPolygon(4).area // 1.0
 ```
