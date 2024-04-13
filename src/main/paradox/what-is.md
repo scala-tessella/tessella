@@ -31,5 +31,5 @@ At the most basic level, a `Tiling` instance is built providing the edges of an 
 And only a constructor with validation is available; since a valid `Tiling` is always a graph, but the opposite is not true, see [Tiling validation](tiling-validation.html).
 
 ```scala
-Tiling.maybe(1--2, 1--3, 2--3) // Right(Tiling(List(1--2, 1--3, 2--3)))
+Tiling.maybe(1--2, 1--3, 2--3) // Right(Tiling(1--2, 1--3, 2--3))
 ```
