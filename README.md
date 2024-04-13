@@ -25,7 +25,7 @@ The graph describing the tessellation is a `Tiling` object.
 
 Add the following dependency to your `build.sbt` file:
 ```scala
-libraryDependencies += "io.github.scala-tessella" %% "tessella" % "0.1.1"
+libraryDependencies += "io.github.scala_tessella" %% "tessella" % "0.1.1"
 ```
 
 ## Getting started
@@ -39,7 +39,7 @@ import io.github.scala_tessella.tessella.Tiling.*
 Then you can write something like:
 
 ```scala
-Tiling.fromPolygon(5).toString // Tiling(List(1--2, 1--5, 2--3, 3--4, 4--5))
+Tiling.fromPolygon(5).toString // Tiling(1--2, 1--5, 2--3, 3--4, 4--5)
 Tiling.fromPolygon(7).graphNodes // List(1, 2, 3, 4, 5, 6, 7)
 Tiling.fromPolygon(4).area // 1.0
 ```
