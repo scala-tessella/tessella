@@ -33,6 +33,5 @@ lazy val root = (project in file("."))
     ),
     SiteScaladoc / siteSubdirName := "api",
     paradoxProperties += ("scaladoc.base_url" -> "api"),
-    coverageEnabled := true,
     scalacOptions += "-deprecation"
   )
