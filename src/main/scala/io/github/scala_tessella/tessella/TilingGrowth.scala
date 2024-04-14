@@ -233,11 +233,11 @@ object TilingGrowth:
           (pathNodes, end, newEdges)
         )
 
-    private def onPerimeterCheck(node: Node): Either[GrowthLeft, _] =
+    private def onPerimeterCheck(node: Node): Either[GrowthLeft, ?] =
       if tiling.perimeter.toRingNodes.contains(node) then Right(())
       else Left((tiling.edges, _.addToNonPerimeterNodeErrMsg(node)))
 
-    private def anglesCheck(nodes: List[Node], polygon: Polygon): Either[GrowthLeft, _] =
+    private def anglesCheck(nodes: List[Node], polygon: Polygon): Either[GrowthLeft, ?] =
       nodes.find(node => Try(Vertex(polygon +: tiling.perimeterOrderedPolygons(node))).isFailure) match
         case Some(node) => Left((tiling.edges, _.addExceedingAngleErrMsg(node, Vertex(polygon))))
         case None       => Right(())

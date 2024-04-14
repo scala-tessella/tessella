@@ -150,11 +150,11 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
       def loop(unordered: Vector[Vector[Node]], acc: List[Path]): List[Path] =
         val connector: Node =
           acc.head.toNodes.head
-        unordered.find(path => (path.head equals connector) || (path.last equals connector)) match
+        unordered.find(path => path.head.equals(connector) || path.last.equals(connector)) match
           case Some(path) =>
             val oriented: Vector[Node] =
-              if path.head equals connector then path.reverse else path
-            loop(unordered.filterNot(_ equals path), Path.unsafe(oriented) :: acc)
+              if path.head.equals(connector) then path.reverse else path
+            loop(unordered.filterNot(_.equals(path)), Path.unsafe(oriented) :: acc)
           case _ => acc
 
       loop(unorderedPaths.tail.toVector, List(Path.unsafe(unorderedPaths.head))).toVector

@@ -40,8 +40,8 @@ object Topology:
       zeroNode
 
     def compare(a: Node, b: Node): Int =
-      if a equals before then -1
-      else if b equals before then 1
+      if a.equals(before) then -1
+      else if b.equals(before) then 1
       else 0
 
   extension (node: Node)

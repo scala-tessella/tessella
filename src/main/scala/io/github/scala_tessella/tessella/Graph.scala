@@ -176,7 +176,7 @@ class Graph(edges: List[Edge]):
     /** Finds if edge nodes has the same orientation of the circular path */
     def isOrientedAt(edge: Edge): Option[Boolean] =
       if !toRingEdges.contains(edge) then None
-      else Option(beforeO(edge.greaterNode).get equals edge.lesserNode)
+      else Option(beforeO(edge.greaterNode).get.equals(edge.lesserNode))
 
   extension (paths: List[RingPath])
 
