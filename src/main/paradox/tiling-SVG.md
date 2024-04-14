@@ -113,3 +113,18 @@ uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, 
 ```raw
 </div>
 ```
+
+### Inversion
+
+```scala
+uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, showInversion = true)
+```
+```raw
+<div style="width: 600px;">
+```
+| ![inversion](svg/inversion.svg)                                          |
+|--------------------------------------------------------------------------|
+| _Finite set of a **[2x(3⁶);(3⁴.6)]** pattern with inverted tessellation  |
+```raw
+</div>
+```
