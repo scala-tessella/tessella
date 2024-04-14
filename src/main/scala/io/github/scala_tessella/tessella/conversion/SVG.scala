@@ -6,13 +6,17 @@ import SVG.LabelledNodes.PERIMETER_ONLY
 import SVG.MarkStyle.NONE
 import SharedML.*
 import RegularPolygon.Vertex
-import Topology.{Node, NodeOrdering}
+import Topology.{Edge, Node, NodeOrdering}
 import TilingUniformity.groupUniformsNestedComplete
+import utility.Utils.toCouple
 import utility.UtilsOption.getDefined
 
 import io.github.scala_tessella.ring_seq.RingSeq.Index
 import math.geom2d.Point2D
+import math.geom2d.line.LineSegment2D
+import math.geom2d.polygon.SimplePolygon2D
 
+import scala.jdk.CollectionConverters.*
 import scala.xml.Elem
 
 /** Methods to convert a `Tiling` into an SVG file */
@@ -73,6 +77,13 @@ object SVG extends ConverterSVG:
       fill("none"),
       stroke("blue"),
       strokeWidth(2)
+    ) *)
+
+  private val inversionStyle: Style =
+    Style(List(
+      fill("none"),
+      stroke("red"),
+      strokeWidth(1)
     ) *)
 
   private val labelStyle: Style =
@@ -261,11 +272,14 @@ object SVG extends ConverterSVG:
             )
           )
         Option(allPolygonsGroup(shapes.toSeq))
-      else None
+      else
+        None
 
     private def perimeterSVG(showPerimeter: Boolean ): Option[Elem] =
-      if showPerimeter then Option(polygon(tiling.perimeter.toRingNodes.map(tiling.coords)).withStyle(perimeterStyle))
-      else None
+      if showPerimeter then
+        Option(polygon(tiling.perimeter.toRingNodes.map(tiling.coords)).withStyle(perimeterStyle))
+      else
+        None
 
     private def labelsSVG(labelledNodes: LabelledNodes): Option[Elem] =
       labelledNodes.ordinal match
@@ -310,7 +324,34 @@ object SVG extends ConverterSVG:
         val nodes: List[Int] =
           (1 to tiling.graphNodes.max(NodeOrdering).toInt).toList
         Option(animatedPolylineArrow(nodes.map(node => tiling.coords(Node(node))), arrowHeadStyle, polylineStyle))
-      else None
+      else
+        None
+
+    private def polygonsCentreCoords: Map[List[Edge], Point2D] =
+      tiling.orientedPolygons.map(path =>
+        path.toPolygonEdges -> SimplePolygon2D(path.toPolygonPathNodes.map(tiling.coords).asJava).centroid
+      ).toMap
+
+    private def innerEdges: List[Edge] =
+      tiling.graphEdges.diff(tiling.perimeter.toRingEdges.toList)
+
+    private def inversionSegments: List[LineSegment2D] =
+      innerEdges
+        .map(edge => polygonsCentreCoords.filter((edges, _) => edges.contains(edge)).values)
+        .map(_.toList.toCouple)
+        .map(LineSegment2D(_, _))
+
+    private def inversionSVG(showInversion: Boolean): Option[Elem] =
+      if showInversion then
+        Option(
+          group(
+            Option(Title("Inversion")),
+            Option(Description("Inverted tessellation by joining the centres of each two polygons sharing an edge")),
+            inversionSegments.map(line)*
+          ).withStyle(inversionStyle)
+        )
+      else
+        None
 
     /** `group` with all the tiling features
      *
@@ -319,18 +360,21 @@ object SVG extends ConverterSVG:
      * @param labelledNodes strategy for labelling nodes
      * @param markStyle     strategy for marking nodes
      * @param showGrowth    if true, growth by ordinal nodes is shown
+     * @param showInversion if true, the inverted tessellation is shown
      */
     def tessellationGroup(showPerimeter: Boolean = true,
                           fillPolygons: Boolean = false,
                           labelledNodes: LabelledNodes = PERIMETER_ONLY,
                           markStyle: MarkStyle = MarkStyle.NONE,
-                          showGrowth: Boolean = false): Elem =
+                          showGrowth: Boolean = false,
+                          showInversion: Boolean = false): Elem =
       group(
         Option(Title("Tiling")),
         Option(Description("Finite tessellation of regular polygons")),
         List(
           graphSVG,
           polygonsSVG(fillPolygons),
+          inversionSVG(showInversion),
           perimeterSVG(showPerimeter),
           growthSVG(showGrowth),
           marksSVG(markStyle),
@@ -349,12 +393,14 @@ object SVG extends ConverterSVG:
      * @param labelledNodes strategy for labelling nodes
      * @param markStyle     strategy for marking nodes
      * @param showGrowth    if true, growth by ordinal nodes is shown
+     * @param showInversion if true, the inverted tessellation is shown
      */
     def toSVG(showPerimeter: Boolean = true,
               fillPolygons: Boolean = false,
               labelledNodes: LabelledNodes = PERIMETER_ONLY,
               markStyle: MarkStyle = NONE,
-              showGrowth: Boolean = false): Elem =
+              showGrowth: Boolean = false,
+              showInversion: Boolean = false): Elem =
       toViewBox(
-        tessellationGroup(showPerimeter, fillPolygons, labelledNodes, markStyle, showGrowth)
+        tessellationGroup(showPerimeter, fillPolygons, labelledNodes, markStyle, showGrowth, showInversion)
       )

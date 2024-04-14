@@ -89,7 +89,8 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
     private def toRingPath: RingPath =
       RingPath.unsafe(nodes)
 
-    private def toPolygonEdges: PolygonEdges =
+    /** Converts to edges */
+    def toPolygonEdges: PolygonEdges =
       toRingPath.toRingEdges.toList
 
     private def checkShared(path: Vector[Node], f: Seq[Node] => Boolean): Boolean =
