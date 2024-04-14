@@ -25,7 +25,7 @@ The graph describing the tessellation is a `Tiling` object.
 
 Add the following dependency to your `build.sbt` file:
 ```scala
-libraryDependencies += "io.github.scala_tessella" %% "tessella" % "0.1.3"
+libraryDependencies += "io.github.scala-tessella" %% "tessella" % "0.1.3"
 ```
 
 ## Getting started
