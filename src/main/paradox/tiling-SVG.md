@@ -8,7 +8,7 @@ describing the vector image.
 import io.github.scala_tessella.tessella.conversion.SVG.*
 
 val uniform3gonal2: Tiling = Tiling.threeUniformTwoOne(4, 4).toOption.get
-uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE) // returns a SVG as scala.XML.Elem
+uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE) // returns a SVG as scala.XML.Elem
 ```
 ```raw
 <div style="width: 600px;">
@@ -27,7 +27,7 @@ Several parameters can be mixed to add one or more information layers.
 ### Node labels
 
 ```scala
-uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.ALL)
+uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.ALL)
 ```
 ```raw
 <div style="width: 600px;">
@@ -42,7 +42,7 @@ uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.ALL)
 ### Animated node order
 
 ```scala
-uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, showGrowth = true)
+uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, showGrowth = true)
 ```
 ```raw
 <div style="width: 600px;">
@@ -57,7 +57,7 @@ uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, 
 ### Perimeter
 
 ```scala
-uniform3gonal2.toSVG(showPerimeter = true, LabelledNodes = LabelledNodes.NONE)
+uniform3gonal2.toSVG(showPerimeter = true, labelledNodes = LabelledNodes.NONE)
 ```
 ```raw
 <div style="width: 600px;">
@@ -72,7 +72,7 @@ uniform3gonal2.toSVG(showPerimeter = true, LabelledNodes = LabelledNodes.NONE)
 ### Polygons
 
 ```scala
-uniform3gonal2.toSVG(showPerimeter = false, fillPolygons = true, LabelledNodes = LabelledNodes.NONE)
+uniform3gonal2.toSVG(showPerimeter = false, fillPolygons = true, labelledNodes = LabelledNodes.NONE)
 ```
 ```raw
 <div style="width: 600px;">
@@ -87,7 +87,7 @@ uniform3gonal2.toSVG(showPerimeter = false, fillPolygons = true, LabelledNodes =
 ### Gonality
 
 ```scala
-uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, markStyle = MarkStyle.GONALITY)
+uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, markStyle = MarkStyle.GONALITY)
 ```
 ```raw
 <div style="width: 600px;">
@@ -102,7 +102,7 @@ uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, 
 ### Uniformity
 
 ```scala
-uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, markStyle = MarkStyle.UNIFORMITY)
+uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, markStyle = MarkStyle.UNIFORMITY)
 ```
 ```raw
 <div style="width: 600px;">
@@ -117,7 +117,7 @@ uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, 
 ### Inversion
 
 ```scala
-uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, showInversion = true)
+uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, showInversion = true)
 ```
 ```raw
 <div style="width: 600px;">
