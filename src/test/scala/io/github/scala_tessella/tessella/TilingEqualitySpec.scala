@@ -160,6 +160,11 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
       true
   }
 
+  they can "be compared" in {
+    tiling1almostEqual.compare(tiling2almostEqual) shouldBe
+      0
+  }
+
   val listed: List[Tiling] =
     List(tiling1almostEqual, tiling2almostEqual)
 

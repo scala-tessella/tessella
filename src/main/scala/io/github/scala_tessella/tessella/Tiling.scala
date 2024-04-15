@@ -16,7 +16,6 @@ import math.geom2d.{Box2D, Point2D}
 import scala.annotation.tailrec
 import scala.collection.{immutable, mutable}
 import scala.jdk.CollectionConverters.*
-import scala.language.strictEquality
 import scala.math.Ordered.orderingToOrdered
 import scala.math.Ordering.Implicits.seqOrdering
 import scala.util.Try
@@ -26,7 +25,7 @@ import scala.util.Try
  * @param edges the graph edges
  * @note being `private` a [[Tiling]] cannot be created outside the class, thus ensuring edges validation
  */
-case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling] derives CanEqual:
+case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling]:
 
   override def toString: String =
     s"Tiling(${edges.stringify})"
