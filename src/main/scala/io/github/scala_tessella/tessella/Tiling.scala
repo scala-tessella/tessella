@@ -419,11 +419,11 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
 
     any match
       case that: Tiling =>
-        EdgesSizeOrdering.orElse(EdgesNodesSizeOrdering).compare(this.graphEdges, that.graphEdges) == 0
-          && this.orderedRoundedPerimeterAngles.isRotationOrReflectionOf(that.orderedRoundedPerimeterAngles)
-          && loop(
-               List(this.strictInnerPolygons.toPolygonsEdges.filter(_.nonEmpty)),
-               List(that.strictInnerPolygons.toPolygonsEdges.filter(_.nonEmpty))
+        EdgesSizeOrdering.orElse(EdgesNodesSizeOrdering).compare(this.graphEdges, that.graphEdges) == 0 &&
+          this.orderedRoundedPerimeterAngles.isRotationOrReflectionOf(that.orderedRoundedPerimeterAngles) &&
+          loop(
+            List(this.strictInnerPolygons.toPolygonsEdges.filter(_.nonEmpty)),
+            List(that.strictInnerPolygons.toPolygonsEdges.filter(_.nonEmpty))
           )
       case _ => false
 
