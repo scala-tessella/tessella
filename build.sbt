@@ -24,7 +24,7 @@ lazy val root: Project =
       libraryDependencies ++= Seq(
         "io.github.iltotore" %% "iron" % "2.5.0",
         "math.geom2d" % "javaGeom" % "0.11.1",
-        "org.scala-lang.modules" %% "scala-xml" % "2.2.0",
+        "org.scala-lang.modules" %% "scala-xml" % "2.3.0",
         "io.github.scala-tessella" %% "ring-seq" % "0.5.1",
         "org.scalatest" %% "scalatest" % "3.2.18" % "test",
         "org.scalacheck" %% "scalacheck" % "1.17.0" % "test"
