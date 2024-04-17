@@ -27,7 +27,7 @@ lazy val root: Project =
         "org.scala-lang.modules" %% "scala-xml" % "2.3.0",
         "io.github.scala-tessella" %% "ring-seq" % "0.5.1",
         "org.scalatest" %% "scalatest" % "3.2.18" % "test",
-        "org.scalacheck" %% "scalacheck" % "1.17.0" % "test"
+        "org.scalacheck" %% "scalacheck" % "1.17.1" % "test"
       ),
       SiteScaladoc / siteSubdirName := "api",
       paradoxProperties += ("scaladoc.base_url" -> "api"),
