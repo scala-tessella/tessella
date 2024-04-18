@@ -2,6 +2,7 @@ package io.github.scala_tessella.tessella
 
 import Geometry.*
 import Geometry.Radian.TAU_2
+import GeometryBase.{Box9D, LineSegment9D}
 import RegularPolygon.{Polygon, Vertex}
 import Tiling.{empty, fromPolygon}
 import TilingErrorMessages.*
@@ -196,13 +197,13 @@ object TilingGrowth:
         case Nil =>
           val newEdgesCoords: Coords =
             newCoords ++ perimeterCoordsAt(end, start)
-          val lines: List[LineSegment2D] =
+          val lines: List[LineSegment9D] =
             newEdges.toSegments(newEdgesCoords)
           val enlargedBox: Box2D =
             newEdges.toBox(newEdgesCoords, 1.0)
-          val perimeterLines: List[LineSegment2D] =
+          val perimeterLines: List[LineSegment9D] =
             tiling.perimeter.toRingEdges.toList.withoutNodes(List(node))
-              .toSegments(tiling.perimeterCoords).filter(_.hasEndpointIn(enlargedBox))
+              .toSegments(tiling.perimeterCoords).filter(_.hasEndpointIn(Box9D.fromBox2D(enlargedBox)))
           if lines.lesserIntersects(perimeterLines) then
             Left((tiling.edges ++ newEdges, _.invalidIntersectionErrMsg))
           else

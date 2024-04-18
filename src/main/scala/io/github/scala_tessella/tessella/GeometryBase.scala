@@ -125,7 +125,7 @@ object GeometryBase extends Accuracy:
     private val dy: Double =
       point2.y - point1.y
 
-    def contains(point: Point9D): Boolean =
+    def containsAtEdges(point: Point9D): Boolean =
       point.almostEquals(point1, ACCURACY) || point.almostEquals(point2, ACCURACY)
 
     def horizontalAngle: Radian =
@@ -139,7 +139,7 @@ object GeometryBase extends Accuracy:
 
     /** Checks if intersecting with another segment, without touching the edge points */
     def lesserIntersects(that: LineSegment9D): Boolean =
-      LineSegment9D.intersects(this, that) && !(this.contains(that.point1) || this.contains(that.point2))
+      LineSegment9D.intersects(this, that) && !(this.containsAtEdges(that.point1) || this.containsAtEdges(that.point2))
 
     def intersection(that: LineSegment9D): Option[Point9D] =
       val dx2 = that.point2.x - that.point1.x
@@ -152,8 +152,9 @@ object GeometryBase extends Accuracy:
         val y2 = origin.y
         val t = ((this.point1.y - y2) * dx2 - (this.point1.x - x2) * dy2) / denominator
         val point = Point9D(this.point1.x + t * this.dx, this.point1.y + t * this.dy)
-        if this.contains(point) && that.contains(point) then Option(point)
-        else None
+        Option(point)
+//        if this.toLineSegment2D.contains(point.toPoint2D) && that.toLineSegment2D.contains(point.toPoint2D) then Option(point)
+//        else None
 
     /** Checks if at least one endpoint is contained in the given box */
     def hasEndpointIn(box: Box9D): Boolean =

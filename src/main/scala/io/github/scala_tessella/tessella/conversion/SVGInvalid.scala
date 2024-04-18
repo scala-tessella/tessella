@@ -6,7 +6,7 @@ import Geometry.toBox
 import SharedML.{Style, withStyle}
 import SVG.*
 import SharedML.*
-import io.github.scala_tessella.tessella.GeometryBase.Point9D
+import io.github.scala_tessella.tessella.GeometryBase.*
 
 import math.geom2d.line.LineSegment2D
 import math.geom2d.Box2D
@@ -76,7 +76,7 @@ object SVGInvalid extends ConverterSVG:
    * @param segment spatial coordinates
    * @param width of `stroke-width` attribute
    */
-  def invalidEdgeGroup(segment: LineSegment2D, width: Int = 1): Elem =
+  def invalidEdgeGroup(segment: LineSegment9D, width: Int = 1): Elem =
     invalidEdgesGroup(List(line(segment)), width)
 
   private def invalidPretty(elems: List[Elem], title: Title, desc: Description, box2D: Box2D) =

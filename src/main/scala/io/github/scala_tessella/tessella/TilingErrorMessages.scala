@@ -2,14 +2,15 @@ package io.github.scala_tessella.tessella
 
 import Geometry.*
 import Geometry.Radian.TAU
+import GeometryBase.*
 import RegularPolygon.{Polygon, Vertex}
 import Topology.{Degree, Edge, Node}
 import conversion.ConverterSVG.Description
 import conversion.DOT
 import conversion.DOT.toDOT
 import conversion.SVGInvalid.*
-import io.github.scala_tessella.tessella.GeometryBase.Point9D
 import utility.Utils.*
+import utility.UtilsOption.getDefined
 
 import math.geom2d.Point2D
 import math.geom2d.line.LineSegment2D
@@ -130,8 +131,8 @@ object TilingErrorMessages:
       val sideCouples =
         tiling.perimeterSimplePolygon2D.intersectingSides.toList
 
-      def edgeFromSide(side: LineSegment2D): Edge =
-        Edge((perimeterNodeFromPoint(Point9D.fromPoint2D(side.firstPoint())), perimeterNodeFromPoint(Point9D.fromPoint2D(side.lastPoint()))))
+      def edgeFromSide(side: LineSegment9D): Edge =
+        Edge((perimeterNodeFromPoint(side.point1), perimeterNodeFromPoint(side.point2)))
 
       val edgeCouples: List[(Edge, Edge)] =
         sideCouples.map((s1, s2) => (edgeFromSide(s1), edgeFromSide(s2)))
@@ -141,8 +142,7 @@ object TilingErrorMessages:
             case (edge1, edge2) => List(edge1, edge2).toSegments(tiling.perimeterCoords).toCouple match
               case (f, s) => f.intersection(s)
           })
-          .filterNot(_ == null)
-          .map(Point9D.fromPoint2D)
+          .getDefined
       val svg: String =
         addInvalidPerimeterSVG(
           Description("Invalid intersecting edges"),

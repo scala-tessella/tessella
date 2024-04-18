@@ -1,6 +1,6 @@
 package io.github.scala_tessella.tessella
 
-import io.github.scala_tessella.tessella.GeometryBase.Point9D
+import io.github.scala_tessella.tessella.GeometryBase.*
 import Topology.{Edge, Node}
 import utility.Utils.{compareElems, mapValues2, toCouple}
 
@@ -8,8 +8,8 @@ import io.github.scala_tessella.ring_seq.RingSeq.Index
 import math.geom2d.{Angle2D, Box2D}
 //import math.geom2d.point.PointArray2D
 //import math.geom2d.Point2D.createPolar
-import math.geom2d.Shape2D.ACCURACY
-import math.geom2d.line.LineSegment2D
+//import math.geom2d.Shape2D.ACCURACY
+//import math.geom2d.line.LineSegment2D
 import math.geom2d.polygon.SimplePolygon2D
 
 import scala.annotation.targetName
@@ -112,20 +112,20 @@ object Geometry extends Accuracy:
 //    def almostEquals(others: Vector[Point2D]): Boolean =
 //      points.compareElems(others)(almostEqualCouple)
 
-  extension (line: LineSegment2D)
-
-    /** Checks if intersecting with another segment, without touching the edge points */
-    def lesserIntersects(other: LineSegment2D): Boolean =
-      LineSegment2D.intersects(line, other) && !(line.contains(other.firstPoint) || line.contains(other.lastPoint))
-
-    /** Checks if at least one endpoint is contained in the given box */
-    def hasEndpointIn(box: Box2D): Boolean =
-      box.contains(line.firstPoint) || box.contains(line.lastPoint)
+//  extension (line: LineSegment2D)
+//
+//    /** Checks if intersecting with another segment, without touching the edge points */
+//    def lesserIntersects(other: LineSegment2D): Boolean =
+//      LineSegment2D.intersects(line, other) && !(line.contains(other.firstPoint) || line.contains(other.lastPoint))
+//
+//    /** Checks if at least one endpoint is contained in the given box */
+//    def hasEndpointIn(box: Box2D): Boolean =
+//      box.contains(line.firstPoint) || box.contains(line.lastPoint)
 
   extension (polygon: SimplePolygon2D)
 
-    private def sides: Vector[LineSegment2D] =
-      polygon.edges().asScala.toVector
+    private def sides: Vector[LineSegment9D] =
+      polygon.edges().asScala.toVector.map(LineSegment9D.fromLineSegment2D)
 
     private def edgesCombinations: Iterator[(Index, Index)] =
       val length = polygon.edgeNumber()
@@ -138,24 +138,24 @@ object Geometry extends Accuracy:
 
     /** Checks if the polygon is self intersecting */
     def isSelfIntersecting: Boolean =
-      edgesCombinations.exists((i1, i2) => LineSegment2D.intersects(sides(i1), sides(i2)))
+      edgesCombinations.exists((i1, i2) => LineSegment9D.intersects(sides(i1), sides(i2)))
 
     /** Filters the intersecting sides */
-    def intersectingSides: Iterator[(LineSegment2D, LineSegment2D)] =
+    def intersectingSides: Iterator[(LineSegment9D, LineSegment9D)] =
       edgesCombinations
-        .filter((i1, i2) => LineSegment2D.intersects(sides(i1), sides(i2)))
+        .filter((i1, i2) => LineSegment9D.intersects(sides(i1), sides(i2)))
         .map((i1, i2) => (sides(i1), sides(i2)))
 
-  extension (lines: Iterable[LineSegment2D])
-
-    /** Checks if sequentially almost equal to another sequence */
-    @targetName("almostEq")
-    def almostEquals(others: Iterable[LineSegment2D]): Boolean =
-      lines.compareElems(others)(_.almostEquals(_, LESSER_ACCURACY))
-
-    /** Checks if the two sequences of segments are intersecting */
-    def lesserIntersects(other: Iterable[LineSegment2D]): Boolean =
-      lines.exists(line => other.exists(line.lesserIntersects))
+//  extension (lines: Iterable[LineSegment2D])
+//
+//    /** Checks if sequentially almost equal to another sequence */
+//    @targetName("almostEq")
+//    def almostEquals(others: Iterable[LineSegment2D]): Boolean =
+//      lines.compareElems(others)(_.almostEquals(_, LESSER_ACCURACY))
+//
+//    /** Checks if the two sequences of segments are intersecting */
+//    def lesserIntersects(other: Iterable[LineSegment2D]): Boolean =
+//      lines.exists(line => other.exists(line.lesserIntersects))
 
   /** Spatial coordinates for the first two nodes of a [[Tiling]] */
   val startingCoords: Coords =
@@ -180,13 +180,13 @@ object Geometry extends Accuracy:
   extension (edge: Edge)
 
     /** Creates a `LineSegment2D` of the given coordinates */
-    def toSegment(coords: Coords): LineSegment2D =
-      LineSegment2D(coords(edge.lesserNode).toPoint2D, coords(edge.greaterNode).toPoint2D)
+    def toSegment(coords: Coords): LineSegment9D =
+      LineSegment9D(coords(edge.lesserNode), coords(edge.greaterNode))
 
   extension (edges: List[Edge])
 
     /** Creates a sequence of `LineSegment2D` of the given coordinates */
-    def toSegments(coords: Coords): List[LineSegment2D] =
+    def toSegments(coords: Coords): List[LineSegment9D] =
       edges.map(_.toSegment(coords))
 
 //    /** @deprecated seems that .boundingBox doesn't work correctly in some cases */

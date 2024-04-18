@@ -4,7 +4,7 @@ package conversion
 import ConverterSVG.Description
 import SharedML.*
 import Geometry.Radian
-import GeometryBase.Point9D
+import GeometryBase.*
 
 import math.geom2d.Point2D.createPolar
 import math.geom2d.line.LineSegment2D
@@ -153,8 +153,8 @@ trait ConverterSVG extends UtilsXML:
     <line x1={ s"$x1" } y1={ s"$y1" } x2={ s"$x2" } y2={ s"$y2" } />
 
   /** `line` element from `LineSegment2D` */
-  def line(segment: LineSegment2D): Elem =
-    line(Point9D.fromPoint2D(segment.firstPoint()), Point9D.fromPoint2D(segment.lastPoint()))
+  def line(segment: LineSegment9D): Elem =
+    line(segment.point1, segment.point2)
 
   /** `circle` element
    *

@@ -2,7 +2,7 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
-import io.github.scala_tessella.tessella.GeometryBase.Point9D
+import io.github.scala_tessella.tessella.GeometryBase.{LineSegment9D, Point9D}
 import SVG.LabelledNodes.PERIMETER_ONLY
 import SVG.MarkStyle.NONE
 import SharedML.*
@@ -338,11 +338,11 @@ object SVG extends ConverterSVG:
     private def innerEdges: List[Edge] =
       tiling.graphEdges.diff(tiling.perimeter.toRingEdges.toList)
 
-    private def inversionSegments: List[LineSegment2D] =
+    private def inversionSegments: List[LineSegment9D] =
       innerEdges
-        .map(edge => polygonsCentreCoords.filter((edges, _) => edges.contains(edge)).values.map(_.toPoint2D))
+        .map(edge => polygonsCentreCoords.filter((edges, _) => edges.contains(edge)).values)
         .map(_.toList.toCouple)
-        .map(LineSegment2D(_, _))
+        .map(LineSegment9D(_, _))
 
     private def inversionSVG(showInversion: Boolean): Option[Elem] =
       if showInversion then

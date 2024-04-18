@@ -3,8 +3,7 @@ package io.github.scala_tessella.tessella
 import Geometry.*
 import Geometry.Radian.TAU_4
 import Topology.{--, Edge, Node}
-import GeometryBase.{Point9D, LineSegment9D}
-
+import GeometryBase.{Box9D, LineSegment9D, Point9D}
 import math.geom2d.{Box2D, Point2D}
 import math.geom2d.Shape2D.ACCURACY
 import math.geom2d.line.LineSegment2D
@@ -140,18 +139,23 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
       true
   }
 
+  it can "return the point of intersection" in {
+    LineSegment9D.fromLineSegment2D(segment).intersection(LineSegment9D.fromLineSegment2D(intersecting)).get shouldBe
+      Point9D(0.5, -0.5)
+  }
+
   it can "lesser intersect with another one" in {
     LineSegment9D.fromLineSegment2D(segment).lesserIntersects(LineSegment9D.fromLineSegment2D(intersecting)) shouldBe
       true
   }
 
   it can "contain a point" in {
-    LineSegment9D.fromLineSegment2D(segment).contains(Point9D.fromPoint2D(sameOrigin.firstPoint())) shouldBe
+    LineSegment9D.fromLineSegment2D(segment).containsAtEdges(Point9D.fromPoint2D(sameOrigin.firstPoint())) shouldBe
       true
   }
 
   it can "NOT contain a point" in {
-    LineSegment9D.fromLineSegment2D(segment).contains(Point9D.fromPoint2D(sameOrigin.lastPoint())) shouldBe
+    LineSegment9D.fromLineSegment2D(segment).containsAtEdges(Point9D.fromPoint2D(sameOrigin.lastPoint())) shouldBe
       false
   }
 
@@ -161,22 +165,27 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
   }
 
   it can "lesser intersect with another one" in {
-    segment.lesserIntersects(intersecting) shouldBe
+    LineSegment9D.fromLineSegment2D(segment).lesserIntersects(LineSegment9D.fromLineSegment2D(intersecting)) shouldBe
       true
   }
 
   it must "not lesser intersect if just one endpoint is shared" in {
-    segment.lesserIntersects(sameOrigin) shouldBe
+    LineSegment9D.fromLineSegment2D(segment).lesserIntersects(LineSegment9D.fromLineSegment2D(sameOrigin)) shouldBe
       false
   }
 
+  it can "return the point of intersection" in {
+    segment.intersection(intersecting) shouldBe
+      Point2D(0.5, -0.5)
+  }
+
   it can "have at least one of its two endpoints contained in a Box2D" in {
-    segment.hasEndpointIn(Box2D(Point2D(-2.0, 0.0), Point2D(1.0, 1.0))) shouldBe
+    LineSegment9D.fromLineSegment2D(segment).hasEndpointIn(Box9D.fromBox2D(Box2D(Point2D(-2.0, 0.0), Point2D(1.0, 1.0)))) shouldBe
       true
   }
 
   it can "have both of its two endpoints NOT contained in a Box2D" in {
-    segment.hasEndpointIn(Box2D(Point2D(0.5, 0.5), Point2D(1.0, 1.0))) shouldBe
+    LineSegment9D.fromLineSegment2D(segment).hasEndpointIn(Box9D.fromBox2D(Box2D(Point2D(0.5, 0.5), Point2D(1.0, 1.0)))) shouldBe
       false
   }
 
@@ -207,14 +216,15 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
     simple.intersectingSides.toList shouldBe
       List(
         (
-          LineSegment2D(Point2D(1.0, 0.0), Point2D(0.0, 1.0)),
-          LineSegment2D(Point2D(), Point2D(1.0, 1.0))
+          LineSegment9D(Point9D(1.0, 0.0), Point9D(0.0, 1.0)),
+          LineSegment9D(Point9D(), Point9D(1.0, 1.0))
         )
       )
   }
 
   "A set of LineSegment2D" can "be approximately equal to another set" in {
-    List(segment, sameOrigin).almostEquals(List(LineSegment2D(Point2D(), almost), sameOrigin)) shouldBe
+    List(segment, sameOrigin).map(LineSegment9D.fromLineSegment2D)
+      .almostEquals(List(LineSegment2D(Point2D(), almost), sameOrigin).map(LineSegment9D.fromLineSegment2D)) shouldBe
       true
   }
 
@@ -249,9 +259,9 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
   val anEdge: Edge =
     1--2
 
-  "An Edge" can "be converted to a LineSegment2D" in {
+  "An Edge" can "be converted to a LineSegment9D" in {
     anEdge.toSegment(Map(Node(1) -> Point9D(), Node(2) -> Point9D(1.0, 0.0))) shouldBe
-      LineSegment2D(Point2D(), Point2D(1.0, 0.0))
+      LineSegment9D(Point9D(), Point9D(1.0, 0.0))
   }
 
   val second: Edge =
@@ -264,8 +274,8 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
       Node(3) -> Point9D(1.0, 1.0),
     )) shouldEqual
       List(
-        LineSegment2D(Point2D(), Point2D(1.0, 0.0)),
-        LineSegment2D(Point2D(), Point2D(1.0, 1.0))
+        LineSegment9D(Point9D(), Point9D(1.0, 0.0)),
+        LineSegment9D(Point9D(), Point9D(1.0, 1.0))
       )
   }
 
