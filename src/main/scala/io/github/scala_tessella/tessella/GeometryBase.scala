@@ -125,20 +125,8 @@ object GeometryBase extends Accuracy:
     private val dy: Double =
       point2.y - point1.y
 
-    private def positionOnLine(point: Point9D): Double = {
-      val denominator: Double =
-        dx * dx + dy * dy
-      if Math.abs(denominator) < 1.0E-12 then
-        throw new IllegalArgumentException()
-      else
-        ((point.y - point1.y) * dy + (point.x - point1.x) * dx) / denominator
-    }
-
     def contains(point: Point9D): Boolean =
-      val t: Double =
-        positionOnLine(point)
-      if t < -1.0E-12 then false
-      else !(t - 1.0 > 1.0E-12)
+      point.almostEquals(point1, ACCURACY) || point.almostEquals(point2, ACCURACY)
 
     def horizontalAngle: Radian =
       Radian((Math.atan2(dy, dx) + 6.283185307179586) % 6.283185307179586)

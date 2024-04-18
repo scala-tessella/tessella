@@ -3,7 +3,8 @@ package io.github.scala_tessella.tessella
 import Geometry.*
 import Geometry.Radian.TAU_4
 import Topology.{--, Edge, Node}
-import io.github.scala_tessella.tessella.GeometryBase.Point9D
+import GeometryBase.{Point9D, LineSegment9D}
+
 import math.geom2d.{Box2D, Point2D}
 import math.geom2d.Shape2D.ACCURACY
 import math.geom2d.line.LineSegment2D
@@ -134,7 +135,32 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
   val sameOrigin: LineSegment2D =
     LineSegment2D(Point2D(), Point2D(3.0, 3.0))
 
+  "A LineSegment9D" can "intersect with another one" in {
+    LineSegment9D.intersects(LineSegment9D.fromLineSegment2D(segment), LineSegment9D.fromLineSegment2D(intersecting)) shouldBe
+      true
+  }
+
+  it can "lesser intersect with another one" in {
+    LineSegment9D.fromLineSegment2D(segment).lesserIntersects(LineSegment9D.fromLineSegment2D(intersecting)) shouldBe
+      true
+  }
+
+  it can "contain a point" in {
+    LineSegment9D.fromLineSegment2D(segment).contains(Point9D.fromPoint2D(sameOrigin.firstPoint())) shouldBe
+      true
+  }
+
+  it can "NOT contain a point" in {
+    LineSegment9D.fromLineSegment2D(segment).contains(Point9D.fromPoint2D(sameOrigin.lastPoint())) shouldBe
+      false
+  }
+
   "A LineSegment2D" can "intersect with another one" in {
+    LineSegment2D.intersects(segment, intersecting) shouldBe
+      true
+  }
+
+  it can "lesser intersect with another one" in {
     segment.lesserIntersects(intersecting) shouldBe
       true
   }
@@ -151,6 +177,16 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
 
   it can "have both of its two endpoints NOT contained in a Box2D" in {
     segment.hasEndpointIn(Box2D(Point2D(0.5, 0.5), Point2D(1.0, 1.0))) shouldBe
+      false
+  }
+
+  it can "contain a point" in {
+    segment.contains(sameOrigin.firstPoint()) shouldBe
+      true
+  }
+
+  it can "NOT contain a point" in {
+    segment.contains(sameOrigin.lastPoint()) shouldBe
       false
   }
 
