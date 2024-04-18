@@ -72,58 +72,58 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
       false
   }
 
-//  it can "be rounded to couple of Long" in {
-//    point.rounded shouldBe
-//      (1000000L, -1000000L)
-//  }
-//
-//  it can "return a new point moved by polar coords" in {
-//    point.plusPolar(2.0)(TAU_4).almostEquals(Point2D(1.0, 1.0), ACCURACY) shouldBe
-//      true
-//  }
-//
-//  it can "return a new point moved by 1 unit in a polar direction" in {
-//    point.plusPolarUnit(TAU_4) shouldBe
-//      Point2D(1.0, 0.0)
-//  }
-//
-//  it can "return the angle to another point" in {
-//    point.angleTo(Point2D(1.0, 0.0)) shouldBe
-//      TAU_4
-//  }
-//
-//  it can "be aligned to other two points" in {
-//    point.alignWithStart(Point2D(), Point2D(1.0, 0.0)).almostEquals(point, ACCURACY) shouldBe
-//      true
-//  }
-//
-//  it can "be flipped vertically" in {
-//    point.flipVertically shouldBe
-//      Point2D(1.0, 1.0)
-//  }
-//
-//  val points: Vector[Point2D] =
-//    Vector(point, Point2D(), Point2D(3.0, 3.0), almost)
-//
-//  "A set of Point2D" can "have no duplicates, with approximation" in {
-//    points.tail.areAllDistinct shouldBe
-//      true
-//  }
-//
-//  it can "have duplicates, with approximation, when an almost equal pont is added" in {
-//    points.areAllDistinct shouldBe
-//      false
-//  }
-//
-//  it can "return only the duplicates, with approximation" in {
-//    points.almostEqualCouples.toList shouldBe
-//      List((point, almost))
-//  }
-//
-//  it can "be approximately equal to another set" in {
-//    points.almostEquals(Vector(almost, Point2D(), Point2D(3.0, 3.0), point)) shouldBe
-//      true
-//  }
+  it can "be rounded to couple of Long" in {
+    Point9D.fromPoint2D(point).rounded shouldBe
+      (1000000L, -1000000L)
+  }
+
+  it can "return a new point moved by polar coords" in {
+    Point9D.fromPoint2D(point).plusPolar(2.0)(TAU_4).almostEquals(Point9D(1.0, 1.0), ACCURACY) shouldBe
+      true
+  }
+
+  it can "return a new point moved by 1 unit in a polar direction" in {
+    Point9D.fromPoint2D(point).plusPolarUnit(TAU_4) shouldBe
+      Point9D(1.0, 0.0)
+  }
+
+  it can "return the angle to another point" in {
+    Point9D.fromPoint2D(point).angleTo(Point9D(1.0, 0.0)) shouldBe
+      TAU_4
+  }
+
+  it can "be aligned to other two points" in {
+    Point9D.fromPoint2D(point).alignWithStart(Point9D(), Point9D(1.0, 0.0)).almostEquals(Point9D.fromPoint2D(point), ACCURACY) shouldBe
+      true
+  }
+
+  it can "be flipped vertically" in {
+    Point9D.fromPoint2D(point).flipVertically shouldBe
+      Point9D(1.0, 1.0)
+  }
+
+  val points: Vector[Point2D] =
+    Vector(point, Point2D(), Point2D(3.0, 3.0), almost)
+
+  "A set of Point2D" can "have no duplicates, with approximation" in {
+    points.map(Point9D.fromPoint2D).tail.areAllDistinct shouldBe
+      true
+  }
+
+  it can "have duplicates, with approximation, when an almost equal pont is added" in {
+    points.map(Point9D.fromPoint2D).areAllDistinct shouldBe
+      false
+  }
+
+  it can "return only the duplicates, with approximation" in {
+    points.map(Point9D.fromPoint2D).almostEqualCouples.toList shouldBe
+      List((point, almost)).map((p1, p2) => (Point9D.fromPoint2D(p1), Point9D.fromPoint2D(p2)))
+  }
+
+  it can "be approximately equal to another set" in {
+    points.map(Point9D.fromPoint2D).almostEquals(Vector(almost, Point2D(), Point2D(3.0, 3.0), point).map(Point9D.fromPoint2D)) shouldBe
+      true
+  }
 
   val segment: LineSegment2D =
     LineSegment2D(Point2D(), point)

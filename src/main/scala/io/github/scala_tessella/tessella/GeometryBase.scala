@@ -70,7 +70,7 @@ object GeometryBase extends Accuracy:
 
     def apply(): Point9D =
       Point9D(0, 0)
-      
+
     def fromPoint2D(point2D: Point2D): Point9D =
       Point9D(point2D.x(), point2D.y())
 
@@ -153,11 +153,28 @@ object GeometryBase extends Accuracy:
     def lesserIntersects(that: LineSegment9D): Boolean =
       LineSegment9D.intersects(this, that) && !(this.contains(that.point1) || this.contains(that.point2))
 
+    def intersection(that: LineSegment9D): Option[Point9D] =
+      val dx2 = that.point2.x - that.point1.x
+      val dy2 = that.point2.y - that.point1.y
+      val denominator = dx * dy2 - dy * dx2
+      if Math.abs(denominator) < 1.0E-12 then None
+      else
+        val origin = that.point1
+        val x2 = origin.x
+        val y2 = origin.y
+        val t = ((this.point1.y - y2) * dx2 - (this.point1.x - x2) * dy2) / denominator
+        val point = Point9D(this.point1.x + t * this.dx, this.point1.y + t * this.dy)
+        if this.contains(point) && that.contains(point) then Option(point)
+        else None
+
     /** Checks if at least one endpoint is contained in the given box */
     def hasEndpointIn(box: Box9D): Boolean =
       box.contains(point1) || box.contains(point2)
 
   object LineSegment9D:
+
+    def fromLineSegment2D(lineSegment2D: LineSegment2D): LineSegment9D =
+      LineSegment9D(Point9D.fromPoint2D(lineSegment2D.firstPoint()), Point9D.fromPoint2D(lineSegment2D.lastPoint()))
 
     def intersects(edge1: LineSegment9D, edge2: LineSegment9D): Boolean =
       val e1p1: Point9D =
@@ -204,7 +221,12 @@ object GeometryBase extends Accuracy:
 
     def height: Double =
       y1 - y0
-  
+
+  object Box9D:
+
+    def fromBox2D(box2D: Box2D): Box9D =
+      Box9D(box2D.getMinX, box2D.getMaxX, box2D.getMinY, box2D.getMaxY)
+
   case class SimplePolygon9D(vertices: List[Point9D]):
 
     def toSimplePolygon2D: SimplePolygon2D =
