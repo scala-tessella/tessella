@@ -111,7 +111,7 @@ object SVGExtra:
             group(None, None, polygons(index)
               .map(tiling.RingPath.simpleFromEdges)
               .map(_.toRingNodes.map(tiling.coords))
-              .map(points => SimplePolygon2D(points.asJava))
+              .map(points => SimplePolygon2D(points.map(_.toPoint2D).asJava))
               .map(polygon(_).withStyle(
                 Style(
                   fill(fillUniform(index % 5)),

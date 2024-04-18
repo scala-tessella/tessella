@@ -6,8 +6,10 @@ import Geometry.toBox
 import SharedML.{Style, withStyle}
 import SVG.*
 import SharedML.*
+import io.github.scala_tessella.tessella.GeometryBase.Point9D
+
 import math.geom2d.line.LineSegment2D
-import math.geom2d.{Box2D, Point2D}
+import math.geom2d.Box2D
 
 import scala.xml.Elem
 
@@ -24,7 +26,7 @@ object SVGInvalid extends ConverterSVG:
    *
    * @param center spatial requirement
    */
-  def invalidNode(center: Point2D): Elem =
+  def invalidNode(center: Point9D): Elem =
     circle(center, 0.1)
 
   /** `group` titled and styled for perimeter intersections
@@ -61,7 +63,7 @@ object SVGInvalid extends ConverterSVG:
    *
    * @param center spatial coordinates
    */
-  def invalidNodeGroup(center: Point2D): Elem =
+  def invalidNodeGroup(center: Point9D): Elem =
     group(
       Option(Title("Highlighted")),
       Option(Description("Nodes")),

@@ -8,10 +8,10 @@ import TilingErrorMessages.*
 import Topology.*
 import creation.{Layered, Quadratic, Uni4Hex, Uni5Hex, UniHex, UniTriangle}
 import utility.Utils.*
-
 import io.github.scala_tessella.ring_seq.RingSeq.*
+import io.github.scala_tessella.tessella.GeometryBase.Point9D
 import math.geom2d.polygon.SimplePolygon2D
-import math.geom2d.{Box2D, Point2D}
+import math.geom2d.Box2D
 
 import scala.annotation.tailrec
 import scala.collection.{immutable, mutable}
@@ -171,8 +171,8 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
 
   extension (nodes: RingPath)
 
-    private def toPoints2D(angles: Map[Node, Radian]): Vector[Point2D] =
-      nodes.toRingNodes.scanLeft((Point2D(1, 0), TAU_2: Radian))({
+    private def toPoints2D(angles: Map[Node, Radian]): Vector[Point9D] =
+      nodes.toRingNodes.scanLeft((Point9D(1, 0), TAU_2: Radian))({
         case ((point, acc), node) => (point.plusPolarUnit(acc), acc + angles(node) + TAU_2)
       }).map((point, _) => point).tail
 
@@ -346,7 +346,7 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
    *
    * @note they differ from the points found as a whole tiling in [[Tiling.coords]]
    */
-  val perimeterPoints2D: Vector[Point2D] =
+  val perimeterPoints2D: Vector[Point9D] =
     perimeter.toPoints2D(perimeterAngles)
 
   /** Associations of perimeter node and spatial coordinate */
@@ -359,7 +359,7 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
 
   /** Perimeter 2D polygon */
   lazy val perimeterSimplePolygon2D: SimplePolygon2D =
-    SimplePolygon2D(perimeterPoints2D.asJava)
+    SimplePolygon2D(perimeterPoints2D.map(_.toPoint2D).asJava)
 
   /** Checks there are no intersecting perimeter edges */
   def hasPerimeterNotSelfIntersecting: Boolean =

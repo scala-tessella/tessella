@@ -3,6 +3,7 @@ package io.github.scala_tessella.tessella
 import Geometry.*
 import Geometry.Radian.TAU_4
 import Topology.{--, Edge, Node}
+import io.github.scala_tessella.tessella.GeometryBase.Point9D
 import math.geom2d.{Box2D, Point2D}
 import math.geom2d.Shape2D.ACCURACY
 import math.geom2d.line.LineSegment2D
@@ -71,58 +72,58 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
       false
   }
 
-  it can "be rounded to couple of Long" in {
-    point.rounded shouldBe
-      (1000000L, -1000000L)
-  }
-
-  it can "return a new point moved by polar coords" in {
-    point.plusPolar(2.0)(TAU_4).almostEquals(Point2D(1.0, 1.0), ACCURACY) shouldBe
-      true
-  }
-
-  it can "return a new point moved by 1 unit in a polar direction" in {
-    point.plusPolarUnit(TAU_4) shouldBe
-      Point2D(1.0, 0.0)
-  }
-
-  it can "return the angle to another point" in {
-    point.angleTo(Point2D(1.0, 0.0)) shouldBe
-      TAU_4
-  }
-
-  it can "be aligned to other two points" in {
-    point.alignWithStart(Point2D(), Point2D(1.0, 0.0)).almostEquals(point, ACCURACY) shouldBe
-      true
-  }
-
-  it can "be flipped vertically" in {
-    point.flipVertically shouldBe
-      Point2D(1.0, 1.0)
-  }
-
-  val points: Vector[Point2D] =
-    Vector(point, Point2D(), Point2D(3.0, 3.0), almost)
-
-  "A set of Point2D" can "have no duplicates, with approximation" in {
-    points.tail.areAllDistinct shouldBe
-      true
-  }
-
-  it can "have duplicates, with approximation, when an almost equal pont is added" in {
-    points.areAllDistinct shouldBe
-      false
-  }
-
-  it can "return only the duplicates, with approximation" in {
-    points.almostEqualCouples.toList shouldBe
-      List((point, almost))
-  }
-
-  it can "be approximately equal to another set" in {
-    points.almostEquals(Vector(almost, Point2D(), Point2D(3.0, 3.0), point)) shouldBe
-      true
-  }
+//  it can "be rounded to couple of Long" in {
+//    point.rounded shouldBe
+//      (1000000L, -1000000L)
+//  }
+//
+//  it can "return a new point moved by polar coords" in {
+//    point.plusPolar(2.0)(TAU_4).almostEquals(Point2D(1.0, 1.0), ACCURACY) shouldBe
+//      true
+//  }
+//
+//  it can "return a new point moved by 1 unit in a polar direction" in {
+//    point.plusPolarUnit(TAU_4) shouldBe
+//      Point2D(1.0, 0.0)
+//  }
+//
+//  it can "return the angle to another point" in {
+//    point.angleTo(Point2D(1.0, 0.0)) shouldBe
+//      TAU_4
+//  }
+//
+//  it can "be aligned to other two points" in {
+//    point.alignWithStart(Point2D(), Point2D(1.0, 0.0)).almostEquals(point, ACCURACY) shouldBe
+//      true
+//  }
+//
+//  it can "be flipped vertically" in {
+//    point.flipVertically shouldBe
+//      Point2D(1.0, 1.0)
+//  }
+//
+//  val points: Vector[Point2D] =
+//    Vector(point, Point2D(), Point2D(3.0, 3.0), almost)
+//
+//  "A set of Point2D" can "have no duplicates, with approximation" in {
+//    points.tail.areAllDistinct shouldBe
+//      true
+//  }
+//
+//  it can "have duplicates, with approximation, when an almost equal pont is added" in {
+//    points.areAllDistinct shouldBe
+//      false
+//  }
+//
+//  it can "return only the duplicates, with approximation" in {
+//    points.almostEqualCouples.toList shouldBe
+//      List((point, almost))
+//  }
+//
+//  it can "be approximately equal to another set" in {
+//    points.almostEquals(Vector(almost, Point2D(), Point2D(3.0, 3.0), point)) shouldBe
+//      true
+//  }
 
   val segment: LineSegment2D =
     LineSegment2D(Point2D(), point)
@@ -183,28 +184,28 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
 
   val coords: Coords =
     Map(
-      Node(1) -> Point2D(0.0, -2.0),
-      Node(2) -> Point2D(1.0, -2.0),
-      Node(3) -> Point2D(1.0, -1.0),
-      Node(4) -> Point2D(0.0, -1.0)
+      Node(1) -> Point9D(0.0, -2.0),
+      Node(2) -> Point9D(1.0, -2.0),
+      Node(3) -> Point9D(1.0, -1.0),
+      Node(4) -> Point9D(0.0, -1.0)
     )
 
   "A set of coordinates" can "be flipped vertically if node 3 is negative on the y-axis" in {
     coords.flipVertically shouldBe
       Map(
-        1 -> Point2D(0.0, 2.0),
-        2 -> Point2D(1.0, 2.0),
-        3 -> Point2D(1.0, 1.0),
-        4 -> Point2D(0.0, 1.0)
+        1 -> Point9D(0.0, 2.0),
+        2 -> Point9D(1.0, 2.0),
+        3 -> Point9D(1.0, 1.0),
+        4 -> Point9D(0.0, 1.0)
       )
   }
 
   it can "be aligned to the two start points" in {
     coords.alignWithStart.almostEqualsMap(Map(
-      Node(1) -> Point2D(0.0, 0.0),
-      Node(2) -> Point2D(1.0, 0.0),
-      Node(3) -> Point2D(1.0, 1.0),
-      Node(4) -> Point2D(0.0, 1.0)
+      Node(1) -> Point9D(0.0, 0.0),
+      Node(2) -> Point9D(1.0, 0.0),
+      Node(3) -> Point9D(1.0, 1.0),
+      Node(4) -> Point9D(0.0, 1.0)
     )) shouldBe
       true
   }
@@ -213,7 +214,7 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
     1--2
 
   "An Edge" can "be converted to a LineSegment2D" in {
-    anEdge.toSegment(Map(Node(1) -> Point2D(), Node(2) -> Point2D(1.0, 0.0))) shouldBe
+    anEdge.toSegment(Map(Node(1) -> Point9D(), Node(2) -> Point9D(1.0, 0.0))) shouldBe
       LineSegment2D(Point2D(), Point2D(1.0, 0.0))
   }
 
@@ -222,9 +223,9 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
 
   it can "be converted to LineSegment2D" in {
     List(anEdge, second).toSegments(Map(
-      Node(1) -> Point2D(),
-      Node(2) -> Point2D(1.0, 0.0),
-      Node(3) -> Point2D(1.0, 1.0),
+      Node(1) -> Point9D(),
+      Node(2) -> Point9D(1.0, 0.0),
+      Node(3) -> Point9D(1.0, 1.0),
     )) shouldEqual
       List(
         LineSegment2D(Point2D(), Point2D(1.0, 0.0)),
@@ -234,18 +235,18 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
 
   it can "be converted to Box" in {
     List(anEdge, second).toBox(Map(
-      Node(1) -> Point2D(-9.0, 10.0),
-      Node(2) -> Point2D(11.0, 10.0),
-      Node(3) -> Point2D(11.0, 11.0),
+      Node(1) -> Point9D(-9.0, 10.0),
+      Node(2) -> Point9D(11.0, 10.0),
+      Node(3) -> Point9D(11.0, 11.0),
     )) shouldEqual
       Box2D(-9.0, 11.0, 10.0, 11.0)
   }
 
   val someCoords: Coords =
     Map(
-      Node(55) -> Point2D(0.49999999999960043, -0.866025403784008),
-      Node(57) -> Point2D(-0.3660254037849453, -1.3660254037838226),
-      Node(68) -> Point2D(-0.3660254037847309, -0.36602540378382264)
+      Node(55) -> Point9D(0.49999999999960043, -0.866025403784008),
+      Node(57) -> Point9D(-0.3660254037849453, -1.3660254037838226),
+      Node(68) -> Point9D(-0.3660254037847309, -0.36602540378382264)
     )
 
   "Another box" can "be created" in {
@@ -253,9 +254,9 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
       Box2D(-0.3660254037849453, 0.49999999999960043, -1.3660254037838226, -0.36602540378382264)
   }
 
-  it can "be created incorrect with a deprecated method" in {
-    List(57--68, 55--68).toBoxOld(someCoords) shouldEqual
-      Box2D(-0.3660254037849453, 0.49999999999960043, -1.3660254037838226, 4.9E-324)
-  }
+//  it can "be created incorrect with a deprecated method" in {
+//    List(57--68, 55--68).toBoxOld(someCoords) shouldEqual
+//      Box2D(-0.3660254037849453, 0.49999999999960043, -1.3660254037838226, 4.9E-324)
+//  }
 
 }

@@ -2,17 +2,18 @@ package io.github.scala_tessella.tessella
 
 import Geometry.*
 import Geometry.Radian.{TAU_2, TAU_3, TAU_4, TAU_6}
+import GeometryBase.*
 import Outliers.*
 import RegularPolygon.{Polygon, Vertex}
 import TilingSymmetry.{countSymmetries, countRotationalSymmetries}
 import Topology.*
 import utility.Utils.{mapKeys, mapValues2}
 
-import math.geom2d.Point2D
+//import math.geom2d.Point2D
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
-class TilingSpec extends AnyFlatSpec with should.Matchers {
+class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
 
   val path1: sqr4x4Reticulate.Path =
     sqr4x4Reticulate.Path(Vector(1, 2, 3, 4, 5, 10, 15, 20, 25).map(Node(_)))
@@ -130,17 +131,17 @@ class TilingSpec extends AnyFlatSpec with should.Matchers {
   }
 
   it can "transform perimeter into cartesian points" in {
-    val expected: Vector[Point2D] =
-      Vector(Point2D(0, 0), Point2D(0.5, S6), Point2D(1, 0))
+    val expected: Vector[Point9D] =
+      Vector(Point9D(0, 0), Point9D(0.5, S6), Point9D(1, 0))
     triangle.perimeterPoints2D.almostEquals(expected) shouldBe
       true
   }
 
   it can "have a map of nodes and cartesian points" in {
     triangle.perimeterCoords.almostEqualsMap(Map(
-      1 -> Point2D(0, 0),
-      3 -> Point2D(0.5, S6),
-      2 -> Point2D(1, 0)
+      1 -> Point9D(0, 0),
+      3 -> Point9D(0.5, S6),
+      2 -> Point9D(1, 0)
     ).mapKeys(Node(_))) shouldBe
       true
   }
@@ -174,11 +175,11 @@ class TilingSpec extends AnyFlatSpec with should.Matchers {
   }
 
   it can "transform perimeter into cartesian points" in {
-    val expected: Vector[Point2D] =
+    val expected: Vector[Point9D] =
       Vector(
-        Point2D(0, 0), Point2D(0, 1), Point2D(0, 2), Point2D(0, 3), Point2D(0, 4), Point2D(1, 4), Point2D(2, 4),
-        Point2D(3, 4), Point2D(4, 4), Point2D(4, 3), Point2D(4, 2), Point2D(4, 1), Point2D(4, 0), Point2D(3, 0),
-        Point2D(2, 0), Point2D(1, 0)
+        Point9D(0, 0), Point9D(0, 1), Point9D(0, 2), Point9D(0, 3), Point9D(0, 4), Point9D(1, 4), Point9D(2, 4),
+        Point9D(3, 4), Point9D(4, 4), Point9D(4, 3), Point9D(4, 2), Point9D(4, 1), Point9D(4, 0), Point9D(3, 0),
+        Point9D(2, 0), Point9D(1, 0)
       )
     sqr4x4Reticulate.perimeterPoints2D.almostEquals(expected) shouldBe
       true
@@ -314,22 +315,22 @@ class TilingSpec extends AnyFlatSpec with should.Matchers {
   it can "be converted to 2D points" in {
     sqr4x4Reticulate.perimeterPoints2D.almostEquals(
       Vector(
-        Point2D(0, 0),
-        Point2D(0, 1),
-        Point2D(0, 2),
-        Point2D(0, 3),
-        Point2D(0, 4),
-        Point2D(1, 4),
-        Point2D(2, 4),
-        Point2D(3, 4),
-        Point2D(4, 4),
-        Point2D(4, 3),
-        Point2D(4, 2),
-        Point2D(4, 1),
-        Point2D(4, 0),
-        Point2D(3, 0),
-        Point2D(2, 0),
-        Point2D(1, 0)
+        Point9D(0, 0),
+        Point9D(0, 1),
+        Point9D(0, 2),
+        Point9D(0, 3),
+        Point9D(0, 4),
+        Point9D(1, 4),
+        Point9D(2, 4),
+        Point9D(3, 4),
+        Point9D(4, 4),
+        Point9D(4, 3),
+        Point9D(4, 2),
+        Point9D(4, 1),
+        Point9D(4, 0),
+        Point9D(3, 0),
+        Point9D(2, 0),
+        Point9D(1, 0)
       )
     ) shouldBe
       true
@@ -338,22 +339,22 @@ class TilingSpec extends AnyFlatSpec with should.Matchers {
   it can "be mapped to coords" in {
     sqr4x4Reticulate.perimeterCoords.almostEqualsMap(
       Map(
-        Node(5)  -> Point2D(0, 4),
-        Node(10) -> Point2D(1, 4),
-        Node(20) -> Point2D(3, 4),
-        Node(1)  -> Point2D(0, 0),
-        Node(6)  -> Point2D(1, 0),
-        Node(21) -> Point2D(4, 0),
-        Node(2)  -> Point2D(0, 1),
-        Node(22) -> Point2D(4, 1),
-        Node(3)  -> Point2D(0, 2),
-        Node(16) -> Point2D(3, 0),
-        Node(11) -> Point2D(2, 0),
-        Node(23) -> Point2D(4, 2),
-        Node(4)  -> Point2D(0, 3),
-        Node(15) -> Point2D(2, 4),
-        Node(24) -> Point2D(4, 3),
-        Node(25) -> Point2D(4, 4)
+        Node(5)  -> Point9D(0, 4),
+        Node(10) -> Point9D(1, 4),
+        Node(20) -> Point9D(3, 4),
+        Node(1)  -> Point9D(0, 0),
+        Node(6)  -> Point9D(1, 0),
+        Node(21) -> Point9D(4, 0),
+        Node(2)  -> Point9D(0, 1),
+        Node(22) -> Point9D(4, 1),
+        Node(3)  -> Point9D(0, 2),
+        Node(16) -> Point9D(3, 0),
+        Node(11) -> Point9D(2, 0),
+        Node(23) -> Point9D(4, 2),
+        Node(4)  -> Point9D(0, 3),
+        Node(15) -> Point9D(2, 4),
+        Node(24) -> Point9D(4, 3),
+        Node(25) -> Point9D(4, 4)
       )
     ) shouldBe
       true

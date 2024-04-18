@@ -2,6 +2,7 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
+import io.github.scala_tessella.tessella.GeometryBase.Point9D
 import SVG.LabelledNodes.PERIMETER_ONLY
 import SVG.MarkStyle.NONE
 import SharedML.*
@@ -12,7 +13,7 @@ import utility.Utils.toCouple
 import utility.UtilsOption.getDefined
 
 import io.github.scala_tessella.ring_seq.RingSeq.Index
-import math.geom2d.Point2D
+//import math.geom2d.Point2D
 import math.geom2d.line.LineSegment2D
 import math.geom2d.polygon.SimplePolygon2D
 
@@ -140,7 +141,7 @@ object SVG extends ConverterSVG:
       fill("red")
     )*)
 
-  private def markNode(point2D: Point2D): Elem =
+  private def markNode(point2D: Point9D): Elem =
     circle(point2D, 0.075)
 
   private def graphGroup(lines: Seq[Elem]): Elem =
@@ -254,7 +255,7 @@ object SVG extends ConverterSVG:
   extension (node: Node)
 
     /** Node label at given coordinates */
-    def label(point2D: Point2D): Elem =
+    def label(point2D: Point9D): Elem =
       text(point2D, node.toString)
 
   extension (tiling: Tiling)
@@ -327,9 +328,11 @@ object SVG extends ConverterSVG:
       else
         None
 
-    private def polygonsCentreCoords: Map[List[Edge], Point2D] =
+    private def polygonsCentreCoords: Map[List[Edge], Point9D] =
       tiling.orientedPolygons.map(path =>
-        path.toPolygonEdges -> SimplePolygon2D(path.toPolygonPathNodes.map(tiling.coords).asJava).centroid
+        path.toPolygonEdges -> Point9D.fromPoint2D(
+          SimplePolygon2D(path.toPolygonPathNodes.map(tiling.coords).map(_.toPoint2D).asJava).centroid
+        )
       ).toMap
 
     private def innerEdges: List[Edge] =
@@ -337,7 +340,7 @@ object SVG extends ConverterSVG:
 
     private def inversionSegments: List[LineSegment2D] =
       innerEdges
-        .map(edge => polygonsCentreCoords.filter((edges, _) => edges.contains(edge)).values)
+        .map(edge => polygonsCentreCoords.filter((edges, _) => edges.contains(edge)).values.map(_.toPoint2D))
         .map(_.toList.toCouple)
         .map(LineSegment2D(_, _))
 
