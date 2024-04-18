@@ -5,7 +5,7 @@ import Topology.{Edge, Node}
 import utility.Utils.{compareElems, mapValues2, toCouple}
 
 import io.github.scala_tessella.ring_seq.RingSeq.Index
-import math.geom2d.{Angle2D, Box2D}
+//import math.geom2d.{Angle2D, Box2D}
 //import math.geom2d.point.PointArray2D
 //import math.geom2d.Point2D.createPolar
 //import math.geom2d.Shape2D.ACCURACY
@@ -34,10 +34,10 @@ object Geometry extends Accuracy:
     /**
      * @see [[https://tauday.com/]]
      */
-    val TAU: Radian = Radian(Angle2D.M_2PI)
-    val TAU_2: Radian = Radian(Angle2D.M_PI)
+    val TAU: Radian = Radian(6.283185307179586)
+    val TAU_2: Radian = Radian(Math.PI)
     val TAU_3: Radian = TAU / 3
-    val TAU_4: Radian = Radian(Angle2D.M_PI_2)
+    val TAU_4: Radian = Radian(1.5707963267948966)
     val TAU_6: Radian = TAU_2 / 3
 
   extension (r: Radian)
@@ -198,11 +198,11 @@ object Geometry extends Accuracy:
      * @param coords      map with the points of each node
      * @param enlargement extra space at each side
      */
-    def toBox(coords: Coords, enlargement: Double = 0.0): Box2D =
+    def toBox(coords: Coords, enlargement: Double = 0.0): Box9D =
       val points: List[Point9D] =
         edges.nodes.map(coords)
       val xs: List[Double] =
         points.map(_.x)
       val ys: List[Double] =
         points.map(_.y)
-      Box2D(xs.min - enlargement, xs.max + enlargement, ys.min - enlargement, ys.max + enlargement)
+      Box9D(xs.min - enlargement, xs.max + enlargement, ys.min - enlargement, ys.max + enlargement)

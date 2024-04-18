@@ -199,11 +199,11 @@ object TilingGrowth:
             newCoords ++ perimeterCoordsAt(end, start)
           val lines: List[LineSegment9D] =
             newEdges.toSegments(newEdgesCoords)
-          val enlargedBox: Box2D =
+          val enlargedBox: Box9D =
             newEdges.toBox(newEdgesCoords, 1.0)
           val perimeterLines: List[LineSegment9D] =
             tiling.perimeter.toRingEdges.toList.withoutNodes(List(node))
-              .toSegments(tiling.perimeterCoords).filter(_.hasEndpointIn(Box9D.fromBox2D(enlargedBox)))
+              .toSegments(tiling.perimeterCoords).filter(_.hasEndpointIn(enlargedBox))
           if lines.lesserIntersects(perimeterLines) then
             Left((tiling.edges ++ newEdges, _.invalidIntersectionErrMsg))
           else

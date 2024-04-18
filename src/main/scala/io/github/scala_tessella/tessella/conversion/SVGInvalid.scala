@@ -79,9 +79,9 @@ object SVGInvalid extends ConverterSVG:
   def invalidEdgeGroup(segment: LineSegment9D, width: Int = 1): Elem =
     invalidEdgesGroup(List(line(segment)), width)
 
-  private def invalidPretty(elems: List[Elem], title: Title, desc: Description, box2D: Box2D) =
+  private def invalidPretty(elems: List[Elem], title: Title, desc: Description, box9D: Box9D) =
     prettyPrinter.format(svg(
-      box2D,
+      box9D,
       group(Option(title), Option(desc), elems *)
     ))
 

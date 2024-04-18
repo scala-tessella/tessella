@@ -52,15 +52,15 @@ trait ConverterSVG extends UtilsXML:
   val stroke: String => Attribute =
     Attribute.create("stroke")
 
-  private def framedViewBox(box2D: Box2D): String =
-    val enlarged: Box2D =
-      box2D.enlarge(0.5)
+  private def framedViewBox(box9D: Box9D): String =
+    val enlarged: Box9D =
+      box9D.enlarge(0.5)
     val newMin: Point9D =
-      Point9D(enlarged.getMinX, enlarged.getMinY)
+      Point9D(enlarged.x0, enlarged.y0)
     val (minX, minY): (Double, Double) =
       newMin.scaled
     val (maxX, maxY): (Double, Double) =
-      Point9D(enlarged.getMaxX, enlarged.getMaxY).minus(newMin).scaled
+      Point9D(enlarged.x1, enlarged.y1).minus(newMin).scaled
     s"$minX $minY $maxX $maxY"
 
   /** `svg` element with `viewBox` to fit a given box
@@ -68,8 +68,8 @@ trait ConverterSVG extends UtilsXML:
    * @param box2D box area with width and height to fit
    * @param elems placed in `svg`
    */
-  def svg(box2D: Box2D, elems: Elem *): Elem =
-    <svg viewBox={ s"${framedViewBox(box2D)}" } xmlns="http://www.w3.org/2000/svg">{ elems.toNodeBuffer }</svg>
+  def svg(box9D: Box9D, elems: Elem *): Elem =
+    <svg viewBox={ s"${framedViewBox(box9D)}" } xmlns="http://www.w3.org/2000/svg">{ elems.toNodeBuffer }</svg>
 
   /** `metadata` element */
   def metadata(elems: Elem *): Elem =
@@ -101,10 +101,10 @@ trait ConverterSVG extends UtilsXML:
    *
    * @param box2D spatial coordinates
    */
-  def rect(box2D: Box2D): Elem =
-    val methods: List[Box2D => Double] =
-      List(_.getWidth, _.getHeight, _.getMinX, _.getMinY)
-    (methods.map(_.apply(box2D)).map(rescale): @unchecked) match
+  def rect(box9D: Box9D): Elem =
+    val methods: List[Box9D => Double] =
+      List(_.width, _.height, _.x0, _.y0)
+    (methods.map(_.apply(box9D)).map(rescale): @unchecked) match
       case width :: height :: x :: y :: Nil =>
         <rect width={ s"$width" } height={ s"$height" } x={ s"$x" } y={ s"$y" }></rect>
 

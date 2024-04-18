@@ -285,7 +285,7 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
       Node(2) -> Point9D(11.0, 10.0),
       Node(3) -> Point9D(11.0, 11.0),
     )) shouldEqual
-      Box2D(-9.0, 11.0, 10.0, 11.0)
+      Box9D(-9.0, 11.0, 10.0, 11.0)
   }
 
   val someCoords: Coords =
@@ -297,7 +297,7 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
 
   "Another box" can "be created" in {
     List(57--68, 55--68).toBox(someCoords) shouldEqual
-      Box2D(-0.3660254037849453, 0.49999999999960043, -1.3660254037838226, -0.36602540378382264)
+      Box9D(-0.3660254037849453, 0.49999999999960043, -1.3660254037838226, -0.36602540378382264)
   }
 
 //  it can "be created incorrect with a deprecated method" in {

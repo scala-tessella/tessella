@@ -2,14 +2,15 @@ package io.github.scala_tessella.tessella
 
 import Geometry.*
 import Geometry.Radian.{TAU, TAU_2}
+import GeometryBase.{Box9D, Point9D}
 import TilingGrowth.*
 import RegularPolygon.{Polygon, PolygonsSeqOrdering, Vertex}
 import TilingErrorMessages.*
 import Topology.*
 import creation.{Layered, Quadratic, Uni4Hex, Uni5Hex, UniHex, UniTriangle}
 import utility.Utils.*
+
 import io.github.scala_tessella.ring_seq.RingSeq.*
-import io.github.scala_tessella.tessella.GeometryBase.Point9D
 import math.geom2d.polygon.SimplePolygon2D
 import math.geom2d.Box2D
 
@@ -428,7 +429,7 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
       case _ => false
 
   /** Finds the 2D box */
-  def toBox: Box2D =
+  def toBox: Box9D =
     edges.toBox(coords)
 
   /** Number of polygons in the tiling */

@@ -203,7 +203,7 @@ object GeometryBase extends Accuracy:
       else !(point.y > y1)
 
     def enlarge(d: Double): Box9D =
-      Box9D(x0 - d, y0 - d, x1 + d, y1 + d)
+      Box9D(x0 - d, x1 +d, y0 - d, y1 + d)
 
     def width: Double =
       x1 - x0
