@@ -1,13 +1,13 @@
 package io.github.scala_tessella.tessella
 
-import io.github.scala_tessella.tessella.GeometryBase.{Box9D, LineSegment9D, Point9D}
+import io.github.scala_tessella.tessella.GeometryBase.{Box, LineSegment, Point}
 import Topology.{Edge, Node}
 import utility.Utils.mapValues2
 
 import scala.annotation.targetName
 
 /** Associations of node and spatial 2D coordinates */
-type Coords = Map[Node, Point9D]
+type Coords = Map[Node, Point]
 
 /** Methods to help the spatial representation of a tiling */
 object Geometry extends Accuracy:
@@ -55,7 +55,7 @@ object Geometry extends Accuracy:
 
   /** Spatial coordinates for the first two nodes of a [[Tiling]] */
   val startingCoords: Coords =
-    Map(Node(1) -> Point9D(0, 0), Node(2) -> Point9D(1, 0))
+    Map(Node(1) -> Point(0, 0), Node(2) -> Point(1, 0))
 
   extension (coords: Coords)
 
@@ -76,13 +76,13 @@ object Geometry extends Accuracy:
   extension (edge: Edge)
 
     /** Creates a `LineSegment2D` of the given coordinates */
-    def toSegment(coords: Coords): LineSegment9D =
-      LineSegment9D(coords(edge.lesserNode), coords(edge.greaterNode))
+    def toSegment(coords: Coords): LineSegment =
+      LineSegment(coords(edge.lesserNode), coords(edge.greaterNode))
 
   extension (edges: List[Edge])
 
     /** Creates a sequence of `LineSegment2D` of the given coordinates */
-    def toSegments(coords: Coords): List[LineSegment9D] =
+    def toSegments(coords: Coords): List[LineSegment] =
       edges.map(_.toSegment(coords))
 
     /** Creates a bounding `Box2D` containing all edges with the given coordinates
@@ -90,11 +90,11 @@ object Geometry extends Accuracy:
      * @param coords      map with the points of each node
      * @param enlargement extra space at each side
      */
-    def toBox(coords: Coords, enlargement: Double = 0.0): Box9D =
-      val points: List[Point9D] =
+    def toBox(coords: Coords, enlargement: Double = 0.0): Box =
+      val points: List[Point] =
         edges.nodes.map(coords)
       val xs: List[Double] =
         points.map(_.x)
       val ys: List[Double] =
         points.map(_.y)
-      Box9D(xs.min - enlargement, xs.max + enlargement, ys.min - enlargement, ys.max + enlargement)
+      Box(xs.min - enlargement, xs.max + enlargement, ys.min - enlargement, ys.max + enlargement)

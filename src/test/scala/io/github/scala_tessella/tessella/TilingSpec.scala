@@ -130,17 +130,17 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it can "transform perimeter into cartesian points" in {
-    val expected: Vector[Point9D] =
-      Vector(Point9D(0, 0), Point9D(0.5, S6), Point9D(1, 0))
+    val expected: Vector[Point] =
+      Vector(Point(0, 0), Point(0.5, S6), Point(1, 0))
     triangle.perimeterPoints2D.almostEquals(expected) shouldBe
       true
   }
 
   it can "have a map of nodes and cartesian points" in {
     triangle.perimeterCoords.almostEqualsMap(Map(
-      1 -> Point9D(0, 0),
-      3 -> Point9D(0.5, S6),
-      2 -> Point9D(1, 0)
+      1 -> Point(0, 0),
+      3 -> Point(0.5, S6),
+      2 -> Point(1, 0)
     ).mapKeys(Node(_))) shouldBe
       true
   }
@@ -174,11 +174,11 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
 //  }
 
   it can "transform perimeter into cartesian points" in {
-    val expected: Vector[Point9D] =
+    val expected: Vector[Point] =
       Vector(
-        Point9D(0, 0), Point9D(0, 1), Point9D(0, 2), Point9D(0, 3), Point9D(0, 4), Point9D(1, 4), Point9D(2, 4),
-        Point9D(3, 4), Point9D(4, 4), Point9D(4, 3), Point9D(4, 2), Point9D(4, 1), Point9D(4, 0), Point9D(3, 0),
-        Point9D(2, 0), Point9D(1, 0)
+        Point(0, 0), Point(0, 1), Point(0, 2), Point(0, 3), Point(0, 4), Point(1, 4), Point(2, 4),
+        Point(3, 4), Point(4, 4), Point(4, 3), Point(4, 2), Point(4, 1), Point(4, 0), Point(3, 0),
+        Point(2, 0), Point(1, 0)
       )
     sqr4x4Reticulate.perimeterPoints2D.almostEquals(expected) shouldBe
       true
@@ -314,22 +314,22 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   it can "be converted to 2D points" in {
     sqr4x4Reticulate.perimeterPoints2D.almostEquals(
       Vector(
-        Point9D(0, 0),
-        Point9D(0, 1),
-        Point9D(0, 2),
-        Point9D(0, 3),
-        Point9D(0, 4),
-        Point9D(1, 4),
-        Point9D(2, 4),
-        Point9D(3, 4),
-        Point9D(4, 4),
-        Point9D(4, 3),
-        Point9D(4, 2),
-        Point9D(4, 1),
-        Point9D(4, 0),
-        Point9D(3, 0),
-        Point9D(2, 0),
-        Point9D(1, 0)
+        Point(0, 0),
+        Point(0, 1),
+        Point(0, 2),
+        Point(0, 3),
+        Point(0, 4),
+        Point(1, 4),
+        Point(2, 4),
+        Point(3, 4),
+        Point(4, 4),
+        Point(4, 3),
+        Point(4, 2),
+        Point(4, 1),
+        Point(4, 0),
+        Point(3, 0),
+        Point(2, 0),
+        Point(1, 0)
       )
     ) shouldBe
       true
@@ -338,22 +338,22 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   it can "be mapped to coords" in {
     sqr4x4Reticulate.perimeterCoords.almostEqualsMap(
       Map(
-        Node(5)  -> Point9D(0, 4),
-        Node(10) -> Point9D(1, 4),
-        Node(20) -> Point9D(3, 4),
-        Node(1)  -> Point9D(0, 0),
-        Node(6)  -> Point9D(1, 0),
-        Node(21) -> Point9D(4, 0),
-        Node(2)  -> Point9D(0, 1),
-        Node(22) -> Point9D(4, 1),
-        Node(3)  -> Point9D(0, 2),
-        Node(16) -> Point9D(3, 0),
-        Node(11) -> Point9D(2, 0),
-        Node(23) -> Point9D(4, 2),
-        Node(4)  -> Point9D(0, 3),
-        Node(15) -> Point9D(2, 4),
-        Node(24) -> Point9D(4, 3),
-        Node(25) -> Point9D(4, 4)
+        Node(5)  -> Point(0, 4),
+        Node(10) -> Point(1, 4),
+        Node(20) -> Point(3, 4),
+        Node(1)  -> Point(0, 0),
+        Node(6)  -> Point(1, 0),
+        Node(21) -> Point(4, 0),
+        Node(2)  -> Point(0, 1),
+        Node(22) -> Point(4, 1),
+        Node(3)  -> Point(0, 2),
+        Node(16) -> Point(3, 0),
+        Node(11) -> Point(2, 0),
+        Node(23) -> Point(4, 2),
+        Node(4)  -> Point(0, 3),
+        Node(15) -> Point(2, 4),
+        Node(24) -> Point(4, 3),
+        Node(25) -> Point(4, 4)
       )
     ) shouldBe
       true

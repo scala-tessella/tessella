@@ -2,7 +2,7 @@ package io.github.scala_tessella.tessella
 
 import Geometry.*
 import Geometry.Radian.{TAU, TAU_2}
-import GeometryBase.{Box9D, Point9D, SimplePolygon9D}
+import GeometryBase.{Box, Point, SimplePolygon}
 import TilingGrowth.*
 import RegularPolygon.{Polygon, PolygonsSeqOrdering, Vertex}
 import TilingErrorMessages.*
@@ -169,8 +169,8 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
 
   extension (nodes: RingPath)
 
-    private def toPoints2D(angles: Map[Node, Radian]): Vector[Point9D] =
-      nodes.toRingNodes.scanLeft((Point9D(1, 0), TAU_2: Radian))({
+    private def toPoints2D(angles: Map[Node, Radian]): Vector[Point] =
+      nodes.toRingNodes.scanLeft((Point(1, 0), TAU_2: Radian))({
         case ((point, acc), node) => (point.plusPolarUnit(acc), acc + angles(node) + TAU_2)
       }).map((point, _) => point).tail
 
@@ -344,7 +344,7 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
    *
    * @note they differ from the points found as a whole tiling in [[Tiling.coords]]
    */
-  val perimeterPoints2D: Vector[Point9D] =
+  val perimeterPoints2D: Vector[Point] =
     perimeter.toPoints2D(perimeterAngles)
 
   /** Associations of perimeter node and spatial coordinate */
@@ -356,8 +356,8 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
     edges.isEmpty || perimeterCoords.values.toVector.areAllDistinct
 
   /** Perimeter 2D polygon */
-  lazy val perimeterSimplePolygon2D: SimplePolygon9D =
-    SimplePolygon9D(perimeterPoints2D.toList)
+  lazy val perimeterSimplePolygon2D: SimplePolygon =
+    SimplePolygon(perimeterPoints2D.toList)
 
   /** Checks there are no intersecting perimeter edges */
   def hasPerimeterNotSelfIntersecting: Boolean =
@@ -426,7 +426,7 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
       case _ => false
 
   /** Finds the 2D box */
-  def toBox: Box9D =
+  def toBox: Box =
     edges.toBox(coords)
 
   /** Number of polygons in the tiling */

@@ -97,10 +97,10 @@ object TilingErrorMessages:
         )
       )
 
-    private def perimeterNodeFromPoint(point: Point9D, strict: Boolean = false): Node =
+    private def perimeterNodeFromPoint(point: Point, strict: Boolean = false): Node =
       tiling.perimeterCoords
         .find((_, mappedPoint) =>
-          if !strict && point.almostEquals(Point9D(0.0, 0.0), ACCURACY) then
+          if !strict && point.almostEquals(Point(0.0, 0.0), ACCURACY) then
             mappedPoint.almostEquals(point, ACCURACY)
           else
             mappedPoint == point
@@ -110,7 +110,7 @@ object TilingErrorMessages:
 
     /** Error message for invalid tiling vertex coordinates, with SVG description */
     def invalidVertexCoordsErrMsg: String =
-      val pointCouples: List[(Point9D, Point9D)] =
+      val pointCouples: List[(Point, Point)] =
         tiling.perimeterPoints2D.almostEqualCouples.toList
       val nodeCouples: List[(Node, Node)] =
         pointCouples.map((p1, p2) => (perimeterNodeFromPoint(p1, true), perimeterNodeFromPoint(p2, true)))
@@ -127,12 +127,12 @@ object TilingErrorMessages:
       val sideCouples =
         tiling.perimeterSimplePolygon2D.intersectingSides.toList
 
-      def edgeFromSide(side: LineSegment9D): Edge =
+      def edgeFromSide(side: LineSegment): Edge =
         Edge((perimeterNodeFromPoint(side.point1), perimeterNodeFromPoint(side.point2)))
 
       val edgeCouples: List[(Edge, Edge)] =
         sideCouples.map((s1, s2) => (edgeFromSide(s1), edgeFromSide(s2)))
-      val crossings: List[Point9D] =
+      val crossings: List[Point] =
         edgeCouples
           .map({
             case (edge1, edge2) => List(edge1, edge2).toSegments(tiling.perimeterCoords).toCouple match

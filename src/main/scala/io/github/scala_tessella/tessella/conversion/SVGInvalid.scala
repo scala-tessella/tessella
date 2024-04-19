@@ -3,7 +3,7 @@ package conversion
 
 import ConverterSVG.*
 import Geometry.toBox
-import GeometryBase.{Box9D, LineSegment9D, Point9D}
+import GeometryBase.{Box, LineSegment, Point}
 import SharedML.*
 import SVG.*
 
@@ -22,7 +22,7 @@ object SVGInvalid extends ConverterSVG:
    *
    * @param center spatial requirement
    */
-  def invalidNode(center: Point9D): Elem =
+  def invalidNode(center: Point): Elem =
     circle(center, 0.1)
 
   /** `group` titled and styled for perimeter intersections
@@ -59,7 +59,7 @@ object SVGInvalid extends ConverterSVG:
    *
    * @param center spatial coordinates
    */
-  def invalidNodeGroup(center: Point9D): Elem =
+  def invalidNodeGroup(center: Point): Elem =
     group(
       Option(Title("Highlighted")),
       Option(Description("Nodes")),
@@ -72,10 +72,10 @@ object SVGInvalid extends ConverterSVG:
    * @param segment spatial coordinates
    * @param width of `stroke-width` attribute
    */
-  def invalidEdgeGroup(segment: LineSegment9D, width: Int = 1): Elem =
+  def invalidEdgeGroup(segment: LineSegment, width: Int = 1): Elem =
     invalidEdgesGroup(List(line(segment)), width)
 
-  private def invalidPretty(elems: List[Elem], title: Title, desc: Description, box9D: Box9D) =
+  private def invalidPretty(elems: List[Elem], title: Title, desc: Description, box9D: Box) =
     prettyPrinter.format(svg(
       box9D,
       group(Option(title), Option(desc), elems *)

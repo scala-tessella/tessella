@@ -1,7 +1,7 @@
 package io.github.scala_tessella.tessella
 package conversion
 
-import GeometryBase.Box9D
+import GeometryBase.Box
 import SharedML.addAttributes
 import SVG.*
 
@@ -13,8 +13,8 @@ import scala.xml.Elem
 
 class ConverterSVGSpec extends AnyFlatSpec with should.Matchers {
 
-  val box9D: Box9D =
-    Box9D(-2.0, 10.0, -2.0, 10.0)
+  val box9D: Box =
+    Box(-2.0, 10.0, -2.0, 10.0)
 
   "An SVG element" can "be created" in {
     val e: Elem =

@@ -15,7 +15,8 @@ object GeometryBase extends Accuracy:
 
   val ACCURACY = 1.0E-12
 
-  case class Point9D(x: Double, y: Double):
+  /** A point in the plane defined by its 2 Cartesian coordinates x and y */
+  case class Point(x: Double, y: Double):
 
 //    def toPoint2D: Point2D =
 //      Point2D(x, y)
@@ -24,57 +25,72 @@ object GeometryBase extends Accuracy:
     def rounded: (Long, Long) =
       (x.rounded(), y.rounded())
 
-    def plus(that: Point9D): Point9D =
-      Point9D(this.x + that.x, this.y + that.y)
+    /** Sum of two points */
+    def plus(that: Point): Point =
+      Point(this.x + that.x, this.y + that.y)
 
-    def minus(that: Point9D): Point9D =
-      Point9D(this.x - that.x, this.y - that.y)
+    /** Difference of two points */
+    def minus(that: Point): Point =
+      Point(this.x - that.x, this.y - that.y)
 
-    private def rotate(theta: Radian): Point9D = {
+    private def rotate(theta: Radian): Point = {
       val cot: Double =
         Math.cos(theta.toDouble)
       val sit: Double =
         Math.sin(theta.toDouble)
-      Point9D(this.x * cot - this.y * sit, this.x * sit + this.y * cot)
+      Point(x * cot - y * sit, x * sit + y * cot)
     }
 
-    def almostEquals(that: Point9D, eps: Double): Boolean =
-      if Math.abs(this.x - that.x) > eps then false
-      else !(Math.abs(this.y - that.y) > eps)
+    /** Tests whether this `Point` is approximately equal to another, within a given accuracy. */
+    def almostEquals(that: Point, accuracy: Double = ACCURACY): Boolean =
+      this.x.~=(that.x, accuracy) && this.y.~=(that.y, accuracy)
 
     /** New point moved by polar coordinates
      *
      * @param rho   distance
      * @param theta angle
      */
-    def plusPolar(rho: Double)(theta: Radian): Point9D =
-      plus(Point9D.createPolar(rho, theta))
+    def plusPolar(rho: Double)(theta: Radian): Point =
+      plus(Point.createPolar(rho, theta))
 
     /** New point moved by distance 1.0 */
-    def plusPolarUnit: Radian => Point9D =
+    def plusPolarUnit: Radian => Point =
       plusPolar(1)
 
     /** Calculates the horizontal angle between two points */
-    def angleTo(other: Point9D): Radian =
-      LineSegment9D(this, other).horizontalAngle
+    def angleTo(other: Point): Radian =
+      LineSegment(this, other).horizontalAngle
 
     /** New point moved to align with reference to two other points */
-    def alignWithStart(first: Point9D, second: Point9D): Point9D =
+    def alignWithStart(first: Point, second: Point): Point =
       minus(first).rotate(TAU - first.angleTo(second))
 
     /** New point flipped vertically around the x-axis */
-    def flipVertically: Point9D =
-      Point9D(x, -y)
+    def flipVertically: Point =
+      Point(x, -y)
 
-  object Point9D:
+  object Point:
 
-    def apply(): Point9D =
-      Point9D(0, 0)
+    /** Creates a point at origin */
+    def apply(): Point =
+      Point(0, 0)
 
-    def createPolar(rho: Double, theta: Radian): Point9D =
-      Point9D(rho * Math.cos(theta.toDouble), rho * Math.sin(theta.toDouble))
+    /** Creates a point from polar coordinates */
+    def createPolar(rho: Double, theta: Radian): Point =
+      Point(rho * Math.cos(theta.toDouble), rho * Math.sin(theta.toDouble))
 
-    def ccw(p0: Point9D, p1: Point9D, p2: Point9D): Int =
+    /** Computes the orientation of the 3 points:
+     *  returns +1 is the path P0->P1->P2 turns Counter-Clockwise,
+     *  -1 if the path turns Clockwise,
+     *  and 0 if the point P2 is located on the line segment [P0 P1].
+     *  Algorithm taken from Sedgewick.
+     *
+     * @param p0 the initial point
+     * @param p1 the middle point
+     * @param p2 the last point
+     * @return +1, 0 or -1, depending on the relative position of the points
+     */
+    def ccw(p0: Point, p1: Point, p2: Point): Int =
       val dx1: Double =
         p1.x - p0.x
       val dy1: Double =
@@ -91,12 +107,12 @@ object GeometryBase extends Accuracy:
         if Math.hypot(dx1, dy1) < Math.hypot(dx2, dy2) then 1 else 0
       else -1
 
-  extension (points: Vector[Point9D])
+  extension (points: Vector[Point])
 
-    private def sortedCouples: Iterator[(Point9D, Point9D)] =
+    private def sortedCouples: Iterator[(Point, Point)] =
       points.sortBy(_.rounded).sliding(2).map(_.toCouple)
 
-    private def almostEqualCouple: ((Point9D, Point9D)) => Boolean =
+    private def almostEqualCouple: ((Point, Point)) => Boolean =
       _.almostEquals(_, ACCURACY)
 
     /** Checks if all points are all distinct in 9D space */
@@ -104,14 +120,15 @@ object GeometryBase extends Accuracy:
       !sortedCouples.exists(almostEqualCouple)
 
     /** Filters all points couples that are not distinct in 9D space */
-    def almostEqualCouples: Iterator[(Point9D, Point9D)] =
+    def almostEqualCouples: Iterator[(Point, Point)] =
       sortedCouples.filter(almostEqualCouple)
 
     /** Checks if sequentially almost equal to another sequence */
-    def almostEquals(others: Vector[Point9D]): Boolean =
+    def almostEquals(others: Vector[Point]): Boolean =
       points.compareElems(others)(almostEqualCouple)
 
-  case class LineSegment9D(point1: Point9D, point2: Point9D):
+  /** Line segment, defined as the set of points located between the two end points. */
+  case class LineSegment(point1: Point, point2: Point):
 
     private val dx: Double =
       point2.x - point1.x
@@ -122,23 +139,39 @@ object GeometryBase extends Accuracy:
 //    private def toLineSegment2D: LineSegment2D =
 //      LineSegment2D(point1.toPoint2D, point2.toPoint2D)
 
-    def containsAtEdges(point: Point9D): Boolean =
+    /** Checks if the given point is approximately equal to one of the two edges of the line segment */
+    def containsAtEdges(point: Point): Boolean =
       point.almostEquals(point1, ACCURACY) || point.almostEquals(point2, ACCURACY)
 
+    /** Computes the horizontal angle of the line segment */
     def horizontalAngle: Radian =
       Radian((Math.atan2(dy, dx) + TAU.toDouble) % TAU.toDouble)
 
-    def almostEquals(that: LineSegment9D, accuracy: Double = ACCURACY): Boolean =
-      this.point1.x.~=(that.point1.x, accuracy) &&
-        this.point1.y.~=(that.point1.y, accuracy) &&
-        this.dx.~=(that.dx, accuracy) &&
-        this.dy.~=(that.dy, accuracy)
+    /** Tests whether this `LineSegment` is approximately equal to another, within a given accuracy. */
+    def almostEquals(that: LineSegment, accuracy: Double = ACCURACY): Boolean =
+      this.point1.almostEquals(that.point1) && this.point2.almostEquals(that.point2)
+
+    def intersects(that: LineSegment): Boolean =
+      val e1p1: Point =
+        this.point1
+      val e1p2: Point =
+        this.point2
+      val e2p1: Point =
+        that.point1
+      val e2p2: Point =
+        that.point2
+      val b1: Boolean =
+        Point.ccw(e1p1, e1p2, e2p1) * Point.ccw(e1p1, e1p2, e2p2) <= 0
+      val b2: Boolean =
+        Point.ccw(e2p1, e2p2, e1p1) * Point.ccw(e2p1, e2p2, e1p2) <= 0
+      b1 && b2
 
     /** Checks if intersecting with another segment, without touching the edge points */
-    def lesserIntersects(that: LineSegment9D): Boolean =
-      LineSegment9D.intersects(this, that) && !(this.containsAtEdges(that.point1) || this.containsAtEdges(that.point2))
+    def lesserIntersects(that: LineSegment): Boolean =
+      this.intersects(that) && !(this.containsAtEdges(that.point1) || this.containsAtEdges(that.point2))
 
-    def intersection(that: LineSegment9D): Option[Point9D] =
+    /** Finds the intersection point with another line segment */
+    def intersection(that: LineSegment): Option[Point] =
       val dx2: Double =
         that.point2.x - that.point1.x
       val dy2: Double =
@@ -152,54 +185,38 @@ object GeometryBase extends Accuracy:
       else
         val t: Double =
           ((this.point1.y - that.point1.y) * dx2 - (this.point1.x - that.point1.x) * dy2) / (p1 - p2)
-        val point: Point9D =
-          Point9D(this.point1.x + t * this.dx, this.point1.y + t * this.dy)
+        val point: Point =
+          Point(this.point1.x + t * this.dx, this.point1.y + t * this.dy)
         Option(point)
 //        if this.toLineSegment2D.contains(point.toPoint2D) && that.toLineSegment2D.contains(point.toPoint2D) then Option(point)
 //        else None
 
     /** Checks if at least one endpoint is contained in the given box */
-    def hasEndpointIn(box: Box9D): Boolean =
+    def hasEndpointIn(box: Box): Boolean =
       box.contains(point1) || box.contains(point2)
 
-  object LineSegment9D:
-
-    def intersects(edge1: LineSegment9D, edge2: LineSegment9D): Boolean =
-      val e1p1: Point9D =
-        edge1.point1
-      val e1p2: Point9D =
-        edge1.point2
-      val e2p1: Point9D =
-        edge2.point1
-      val e2p2: Point9D =
-        edge2.point2
-      val b1: Boolean =
-        Point9D.ccw(e1p1, e1p2, e2p1) * Point9D.ccw(e1p1, e1p2, e2p2) <= 0
-      val b2: Boolean =
-        Point9D.ccw(e2p1, e2p2, e1p1) * Point9D.ccw(e2p1, e2p2, e1p2) <= 0
-      b1 && b2
-
-  extension (lines: Iterable[LineSegment9D])
+  extension (lines: Iterable[LineSegment])
 
     /** Checks if sequentially almost equal to another sequence */
     @targetName("almostEq")
-    def almostEquals(others: Iterable[LineSegment9D]): Boolean =
+    def almostEquals(others: Iterable[LineSegment]): Boolean =
       lines.compareElems(others)(_.almostEquals(_, LESSER_ACCURACY))
 
     /** Checks if the two sequences of segments are intersecting */
-    def lesserIntersects(other: Iterable[LineSegment9D]): Boolean =
+    def lesserIntersects(other: Iterable[LineSegment]): Boolean =
       lines.exists(line => other.exists(line.lesserIntersects))
 
-  case class Box9D(x0: Double, x1: Double, y0: Double, y1: Double):
+  /** Bounds of a shape. */
+  case class Box(x0: Double, x1: Double, y0: Double, y1: Double):
 
-    def contains(point: Point9D): Boolean =
+    def contains(point: Point): Boolean =
       if point.x < x0 then false
       else if point.y < y0 then false
       else if point.x > x1 then false
       else !(point.y > y1)
 
-    def enlarge(d: Double): Box9D =
-      Box9D(x0 - d, x1 +d, y0 - d, y1 + d)
+    def enlarge(d: Double): Box =
+      Box(x0 - d, x1 +d, y0 - d, y1 + d)
 
     def width: Double =
       x1 - x0
@@ -207,14 +224,16 @@ object GeometryBase extends Accuracy:
     def height: Double =
       y1 - y0
 
-  class SimplePolygon9D(vertices: List[Point9D]):
+  /** Represents a polygonal domain whose boundary is a single closed polyline. */
+  class SimplePolygon(vertices: List[Point]):
 
-    val getVertices: List[Point9D] =
+    /** Gets ordered sequence of vertices */
+    val getVertices: List[Point] =
       vertices
 
-    private def edges: Vector[LineSegment9D] =
-      vertices.slidingO(2).map(_.toCouple).toVector.map(LineSegment9D(_, _))
-    
+    private def edges: Vector[LineSegment] =
+      vertices.slidingO(2).map(_.toCouple).toVector.map(LineSegment(_, _))
+
     private def edgesCombinations: Iterator[(Index, Index)] =
       val length: Int =
         vertices.size
@@ -227,17 +246,19 @@ object GeometryBase extends Accuracy:
 
     /** Checks if the polygon is self intersecting */
     def isSelfIntersecting: Boolean =
-      edgesCombinations.exists((i1, i2) => LineSegment9D.intersects(edges(i1), edges(i2)))
+      edgesCombinations.exists((i1, i2) => edges(i1).intersects(edges(i2)))
 
     /** Filters the intersecting sides */
-    def intersectingSides: Iterator[(LineSegment9D, LineSegment9D)] =
+    def intersectingSides: Iterator[(LineSegment, LineSegment)] =
       edgesCombinations
-        .filter((i1, i2) => LineSegment9D.intersects(edges(i1), edges(i2)))
+        .filter((i1, i2) => edges(i1).intersects(edges(i2)))
         .map((i1, i2) => (edges(i1), edges(i2)))
 
-  class RegularPolygon2D(vertices: List[Point9D]) extends SimplePolygon9D(vertices):
+  /** Represents a regular polygon. */
+  class RegularPolygon2D(vertices: List[Point]) extends SimplePolygon(vertices):
 
-    def center(): Point9D =
+    /** Center of the polygon */
+    def center(): Point =
       val size: Int =
         vertices.size
-      Point9D(vertices.map(_.x).sum / size, vertices.map(_.y).sum / size)
+      Point(vertices.map(_.x).sum / size, vertices.map(_.y).sum / size)
