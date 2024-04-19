@@ -2,7 +2,7 @@ package io.github.scala_tessella.tessella
 
 import Geometry.*
 import Geometry.Radian.TAU_4
-import GeometryBase.{ACCURACY, Box9D, LineSegment9D, Point9D, SimplePolygon9D}
+import GeometryBase.{ACCURACY, Box9D, LineSegment9D, Point9D, RegularPolygon2D, SimplePolygon9D}
 import Topology.{--, Edge, Node}
 
 import org.scalatest.*
@@ -169,7 +169,7 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
       false
   }
 
-  val simple: SimplePolygon9D =
+  val single: SimplePolygon9D =
     SimplePolygon9D(List(
       Point9D(),
       Point9D(1.0, 1.0),
@@ -178,18 +178,31 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
     ))
 
   "A SimplePolygon2D" can "be self intersecting" in {
-    simple.isSelfIntersecting shouldBe
+    single.isSelfIntersecting shouldBe
       true
   }
 
   it can "return the couples of segments self intersecting" in {
-    simple.intersectingSides.toList shouldBe
+    single.intersectingSides.toList shouldBe
       List(
         (
           LineSegment9D(Point9D(1.0, 0.0), Point9D(0.0, 1.0)),
           LineSegment9D(Point9D(), Point9D(1.0, 1.0))
         )
       )
+  }
+
+  val regular: RegularPolygon2D =
+    RegularPolygon2D(List(
+      Point9D(),
+      Point9D(0.0, 1.0),
+      Point9D(1.0, 1.0),
+      Point9D(1.0, 0.0)
+    ))
+
+  "A regular polygon" must "have a centre" in {
+    regular.center() shouldBe
+      Point9D(0.5, 0.5)
   }
 
   "A set of LineSegment2D" can "be approximately equal to another set" in {
@@ -268,6 +281,11 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
   "Another box" can "be created" in {
     List(57--68, 55--68).toBox(someCoords) shouldEqual
       Box9D(-0.3660254037849453, 0.49999999999960043, -1.3660254037838226, -0.36602540378382264)
+  }
+
+  "A regular triangle" must "have a center" in {
+    RegularPolygon2D(someCoords.values.toList).center() shouldBe
+      Point9D(-0.07735026919002526, -0.8660254037838845)
   }
 
 //  it can "be created incorrect with a deprecated method" in {

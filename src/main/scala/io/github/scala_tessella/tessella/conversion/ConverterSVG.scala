@@ -117,7 +117,7 @@ trait ConverterSVG extends UtilsXML:
 
   /** `polygon` element from `Polygon2D` */
   def polygon(simplePolygon9D: SimplePolygon9D): Elem =
-    polygon(simplePolygon9D.vertices)
+    polygon(simplePolygon9D.getVertices)
 
   /** `polyline` element
    *

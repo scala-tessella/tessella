@@ -5,8 +5,8 @@ import Geometry.Radian.TAU
 import utility.Utils.{compareElems, toCouple}
 
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO}
-import math.geom2d.Point2D
-import math.geom2d.polygon.SimplePolygon2D
+//import math.geom2d.Point2D
+//import math.geom2d.line.LineSegment2D
 
 import scala.annotation.targetName
 import scala.jdk.CollectionConverters.*
@@ -17,8 +17,8 @@ object GeometryBase extends Accuracy:
 
   case class Point9D(x: Double, y: Double):
 
-    def toPoint2D: Point2D =
-      Point2D(x, y)
+//    def toPoint2D: Point2D =
+//      Point2D(x, y)
 
     /** Converts to rounded `Long`s */
     def rounded: (Long, Long) =
@@ -71,9 +71,6 @@ object GeometryBase extends Accuracy:
     def apply(): Point9D =
       Point9D(0, 0)
 
-    def fromPoint2D(point2D: Point2D): Point9D =
-      Point9D(point2D.x(), point2D.y())
-
     def createPolar(rho: Double, theta: Radian): Point9D =
       Point9D(rho * Math.cos(theta.toDouble), rho * Math.sin(theta.toDouble))
 
@@ -122,34 +119,41 @@ object GeometryBase extends Accuracy:
     private val dy: Double =
       point2.y - point1.y
 
+//    private def toLineSegment2D: LineSegment2D =
+//      LineSegment2D(point1.toPoint2D, point2.toPoint2D)
+
     def containsAtEdges(point: Point9D): Boolean =
       point.almostEquals(point1, ACCURACY) || point.almostEquals(point2, ACCURACY)
 
     def horizontalAngle: Radian =
       Radian((Math.atan2(dy, dx) + TAU.toDouble) % TAU.toDouble)
 
-    def almostEquals(that: LineSegment9D, eps: Double): Boolean =
-      if Math.abs(this.point1.x - that.point1.x) > eps then false
-      else if Math.abs(this.point1.y - that.point1.y) > eps then false
-      else if Math.abs(this.dx - that.dx) > eps then false
-      else !(Math.abs(this.dy - that.dy) > eps)
+    def almostEquals(that: LineSegment9D, accuracy: Double = ACCURACY): Boolean =
+      this.point1.x.~=(that.point1.x, accuracy) &&
+        this.point1.y.~=(that.point1.y, accuracy) &&
+        this.dx.~=(that.dx, accuracy) &&
+        this.dy.~=(that.dy, accuracy)
 
     /** Checks if intersecting with another segment, without touching the edge points */
     def lesserIntersects(that: LineSegment9D): Boolean =
       LineSegment9D.intersects(this, that) && !(this.containsAtEdges(that.point1) || this.containsAtEdges(that.point2))
 
     def intersection(that: LineSegment9D): Option[Point9D] =
-      val dx2 = that.point2.x - that.point1.x
-      val dy2 = that.point2.y - that.point1.y
-      val denominator = dx * dy2 - dy * dx2
-      if Math.abs(denominator) < ACCURACY then
+      val dx2: Double =
+        that.point2.x - that.point1.x
+      val dy2: Double =
+        that.point2.y - that.point1.y
+      val p1: Double =
+        this.dx * dy2
+      val p2: Double =
+        this.dy * dx2
+      if p1.~=(p2, ACCURACY) then
         None
       else
-        val origin = that.point1
-        val x2 = origin.x
-        val y2 = origin.y
-        val t = ((this.point1.y - y2) * dx2 - (this.point1.x - x2) * dy2) / denominator
-        val point = Point9D(this.point1.x + t * this.dx, this.point1.y + t * this.dy)
+        val t: Double =
+          ((this.point1.y - that.point1.y) * dx2 - (this.point1.x - that.point1.x) * dy2) / (p1 - p2)
+        val point: Point9D =
+          Point9D(this.point1.x + t * this.dx, this.point1.y + t * this.dy)
         Option(point)
 //        if this.toLineSegment2D.contains(point.toPoint2D) && that.toLineSegment2D.contains(point.toPoint2D) then Option(point)
 //        else None
@@ -203,10 +207,10 @@ object GeometryBase extends Accuracy:
     def height: Double =
       y1 - y0
 
-  case class SimplePolygon9D(vertices: List[Point9D]):
+  class SimplePolygon9D(vertices: List[Point9D]):
 
-    private def toSimplePolygon2D: SimplePolygon2D =
-      SimplePolygon2D(vertices.map(_.toPoint2D).asJava)
+    val getVertices: List[Point9D] =
+      vertices
 
     private def edges: Vector[LineSegment9D] =
       vertices.slidingO(2).map(_.toCouple).toVector.map(LineSegment9D(_, _))
@@ -231,5 +235,9 @@ object GeometryBase extends Accuracy:
         .filter((i1, i2) => LineSegment9D.intersects(edges(i1), edges(i2)))
         .map((i1, i2) => (edges(i1), edges(i2)))
 
-    def centroid(): Point9D =
-      Point9D.fromPoint2D(toSimplePolygon2D.centroid())
+  class RegularPolygon2D(vertices: List[Point9D]) extends SimplePolygon9D(vertices):
+
+    def center(): Point9D =
+      val size: Int =
+        vertices.size
+      Point9D(vertices.map(_.x).sum / size, vertices.map(_.y).sum / size)

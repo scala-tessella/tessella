@@ -2,7 +2,7 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
-import io.github.scala_tessella.tessella.GeometryBase.{LineSegment9D, Point9D, SimplePolygon9D}
+import io.github.scala_tessella.tessella.GeometryBase.{LineSegment9D, Point9D, RegularPolygon2D, SimplePolygon9D}
 import SVG.LabelledNodes.PERIMETER_ONLY
 import SVG.MarkStyle.NONE
 import SharedML.*
@@ -11,7 +11,6 @@ import Topology.{Edge, Node, NodeOrdering}
 import TilingUniformity.groupUniformsNestedComplete
 import utility.Utils.toCouple
 import utility.UtilsOption.getDefined
-
 import io.github.scala_tessella.ring_seq.RingSeq.Index
 
 import scala.jdk.CollectionConverters.*
@@ -327,7 +326,7 @@ object SVG extends ConverterSVG:
 
     private def polygonsCentreCoords: Map[List[Edge], Point9D] =
       tiling.orientedPolygons.map(path =>
-        path.toPolygonEdges -> SimplePolygon9D(path.toPolygonPathNodes.map(tiling.coords).toList).centroid()
+        path.toPolygonEdges -> RegularPolygon2D(path.toPolygonPathNodes.map(tiling.coords).toList).center()
       ).toMap
 
     private def innerEdges: List[Edge] =
