@@ -1,6 +1,7 @@
 package io.github.scala_tessella.tessella
 
 import Geometry.Radian
+import Geometry.Radian.TAU
 import utility.Utils.{compareElems, toCouple}
 
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO}
@@ -29,7 +30,7 @@ object GeometryBase extends Accuracy:
     def minus(that: Point9D): Point9D =
       Point9D(this.x - that.x, this.y - that.y)
 
-    def rotate(theta: Radian): Point9D = {
+    private def rotate(theta: Radian): Point9D = {
       val cot: Double =
         Math.cos(theta.toDouble)
       val sit: Double =
@@ -59,7 +60,7 @@ object GeometryBase extends Accuracy:
 
     /** New point moved to align with reference to two other points */
     def alignWithStart(first: Point9D, second: Point9D): Point9D =
-      minus(first).rotate(Radian.TAU - first.angleTo(second))
+      minus(first).rotate(TAU - first.angleTo(second))
 
     /** New point flipped vertically around the x-axis */
     def flipVertically: Point9D =
@@ -115,9 +116,6 @@ object GeometryBase extends Accuracy:
 
   case class LineSegment9D(point1: Point9D, point2: Point9D):
 
-//    def toLineSegment2D: LineSegment2D =
-//      LineSegment2D(point1.toPoint2D, point2.toPoint2D)
-
     private val dx: Double =
       point2.x - point1.x
 
@@ -128,7 +126,7 @@ object GeometryBase extends Accuracy:
       point.almostEquals(point1, ACCURACY) || point.almostEquals(point2, ACCURACY)
 
     def horizontalAngle: Radian =
-      Radian((Math.atan2(dy, dx) + 6.283185307179586) % 6.283185307179586)
+      Radian((Math.atan2(dy, dx) + TAU.toDouble) % TAU.toDouble)
 
     def almostEquals(that: LineSegment9D, eps: Double): Boolean =
       if Math.abs(this.point1.x - that.point1.x) > eps then false
@@ -144,7 +142,8 @@ object GeometryBase extends Accuracy:
       val dx2 = that.point2.x - that.point1.x
       val dy2 = that.point2.y - that.point1.y
       val denominator = dx * dy2 - dy * dx2
-      if Math.abs(denominator) < 1.0E-12 then None
+      if Math.abs(denominator) < ACCURACY then
+        None
       else
         val origin = that.point1
         val x2 = origin.x
@@ -160,9 +159,6 @@ object GeometryBase extends Accuracy:
       box.contains(point1) || box.contains(point2)
 
   object LineSegment9D:
-
-//    def fromLineSegment2D(lineSegment2D: LineSegment2D): LineSegment9D =
-//      LineSegment9D(Point9D.fromPoint2D(lineSegment2D.firstPoint()), Point9D.fromPoint2D(lineSegment2D.lastPoint()))
 
     def intersects(edge1: LineSegment9D, edge2: LineSegment9D): Boolean =
       val e1p1: Point9D =
@@ -192,9 +188,6 @@ object GeometryBase extends Accuracy:
 
   case class Box9D(x0: Double, x1: Double, y0: Double, y1: Double):
 
-//    def toBox2D: Box2D =
-//      Box2D(x0, x1, y0, y1)
-
     def contains(point: Point9D): Boolean =
       if point.x < x0 then false
       else if point.y < y0 then false
@@ -210,14 +203,9 @@ object GeometryBase extends Accuracy:
     def height: Double =
       y1 - y0
 
-//  object Box9D:
-//
-//    def fromBox2D(box2D: Box2D): Box9D =
-//      Box9D(box2D.getMinX, box2D.getMaxX, box2D.getMinY, box2D.getMaxY)
-
   case class SimplePolygon9D(vertices: List[Point9D]):
 
-    def toSimplePolygon2D: SimplePolygon2D =
+    private def toSimplePolygon2D: SimplePolygon2D =
       SimplePolygon2D(vertices.map(_.toPoint2D).asJava)
 
     private def edges: Vector[LineSegment9D] =
