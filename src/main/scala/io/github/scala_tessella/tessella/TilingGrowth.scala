@@ -1,5 +1,6 @@
 package io.github.scala_tessella.tessella
 
+import TilingCoordinates.*
 import Geometry.*
 import Geometry.Radian.TAU_2
 import RegularPolygon.{Polygon, Vertex}
@@ -11,8 +12,6 @@ import Topology.{BeforeAfterOrdering, Edge, EdgeOrdering, Node, NodeOrdering}
 import utility.Utils.toCouple
 
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, reflectAt}
-import math.geom2d.line.LineSegment2D
-import math.geom2d.{Box2D, Point2D}
 
 import scala.util.Try
 
@@ -196,11 +195,11 @@ object TilingGrowth:
         case Nil =>
           val newEdgesCoords: Coords =
             newCoords ++ perimeterCoordsAt(end, start)
-          val lines: List[LineSegment2D] =
+          val lines: List[LineSegment] =
             newEdges.toSegments(newEdgesCoords)
-          val enlargedBox: Box2D =
+          val enlargedBox: Box =
             newEdges.toBox(newEdgesCoords, 1.0)
-          val perimeterLines: List[LineSegment2D] =
+          val perimeterLines: List[LineSegment] =
             tiling.perimeter.toRingEdges.toList.withoutNodes(List(node))
               .toSegments(tiling.perimeterCoords).filter(_.hasEndpointIn(enlargedBox))
           if lines.lesserIntersects(perimeterLines) then

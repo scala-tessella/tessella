@@ -1,7 +1,8 @@
 package io.github.scala_tessella.tessella
 
-import Geometry.*
+import TilingCoordinates.*
 import Geometry.Radian.TAU
+import Geometry.*
 import RegularPolygon.{Polygon, Vertex}
 import Topology.{Degree, Edge, Node}
 import conversion.ConverterSVG.Description
@@ -9,10 +10,7 @@ import conversion.DOT
 import conversion.DOT.toDOT
 import conversion.SVGInvalid.*
 import utility.Utils.*
-
-import math.geom2d.Point2D
-import math.geom2d.line.LineSegment2D
-import math.geom2d.Shape2D.ACCURACY
+import utility.UtilsOption.getDefined
 
 import scala.xml.Elem
 
@@ -99,10 +97,10 @@ object TilingErrorMessages:
         )
       )
 
-    private def perimeterNodeFromPoint(point: Point2D, strict: Boolean = false): Node =
+    private def perimeterNodeFromPoint(point: Point, strict: Boolean = false): Node =
       tiling.perimeterCoords
         .find((_, mappedPoint) =>
-          if !strict && point.almostEquals(Point2D(0.0, 0.0), ACCURACY) then
+          if !strict && point.almostEquals(Point(), ACCURACY) then
             mappedPoint.almostEquals(point, ACCURACY)
           else
             mappedPoint == point
@@ -112,8 +110,8 @@ object TilingErrorMessages:
 
     /** Error message for invalid tiling vertex coordinates, with SVG description */
     def invalidVertexCoordsErrMsg: String =
-      val pointCouples: List[(Point2D, Point2D)] =
-        tiling.perimeterPoints2D.almostEqualCouples.toList
+      val pointCouples: List[(Point, Point)] =
+        tiling.perimeterPoints.almostEqualCouples.toList
       val nodeCouples: List[(Node, Node)] =
         pointCouples.map((p1, p2) => (perimeterNodeFromPoint(p1, true), perimeterNodeFromPoint(p2, true)))
       val svg: String =
@@ -126,20 +124,21 @@ object TilingErrorMessages:
 
     /** Error message for invalid tiling edges intersection, with SVG description */
     def invalidIntersectionErrMsg: String =
-      val sideCouples = tiling.perimeterSimplePolygon2D.intersectingSides.toList
+      val sideCouples =
+        tiling.perimeterSimplePolygon.intersectingSides.toList
 
-      def edgeFromSide(side: LineSegment2D): Edge =
-        Edge((perimeterNodeFromPoint(side.firstPoint()), perimeterNodeFromPoint(side.lastPoint())))
+      def edgeFromSide(side: LineSegment): Edge =
+        Edge((perimeterNodeFromPoint(side.point1), perimeterNodeFromPoint(side.point2)))
 
       val edgeCouples: List[(Edge, Edge)] =
         sideCouples.map((s1, s2) => (edgeFromSide(s1), edgeFromSide(s2)))
-      val crossings: List[Point2D] =
+      val crossings: List[Point] =
         edgeCouples
           .map({
             case (edge1, edge2) => List(edge1, edge2).toSegments(tiling.perimeterCoords).toCouple match
               case (f, s) => f.intersection(s)
           })
-          .filterNot(_ == null)
+          .getDefined
       val svg: String =
         addInvalidPerimeterSVG(
           Description("Invalid intersecting edges"),

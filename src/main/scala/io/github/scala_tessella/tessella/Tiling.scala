@@ -1,21 +1,19 @@
 package io.github.scala_tessella.tessella
 
 import Geometry.*
-import Geometry.Radian.{TAU, TAU_2}
-import TilingGrowth.*
+import Geometry.Radian.TAU
 import RegularPolygon.{Polygon, PolygonsSeqOrdering, Vertex}
+import TilingCoordinates.*
 import TilingErrorMessages.*
+import TilingGrowth.*
 import Topology.*
 import creation.{Layered, Quadratic, Uni4Hex, Uni5Hex, UniHex, UniTriangle}
 import utility.Utils.*
 
 import io.github.scala_tessella.ring_seq.RingSeq.*
-import math.geom2d.polygon.SimplePolygon2D
-import math.geom2d.{Box2D, Point2D}
 
 import scala.annotation.tailrec
 import scala.collection.{immutable, mutable}
-import scala.jdk.CollectionConverters.*
 import scala.math.Ordered.orderingToOrdered
 import scala.math.Ordering.Implicits.seqOrdering
 import scala.util.Try
@@ -168,13 +166,6 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
     /** Converts to generic polygons */
     def toPolygons: Vector[Polygon] =
       paths.map(_.toPolygon)
-
-  extension (nodes: RingPath)
-
-    private def toPoints2D(angles: Map[Node, Radian]): Vector[Point2D] =
-      nodes.toRingNodes.scanLeft((Point2D(1, 0), TAU_2: Radian))({
-        case ((point, acc), node) => (point.plusPolarUnit(acc), acc + angles(node) + TAU_2)
-      }).map((point, _) => point).tail
 
   extension (polygon: PolygonEdges)
 
@@ -346,24 +337,24 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
    *
    * @note they differ from the points found as a whole tiling in [[Tiling.coords]]
    */
-  val perimeterPoints2D: Vector[Point2D] =
-    perimeter.toPoints2D(perimeterAngles)
+  val perimeterPoints: Vector[Point] =
+    perimeter.toRingNodes.pointsFrom(perimeterAngles)
 
   /** Associations of perimeter node and spatial coordinate */
   lazy val perimeterCoords: Coords =
-    perimeter.toRingNodes.zip(perimeterPoints2D).toMap
+    perimeter.toRingNodes.zip(perimeterPoints).toMap
 
   /** Checks there are no multiple perimeter nodes at the same spatial coordinates */
   def hasPerimeterWithDistinctVertices: Boolean =
     edges.isEmpty || perimeterCoords.values.toVector.areAllDistinct
 
   /** Perimeter 2D polygon */
-  lazy val perimeterSimplePolygon2D: SimplePolygon2D =
-    SimplePolygon2D(perimeterPoints2D.asJava)
+  lazy val perimeterSimplePolygon: SimplePolygon =
+    SimplePolygon(perimeterPoints.toList)
 
   /** Checks there are no intersecting perimeter edges */
   def hasPerimeterNotSelfIntersecting: Boolean =
-    edges.isEmpty || perimeter.toRingNodes.sizeIs < 13 || !perimeterSimplePolygon2D.isSelfIntersecting
+    edges.isEmpty || perimeter.toRingNodes.sizeIs < 13 || !perimeterSimplePolygon.isSelfIntersecting
 
   /** Filters the invalid perimeter vertices */
   def invalidPerimeterVertices: Vector[Node] =
@@ -428,7 +419,7 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
       case _ => false
 
   /** Finds the 2D box */
-  def toBox: Box2D =
+  def toBox: Box =
     edges.toBox(coords)
 
   /** Number of polygons in the tiling */
@@ -437,36 +428,7 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
 
   /** Associations of tiling node and spatial coordinate */
   lazy val coords: Coords =
-
-    @tailrec
-    def loop(coordinates: Coords, polygons: List[PolygonPath]): Coords =
-      polygons.find(_.slidingO(2).exists(_.forall(node => coordinates.contains(node)))) match
-        case None => coordinates
-        case Some(polygon) =>
-          val pairs: List[Vector[Node]] =
-            polygon.slidingO(2).toList
-          val index: Index =
-            pairs.indexWhere(_.forall(node => coordinates.contains(node)))
-          val startingAngle: Radian =
-            coordinates(pairs(index)(0)).angleTo(coordinates(pairs(index)(1)))
-          val alpha: Radian =
-            polygon.toPolygon.alpha
-          val newCoordinates: Coords =
-            pairs.startAt(index - 1).drop(2).map(_.toCouple).foldLeft((coordinates, startingAngle))({
-              case ((cumulativeCoordinates, angle), (previous, node)) =>
-                val newAngle: Radian =
-                  angle + TAU_2 - alpha
-                val newCumulativeCoordinates: Coords =
-                  if cumulativeCoordinates.contains(node) then cumulativeCoordinates
-                  else cumulativeCoordinates + (node -> cumulativeCoordinates(previous).plusPolarUnit(newAngle))
-                (newCumulativeCoordinates, newAngle)
-            })._1
-          loop(newCoordinates, polygons.diff(polygon).filter(_.exists(node => !newCoordinates.contains(node))))
-
-    if edges.isEmpty then
-      Map()
-    else
-      loop(startingCoords, orientedPolygons).flipVertically
+    this.coordinates
 
   private def polygonsAt(node: Node): List[PolygonPath] =
     orientedPolygons.filter(_.toPolygonPathNodes.contains(node))
@@ -512,10 +474,6 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
   /** Area of the tiling */
   def area: Double =
     groupHedrals.map((polygon, count) => Vertex.tessellableAreas(polygon) * count).sum
-
-  /** Alternative method for the area of the tiling */
-  def areaAlt: Double =
-    Math.abs(perimeterSimplePolygon2D.area())
 
   /** @see https://en.wikipedia.org/wiki/Compactness_measure#Examples */
   def compactness: Double =

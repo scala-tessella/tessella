@@ -2,6 +2,7 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
+import Geometry.{LineSegment, Point, RegularPolygon2D}
 import SVG.LabelledNodes.PERIMETER_ONLY
 import SVG.MarkStyle.NONE
 import SharedML.*
@@ -10,13 +11,8 @@ import Topology.{Edge, Node, NodeOrdering}
 import TilingUniformity.groupUniformsNestedComplete
 import utility.Utils.toCouple
 import utility.UtilsOption.getDefined
-
 import io.github.scala_tessella.ring_seq.RingSeq.Index
-import math.geom2d.Point2D
-import math.geom2d.line.LineSegment2D
-import math.geom2d.polygon.SimplePolygon2D
 
-import scala.jdk.CollectionConverters.*
 import scala.xml.Elem
 
 /** Methods to convert a `Tiling` into an SVG file */
@@ -140,8 +136,8 @@ object SVG extends ConverterSVG:
       fill("red")
     )*)
 
-  private def markNode(point2D: Point2D): Elem =
-    circle(point2D, 0.075)
+  private def markNode(point: Point): Elem =
+    circle(point, 0.075)
 
   private def graphGroup(lines: Seq[Elem]): Elem =
     group(
@@ -254,8 +250,8 @@ object SVG extends ConverterSVG:
   extension (node: Node)
 
     /** Node label at given coordinates */
-    def label(point2D: Point2D): Elem =
-      text(point2D, node.toString)
+    def label(point: Point): Elem =
+      text(point, node.toString)
 
   extension (tiling: Tiling)
 
@@ -327,19 +323,19 @@ object SVG extends ConverterSVG:
       else
         None
 
-    private def polygonsCentreCoords: Map[List[Edge], Point2D] =
+    private def polygonsCentreCoords: Map[List[Edge], Point] =
       tiling.orientedPolygons.map(path =>
-        path.toPolygonEdges -> SimplePolygon2D(path.toPolygonPathNodes.map(tiling.coords).asJava).centroid
+        path.toPolygonEdges -> RegularPolygon2D(path.toPolygonPathNodes.map(tiling.coords).toList).center()
       ).toMap
 
     private def innerEdges: List[Edge] =
       tiling.graphEdges.diff(tiling.perimeter.toRingEdges.toList)
 
-    private def inversionSegments: List[LineSegment2D] =
+    private def inversionSegments: List[LineSegment] =
       innerEdges
         .map(edge => polygonsCentreCoords.filter((edges, _) => edges.contains(edge)).values)
         .map(_.toList.toCouple)
-        .map(LineSegment2D(_, _))
+        .map(LineSegment(_, _))
 
     private def inversionSVG(showInversion: Boolean): Option[Elem] =
       if showInversion then

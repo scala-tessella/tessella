@@ -2,12 +2,10 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
-import Geometry.toBox
-import SharedML.{Style, withStyle}
-import SVG.*
+import TilingCoordinates.toBox
+import Geometry.{Box, LineSegment, Point}
 import SharedML.*
-import math.geom2d.line.LineSegment2D
-import math.geom2d.{Box2D, Point2D}
+import SVG.*
 
 import scala.xml.Elem
 
@@ -24,7 +22,7 @@ object SVGInvalid extends ConverterSVG:
    *
    * @param center spatial requirement
    */
-  def invalidNode(center: Point2D): Elem =
+  def invalidNode(center: Point): Elem =
     circle(center, 0.1)
 
   /** `group` titled and styled for perimeter intersections
@@ -61,7 +59,7 @@ object SVGInvalid extends ConverterSVG:
    *
    * @param center spatial coordinates
    */
-  def invalidNodeGroup(center: Point2D): Elem =
+  def invalidNodeGroup(center: Point): Elem =
     group(
       Option(Title("Highlighted")),
       Option(Description("Nodes")),
@@ -74,12 +72,12 @@ object SVGInvalid extends ConverterSVG:
    * @param segment spatial coordinates
    * @param width of `stroke-width` attribute
    */
-  def invalidEdgeGroup(segment: LineSegment2D, width: Int = 1): Elem =
+  def invalidEdgeGroup(segment: LineSegment, width: Int = 1): Elem =
     invalidEdgesGroup(List(line(segment)), width)
 
-  private def invalidPretty(elems: List[Elem], title: Title, desc: Description, box2D: Box2D) =
+  private def invalidPretty(elems: List[Elem], title: Title, desc: Description, box: Box) =
     prettyPrinter.format(svg(
-      box2D,
+      box,
       group(Option(title), Option(desc), elems *)
     ))
 
@@ -94,7 +92,7 @@ object SVGInvalid extends ConverterSVG:
       val toLabelsSVG: Elem =
         perimeterLabelsGroup(tiling.perimeterCoords.map((node, coordinate) => node.label(coordinate)).toSeq)
       val elems: List[Elem] =
-        polygon(tiling.perimeterPoints2D).withStyle(perimeterStyle)
+        polygon(tiling.perimeterPoints).withStyle(perimeterStyle)
           :: (intersections match
           case Some(perimeterIntersections) => List(perimeterIntersections, toLabelsSVG)
           case _                            => List(toLabelsSVG)

@@ -2,17 +2,12 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.Description
+import Geometry.*
 import SharedML.*
 
-import math.geom2d.Point2D.createPolar
-import math.geom2d.line.LineSegment2D
-import math.geom2d.polygon.{Polyline2D, SimplePolygon2D}
-import math.geom2d.{Box2D, Point2D}
-
-import scala.jdk.CollectionConverters.*
 import scala.xml.{Elem, Null, UnprefixedAttribute}
 
-/** Generic methods for producing .SVG file from [[math.geom2d]]
+/** Generic methods for producing .SVG file
  *
  * @see https://en.wikipedia.org/wiki/Scalable_Vector_Graphics
  */
@@ -29,17 +24,17 @@ trait ConverterSVG extends UtilsXML:
   private def rescale(double: Double): Double =
     Math.round(double * svgAccuracy * scale) / svgAccuracy
 
-  extension (point: Point2D)
+  extension (point: Point)
 
     private def scaled: (Double, Double) = (rescale(point.x), rescale(point.y))
 
-  private def formatPoints(points: Iterable[Point2D]): String =
+  private def formatPoints(points: Iterable[Point]): String =
     points.map(_.scaled).map((x, y) => s"$x,$y").mkString(" ")
 
   extension (elem: Elem)
 
     /** add `points` attribute for `polyline` and `polygon` */
-    private def withPoints(points: Iterable[Point2D]): Elem =
+    private def withPoints(points: Iterable[Point]): Elem =
       elem.addAttributes(Attribute.create("points")(formatPoints(points)))
 
   /** `fill` attribute */
@@ -50,24 +45,24 @@ trait ConverterSVG extends UtilsXML:
   val stroke: String => Attribute =
     Attribute.create("stroke")
 
-  private def framedViewBox(box2D: Box2D): String =
-    val enlarged: Box2D =
-      box2D.enlarge(0.5)
-    val newMin: Point2D =
-      Point2D(enlarged.getMinX, enlarged.getMinY)
+  private def framedViewBox(box: Box): String =
+    val enlarged: Box =
+      box.enlarge(0.5)
+    val newMin: Point =
+      Point(enlarged.x0, enlarged.y0)
     val (minX, minY): (Double, Double) =
       newMin.scaled
     val (maxX, maxY): (Double, Double) =
-      Point2D(enlarged.getMaxX, enlarged.getMaxY).minus(newMin).scaled
+      Point(enlarged.x1, enlarged.y1).minus(newMin).scaled
     s"$minX $minY $maxX $maxY"
 
   /** `svg` element with `viewBox` to fit a given box
    *
-   * @param box2D box area with width and height to fit
+   * @param box   box area with width and height to fit
    * @param elems placed in `svg`
    */
-  def svg(box2D: Box2D, elems: Elem *): Elem =
-    <svg viewBox={ s"${framedViewBox(box2D)}" } xmlns="http://www.w3.org/2000/svg">{ elems.toNodeBuffer }</svg>
+  def svg(box: Box, elems: Elem *): Elem =
+    <svg viewBox={ s"${framedViewBox(box)}" } xmlns="http://www.w3.org/2000/svg">{ elems.toNodeBuffer }</svg>
 
   /** `metadata` element */
   def metadata(elems: Elem *): Elem =
@@ -91,18 +86,18 @@ trait ConverterSVG extends UtilsXML:
    * @param point spatial coordinates
    * @param s     text
    */
-  def text(point: Point2D, s: String): Elem =
+  def text(point: Point, s: String): Elem =
     val (x, y) = point.scaled
     <text x={ s"$x" } y={ s"$y" } >{ s }</text>
 
   /** `rect` element
    *
-   * @param box2D spatial coordinates
+   * @param box spatial coordinates
    */
-  def rect(box2D: Box2D): Elem =
-    val methods: List[Box2D => Double] =
-      List(_.getWidth, _.getHeight, _.getMinX, _.getMinY)
-    (methods.map(_.apply(box2D)).map(rescale): @unchecked) match
+  def rect(box: Box): Elem =
+    val methods: List[Box => Double] =
+      List(_.width, _.height, _.x0, _.y0)
+    (methods.map(_.apply(box)).map(rescale): @unchecked) match
       case width :: height :: x :: y :: Nil =>
         <rect width={ s"$width" } height={ s"$height" } x={ s"$x" } y={ s"$y" }></rect>
 
@@ -111,55 +106,51 @@ trait ConverterSVG extends UtilsXML:
    * @param points spatial coordinates
    * @param elems placed in `polygon`
    */
-  def polygon(points: Iterable[Point2D], elems: Elem *): Elem =
+  def polygon(points: Iterable[Point], elems: Elem *): Elem =
     (if elems.isEmpty then
       <polygon/>
     else
       <polygon>{ elems.toNodeBuffer }</polygon>
     ).withPoints(points)
 
-  /** `polygon` element from `Polygon2D` */
-  def polygon(polygon2D: SimplePolygon2D): Elem =
-    polygon(polygon2D.vertices().asScala)
+  /** `polygon` element from `SimplePolygon` */
+  def polygon(simplePolygon: SimplePolygon): Elem =
+    polygon(simplePolygon.getVertices)
 
   /** `polyline` element
    *
    * @param points spatial coordinates
    * @param elems placed in `polygon`
    */
-  def polyline(points: Iterable[Point2D], elems: Elem *): Elem =
+  def polyline(points: Iterable[Point], elems: Elem *): Elem =
     (if elems.isEmpty then
       <polyline/>
     else
       <polyline>{ elems.toNodeBuffer }</polyline>
     ).withPoints(points)
 
-  /** `polyline` element from `Polyline2D` */
-  def polyline(polyline2D: Polyline2D, elems: Elem *): Elem =
-    polyline(polyline2D.vertices().asScala, elems *)
-
   /** `line` element
    *
    * @param point1 spatial coordinates of one endpoint
    * @param point2 spatial coordinates of other endpoint
    */
-  def line(point1: Point2D, point2: Point2D): Elem =
+  def line(point1: Point, point2: Point): Elem =
     val (x1, y1): (Double, Double) =
       point1.scaled
     val (x2, y2): (Double, Double) =
       point2.scaled
     <line x1={ s"$x1" } y1={ s"$y1" } x2={ s"$x2" } y2={ s"$y2" } />
 
-  /** `line` element from `LineSegment2D` */
-  def line(segment: LineSegment2D): Elem =
-    line(segment.firstPoint(), segment.lastPoint())
+  /** `line` element from `LineSegment` */
+  def line(segment: LineSegment): Elem =
+    line(segment.point1, segment.point2)
 
   /** `circle` element
    *
    * @param center spatial coordinates
    * @param radius length
    */
-  def circle(center: Point2D, radius: Double): Elem =
+  def circle(center: Point, radius: Double): Elem =
     val (cx, cy): (Double, Double) =
       center.scaled
     <circle cx={ s"$cx" } cy={ s"$cy" } r={ s"${rescale(radius)}"} />
@@ -170,9 +161,9 @@ trait ConverterSVG extends UtilsXML:
       <animate />
     element.addAttributes(attributes *)
 
-  private def pointsAnimation(from: Iterable[Point2D],
-                              to: Iterable[Point2D],
-                              values: List[Iterable[Point2D]]): Elem =
+  private def pointsAnimation(from: Iterable[Point],
+                              to: Iterable[Point],
+                              values: List[Iterable[Point]]): Elem =
     animate(List(
       Attribute.create("attributeName")("points"),
       Attribute.create("dur")("5s"),
@@ -183,9 +174,9 @@ trait ConverterSVG extends UtilsXML:
 
   /** Animated polygon
    *
-   * @param points spatial coordinates
+   * @param pointsSeries spatial coordinates
    */
-  def animatedPolygon(pointsSeries: List[Iterable[Point2D]]): Elem =
+  def animatedPolygon(pointsSeries: List[Iterable[Point]]): Elem =
     val animation: Elem =
       pointsAnimation(
         pointsSeries.head,
@@ -198,8 +189,8 @@ trait ConverterSVG extends UtilsXML:
    *
    * @param points spatial coordinates
    */
-  def animatedPolyline(points: Iterable[Point2D]): Elem =
-    val scanned: Iterable[List[Point2D]] =
+  def animatedPolyline(points: Iterable[Point]): Elem =
+    val scanned: Iterable[List[Point]] =
       points.tail.scanLeft(List(points.head))(_ ++ List(_))
     val animation: Elem =
       pointsAnimation(
@@ -209,31 +200,34 @@ trait ConverterSVG extends UtilsXML:
       )
     polyline(points, animation)
 
-  private def arrowHeadPoints(tip: Point2D, origin: Point2D): List[Point2D] =
-    val angle = LineSegment2D(tip, origin).horizontalAngle
-    val delta = 0.5
+  private def arrowHeadPoints(tip: Point, origin: Point): List[Point] =
+    val angle: Radian =
+      LineSegment(tip, origin).horizontalAngle
+    val delta: Double =
+      0.5
 
-    def vertex(upper: Boolean): Point2D =
-      val variation = if upper then delta else -delta
-      tip.plus(Point2D(createPolar(0.1, angle + variation)))
+    def vertex(upper: Boolean): Point =
+      val variation: Radian =
+        Radian(if upper then delta else -delta)
+      tip.plus(Point.createPolar(0.1, angle + variation))
 
     List(tip, vertex(true), vertex(false))
 
   /** Arrow head as a triangle
    *
    * @param tip spatial coordinates of endpoint with arrow
-   * @param point2 spatial coordinates of other endpoint
+   * @param origin spatial coordinates of other endpoint
    */
-  def arrowHead(tip: Point2D, origin: Point2D, elems: Elem *): Elem =
+  def arrowHead(tip: Point, origin: Point, elems: Elem *): Elem =
     polygon(arrowHeadPoints(tip, origin), elems *)
 
   /** Animated arrow head
    *
    * @param points spatial coordinates of the arrow movements
    */
-  def animatedArrowHead(points: Iterable[Point2D]): Elem =
+  def animatedArrowHead(points: Iterable[Point]): Elem =
     val listed = points.toList
-    val slided: List[List[Point2D]] = (listed.head :: listed).sliding(2).toList
+    val slided: List[List[Point]] = (listed.head :: listed).sliding(2).toList
     val animation: Elem =
       pointsAnimation(
         arrowHeadPoints(slided.head.last, slided.head.head),
@@ -248,7 +242,7 @@ trait ConverterSVG extends UtilsXML:
    * @param arrowHeadStyle arrow head style
    * @param polylineStyle polyline style
    */
-  def animatedPolylineArrow(points: Iterable[Point2D],
+  def animatedPolylineArrow(points: Iterable[Point],
                             arrowHeadStyle: Style = Style(Nil *),
                             polylineStyle: Style = Style(Nil *)): Elem =
     group(None, None, elems = List(
@@ -256,7 +250,7 @@ trait ConverterSVG extends UtilsXML:
       animatedArrowHead(points).withStyle(arrowHeadStyle)
     ) *)
 
-/** Companion methods for producing .SVG file from [[math.geom2d]] */
+/** Companion methods for producing .SVG file */
 object ConverterSVG:
 
   /** A description `desc` element
