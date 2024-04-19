@@ -3,13 +3,9 @@ package conversion
 
 import ConverterSVG.*
 import Geometry.toBox
-import SharedML.{Style, withStyle}
-import SVG.*
+import GeometryBase.{Box9D, LineSegment9D, Point9D}
 import SharedML.*
-import io.github.scala_tessella.tessella.GeometryBase.*
-
-import math.geom2d.line.LineSegment2D
-import math.geom2d.Box2D
+import SVG.*
 
 import scala.xml.Elem
 

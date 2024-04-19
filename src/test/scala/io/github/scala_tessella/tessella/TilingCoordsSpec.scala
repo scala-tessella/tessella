@@ -10,8 +10,6 @@ import conversion.SVG
 import conversion.SVG.*
 import utility.Utils.mapKeys
 
-//import math.geom2d.Point2D
-import math.geom2d.Shape2D.ACCURACY
 import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*

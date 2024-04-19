@@ -9,7 +9,6 @@ import TilingSymmetry.{countSymmetries, countRotationalSymmetries}
 import Topology.*
 import utility.Utils.{mapKeys, mapValues2}
 
-//import math.geom2d.Point2D
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
@@ -169,10 +168,10 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
       (16, 16.000000000000004, 0.7853981633974484)
   }
 
-  it must "have an area calculated with an alternative method" in {
-    (sqr4x4Reticulate.areaAlt ~= 16) shouldBe
-      true
-  }
+//  it must "have an area calculated with an alternative method" in {
+//    (sqr4x4Reticulate.areaAlt ~= 16) shouldBe
+//      true
+//  }
 
   it can "transform perimeter into cartesian points" in {
     val expected: Vector[Point9D] =

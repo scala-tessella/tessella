@@ -12,10 +12,6 @@ import conversion.SVGInvalid.*
 import utility.Utils.*
 import utility.UtilsOption.getDefined
 
-import math.geom2d.Point2D
-import math.geom2d.line.LineSegment2D
-import math.geom2d.Shape2D.ACCURACY
-
 import scala.xml.Elem
 
 /** Descriptive error messages for invalid tiling */

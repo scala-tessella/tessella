@@ -12,8 +12,6 @@ import Topology.{BeforeAfterOrdering, Edge, EdgeOrdering, Node, NodeOrdering}
 import utility.Utils.toCouple
 
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, reflectAt}
-import math.geom2d.line.LineSegment2D
-import math.geom2d.{Box2D, Point2D}
 
 import scala.util.Try
 

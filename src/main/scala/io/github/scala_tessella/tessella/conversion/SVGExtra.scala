@@ -2,11 +2,10 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
+import GeometryBase.SimplePolygon9D
 import SharedML.{Attribute, Style, Title, withStyle}
 import SVG.*
 import Topology.{Edge, Node}
-
-import math.geom2d.polygon.SimplePolygon2D
 
 import scala.xml.Elem
 import scala.jdk.CollectionConverters.*
@@ -110,8 +109,8 @@ object SVGExtra:
           .map(index =>
             group(None, None, polygons(index)
               .map(tiling.RingPath.simpleFromEdges)
-              .map(_.toRingNodes.map(tiling.coords))
-              .map(points => SimplePolygon2D(points.map(_.toPoint2D).asJava))
+              .map(_.toRingNodes.map(tiling.coords).toList)
+              .map(SimplePolygon9D(_))
               .map(polygon(_).withStyle(
                 Style(
                   fill(fillUniform(index % 5)),

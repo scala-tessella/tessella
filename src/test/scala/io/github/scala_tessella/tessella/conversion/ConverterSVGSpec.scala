@@ -5,7 +5,6 @@ import GeometryBase.Box9D
 import SharedML.addAttributes
 import SVG.*
 
-import math.geom2d.{Box2D, Point2D}
 import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*

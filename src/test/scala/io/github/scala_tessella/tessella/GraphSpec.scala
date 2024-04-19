@@ -1,12 +1,8 @@
 package io.github.scala_tessella.tessella
 
-import Geometry.*
 import Outliers.*
-import RegularPolygon.{Polygon, Vertex}
 import Topology.*
 import conversion.DOT.toDOT
-import utility.Utils.mapKeys
-import math.geom2d.Point2D
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 

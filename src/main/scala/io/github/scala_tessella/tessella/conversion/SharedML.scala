@@ -1,7 +1,6 @@
 package io.github.scala_tessella.tessella.conversion
 
 import NameValue.*
-import math.geom2d.{Box2D, Point2D}
 
 import scala.xml.{Elem, Null, UnprefixedAttribute}
 
@@ -40,14 +39,6 @@ object SharedML:
 
     override def toString: String =
       format(attributes.toList)(';')
-
-  extension (box2D: Box2D)
-
-    def enlarge(d: Double): Box2D =
-      Box2D(
-        Point2D(box2D.getMinX - d, box2D.getMinY - d), 
-        Point2D(box2D.getMaxX + d, box2D.getMaxY + d)
-      )
 
   extension (elem: Elem)
 

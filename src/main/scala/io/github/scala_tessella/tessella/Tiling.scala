@@ -2,7 +2,7 @@ package io.github.scala_tessella.tessella
 
 import Geometry.*
 import Geometry.Radian.{TAU, TAU_2}
-import GeometryBase.{Box9D, Point9D}
+import GeometryBase.{Box9D, Point9D, SimplePolygon9D}
 import TilingGrowth.*
 import RegularPolygon.{Polygon, PolygonsSeqOrdering, Vertex}
 import TilingErrorMessages.*
@@ -11,12 +11,9 @@ import creation.{Layered, Quadratic, Uni4Hex, Uni5Hex, UniHex, UniTriangle}
 import utility.Utils.*
 
 import io.github.scala_tessella.ring_seq.RingSeq.*
-import math.geom2d.polygon.SimplePolygon2D
-import math.geom2d.Box2D
 
 import scala.annotation.tailrec
 import scala.collection.{immutable, mutable}
-import scala.jdk.CollectionConverters.*
 import scala.math.Ordered.orderingToOrdered
 import scala.math.Ordering.Implicits.seqOrdering
 import scala.util.Try
@@ -359,8 +356,8 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
     edges.isEmpty || perimeterCoords.values.toVector.areAllDistinct
 
   /** Perimeter 2D polygon */
-  lazy val perimeterSimplePolygon2D: SimplePolygon2D =
-    SimplePolygon2D(perimeterPoints2D.map(_.toPoint2D).asJava)
+  lazy val perimeterSimplePolygon2D: SimplePolygon9D =
+    SimplePolygon9D(perimeterPoints2D.toList)
 
   /** Checks there are no intersecting perimeter edges */
   def hasPerimeterNotSelfIntersecting: Boolean =
@@ -514,9 +511,9 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
   def area: Double =
     groupHedrals.map((polygon, count) => Vertex.tessellableAreas(polygon) * count).sum
 
-  /** Alternative method for the area of the tiling */
-  def areaAlt: Double =
-    Math.abs(perimeterSimplePolygon2D.area())
+//  /** Alternative method for the area of the tiling */
+//  def areaAlt: Double =
+//    Math.abs(perimeterSimplePolygon2D.area())
 
   /** @see https://en.wikipedia.org/wiki/Compactness_measure#Examples */
   def compactness: Double =

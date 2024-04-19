@@ -4,8 +4,7 @@ import Geometry.Radian
 import utility.Utils.{compareElems, toCouple}
 
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO}
-import math.geom2d.{Box2D, Point2D}
-import math.geom2d.line.LineSegment2D
+import math.geom2d.Point2D
 import math.geom2d.polygon.SimplePolygon2D
 
 import scala.annotation.targetName
@@ -116,8 +115,8 @@ object GeometryBase extends Accuracy:
 
   case class LineSegment9D(point1: Point9D, point2: Point9D):
 
-    def toLineSegment2D: LineSegment2D =
-      LineSegment2D(point1.toPoint2D, point2.toPoint2D)
+//    def toLineSegment2D: LineSegment2D =
+//      LineSegment2D(point1.toPoint2D, point2.toPoint2D)
 
     private val dx: Double =
       point2.x - point1.x
@@ -162,8 +161,8 @@ object GeometryBase extends Accuracy:
 
   object LineSegment9D:
 
-    def fromLineSegment2D(lineSegment2D: LineSegment2D): LineSegment9D =
-      LineSegment9D(Point9D.fromPoint2D(lineSegment2D.firstPoint()), Point9D.fromPoint2D(lineSegment2D.lastPoint()))
+//    def fromLineSegment2D(lineSegment2D: LineSegment2D): LineSegment9D =
+//      LineSegment9D(Point9D.fromPoint2D(lineSegment2D.firstPoint()), Point9D.fromPoint2D(lineSegment2D.lastPoint()))
 
     def intersects(edge1: LineSegment9D, edge2: LineSegment9D): Boolean =
       val e1p1: Point9D =
@@ -193,8 +192,8 @@ object GeometryBase extends Accuracy:
 
   case class Box9D(x0: Double, x1: Double, y0: Double, y1: Double):
 
-    def toBox2D: Box2D =
-      Box2D(x0, x1, y0, y1)
+//    def toBox2D: Box2D =
+//      Box2D(x0, x1, y0, y1)
 
     def contains(point: Point9D): Boolean =
       if point.x < x0 then false
@@ -211,10 +210,10 @@ object GeometryBase extends Accuracy:
     def height: Double =
       y1 - y0
 
-  object Box9D:
-
-    def fromBox2D(box2D: Box2D): Box9D =
-      Box9D(box2D.getMinX, box2D.getMaxX, box2D.getMinY, box2D.getMaxY)
+//  object Box9D:
+//
+//    def fromBox2D(box2D: Box2D): Box9D =
+//      Box9D(box2D.getMinX, box2D.getMaxX, box2D.getMinY, box2D.getMaxY)
 
   case class SimplePolygon9D(vertices: List[Point9D]):
 
@@ -245,4 +244,4 @@ object GeometryBase extends Accuracy:
         .map((i1, i2) => (edges(i1), edges(i2)))
 
     def centroid(): Point9D =
-      ???
+      Point9D.fromPoint2D(toSimplePolygon2D.centroid())

@@ -6,11 +6,6 @@ import SharedML.*
 import Geometry.Radian
 import GeometryBase.*
 
-import math.geom2d.Point2D.createPolar
-import math.geom2d.line.LineSegment2D
-import math.geom2d.polygon.{Polyline2D, SimplePolygon2D}
-import math.geom2d.Box2D
-
 import scala.jdk.CollectionConverters.*
 import scala.xml.{Elem, Null, UnprefixedAttribute}
 
@@ -121,8 +116,8 @@ trait ConverterSVG extends UtilsXML:
     ).withPoints(points)
 
   /** `polygon` element from `Polygon2D` */
-  def polygon(polygon2D: SimplePolygon2D): Elem =
-    polygon(polygon2D.vertices().asScala.map(Point9D.fromPoint2D))
+  def polygon(simplePolygon9D: SimplePolygon9D): Elem =
+    polygon(simplePolygon9D.vertices)
 
   /** `polyline` element
    *
@@ -135,10 +130,6 @@ trait ConverterSVG extends UtilsXML:
     else
       <polyline>{ elems.toNodeBuffer }</polyline>
     ).withPoints(points)
-
-  /** `polyline` element from `Polyline2D` */
-  def polyline(polyline2D: Polyline2D, elems: Elem *): Elem =
-    polyline(polyline2D.vertices().asScala.map(Point9D.fromPoint2D), elems *)
 
   /** `line` element
    *
@@ -212,12 +203,15 @@ trait ConverterSVG extends UtilsXML:
     polyline(points, animation)
 
   private def arrowHeadPoints(tip: Point9D, origin: Point9D): List[Point9D] =
-    val angle = LineSegment2D(tip.toPoint2D, origin.toPoint2D).horizontalAngle
-    val delta = 0.5
+    val angle: Radian =
+      LineSegment9D(tip, origin).horizontalAngle
+    val delta: Double =
+      0.5
 
     def vertex(upper: Boolean): Point9D =
-      val variation = if upper then delta else -delta
-      tip.plus(Point9D.createPolar(0.1, Radian(angle + variation)))
+      val variation: Radian =
+        Radian(if upper then delta else -delta)
+      tip.plus(Point9D.createPolar(0.1, angle + variation))
 
     List(tip, vertex(true), vertex(false))
 
