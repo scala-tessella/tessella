@@ -1,6 +1,7 @@
-package io.github.scala_tessella.tessella.conversion
+package io.github.scala_tessella.tessella
+package conversion
 
-import io.github.scala_tessella.tessella.Geometry.Box
+import Geometry.Box
 import SharedML.*
 
 import scala.xml.Elem
@@ -36,20 +37,20 @@ trait ConverterHTML extends UtilsXML:
   def div(elems: Elem*): Elem =
     <div>{ elems.toNodeBuffer }</div>
 
-  private def boxedWidth(box9D: Box): Style =
+  private def boxedWidth(box: Box): Style =
     val enlarged: Box =
-      box9D.enlarge(0.5)
+      box.enlarge(0.5)
     val width: Int =
       enlarged.width.toInt * scale
     Style(Attribute.create("width")(s"${width}px"))
 
   /** styled `div` element with width to fit a given box
    *
-   * @param box2D box area with width to fit
+   * @param box   box area with width to fit
    * @param elems placed in `div`
    */
-  def divBoxed(box9D: Box, elems: Elem*): Elem =
-    div(elems *).withStyle(boxedWidth(box9D))
+  def divBoxed(box: Box, elems: Elem*): Elem =
+    div(elems *).withStyle(boxedWidth(box))
 
   /** `h1` element */
   def h1(s: String): Elem =

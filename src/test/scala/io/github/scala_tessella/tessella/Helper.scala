@@ -1,8 +1,8 @@
 package io.github.scala_tessella.tessella
 
-import Coordinates.*
 import Geometry.Radian.TAU_6
 import RegularPolygon.Vertex
+import TilingCoordinates.*
 import Topology.*
 import conversion.SVG.*
 import conversion.SVGExtra.*

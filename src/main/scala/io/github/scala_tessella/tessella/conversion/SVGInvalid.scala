@@ -2,7 +2,7 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
-import Coordinates.toBox
+import TilingCoordinates.toBox
 import Geometry.{Box, LineSegment, Point}
 import SharedML.*
 import SVG.*
@@ -75,9 +75,9 @@ object SVGInvalid extends ConverterSVG:
   def invalidEdgeGroup(segment: LineSegment, width: Int = 1): Elem =
     invalidEdgesGroup(List(line(segment)), width)
 
-  private def invalidPretty(elems: List[Elem], title: Title, desc: Description, box9D: Box) =
+  private def invalidPretty(elems: List[Elem], title: Title, desc: Description, box: Box) =
     prettyPrinter.format(svg(
-      box9D,
+      box,
       group(Option(title), Option(desc), elems *)
     ))
 
@@ -92,7 +92,7 @@ object SVGInvalid extends ConverterSVG:
       val toLabelsSVG: Elem =
         perimeterLabelsGroup(tiling.perimeterCoords.map((node, coordinate) => node.label(coordinate)).toSeq)
       val elems: List[Elem] =
-        polygon(tiling.perimeterPoints2D).withStyle(perimeterStyle)
+        polygon(tiling.perimeterPoints).withStyle(perimeterStyle)
           :: (intersections match
           case Some(perimeterIntersections) => List(perimeterIntersections, toLabelsSVG)
           case _                            => List(toLabelsSVG)

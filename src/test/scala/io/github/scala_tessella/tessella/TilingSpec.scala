@@ -131,7 +131,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   it can "transform perimeter into cartesian points" in {
     val expected: Vector[Point] =
       Vector(Point(), Point(0.5, S6), Point(1, 0))
-    triangle.perimeterPoints2D.almostEquals(expected) shouldBe
+    triangle.perimeterPoints.almostEquals(expected) shouldBe
       true
   }
 
@@ -179,7 +179,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
         Point(3, 4), Point(4, 4), Point(4, 3), Point(4, 2), Point(4, 1), Point(4, 0), Point(3, 0),
         Point(2, 0), Point(1, 0)
       )
-    sqr4x4Reticulate.perimeterPoints2D.almostEquals(expected) shouldBe
+    sqr4x4Reticulate.perimeterPoints.almostEquals(expected) shouldBe
       true
   }
 
@@ -311,7 +311,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it can "be converted to 2D points" in {
-    sqr4x4Reticulate.perimeterPoints2D.almostEquals(
+    sqr4x4Reticulate.perimeterPoints.almostEquals(
       Vector(
         Point(),
         Point(0, 1),

@@ -1,11 +1,11 @@
 package io.github.scala_tessella.tessella
 
-import Coordinates.*
 import Geometry.*
 import Geometry.Radian.{TAU, TAU_2}
-import TilingGrowth.*
 import RegularPolygon.{Polygon, PolygonsSeqOrdering, Vertex}
+import TilingCoordinates.*
 import TilingErrorMessages.*
+import TilingGrowth.*
 import Topology.*
 import creation.{Layered, Quadratic, Uni4Hex, Uni5Hex, UniHex, UniTriangle}
 import utility.Utils.*
@@ -169,7 +169,7 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
 
   extension (nodes: RingPath)
 
-    private def toPoints2D(angles: Map[Node, Radian]): Vector[Point] =
+    private def toPoints(angles: Map[Node, Radian]): Vector[Point] =
       nodes.toRingNodes.scanLeft((Point(1, 0), TAU_2: Radian))({
         case ((point, acc), node) => (point.plusPolarUnit(acc), acc + angles(node) + TAU_2)
       }).map((point, _) => point).tail
@@ -344,24 +344,24 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
    *
    * @note they differ from the points found as a whole tiling in [[Tiling.coords]]
    */
-  val perimeterPoints2D: Vector[Point] =
-    perimeter.toPoints2D(perimeterAngles)
+  val perimeterPoints: Vector[Point] =
+    perimeter.toPoints(perimeterAngles)
 
   /** Associations of perimeter node and spatial coordinate */
   lazy val perimeterCoords: Coords =
-    perimeter.toRingNodes.zip(perimeterPoints2D).toMap
+    perimeter.toRingNodes.zip(perimeterPoints).toMap
 
   /** Checks there are no multiple perimeter nodes at the same spatial coordinates */
   def hasPerimeterWithDistinctVertices: Boolean =
     edges.isEmpty || perimeterCoords.values.toVector.areAllDistinct
 
   /** Perimeter 2D polygon */
-  lazy val perimeterSimplePolygon2D: SimplePolygon =
-    SimplePolygon(perimeterPoints2D.toList)
+  lazy val perimeterSimplePolygon: SimplePolygon =
+    SimplePolygon(perimeterPoints.toList)
 
   /** Checks there are no intersecting perimeter edges */
   def hasPerimeterNotSelfIntersecting: Boolean =
-    edges.isEmpty || perimeter.toRingNodes.sizeIs < 13 || !perimeterSimplePolygon2D.isSelfIntersecting
+    edges.isEmpty || perimeter.toRingNodes.sizeIs < 13 || !perimeterSimplePolygon.isSelfIntersecting
 
   /** Filters the invalid perimeter vertices */
   def invalidPerimeterVertices: Vector[Node] =
@@ -510,10 +510,6 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
   /** Area of the tiling */
   def area: Double =
     groupHedrals.map((polygon, count) => Vertex.tessellableAreas(polygon) * count).sum
-
-//  /** Alternative method for the area of the tiling */
-//  def areaAlt: Double =
-//    Math.abs(perimeterSimplePolygon2D.area())
 
   /** @see https://en.wikipedia.org/wiki/Compactness_measure#Examples */
   def compactness: Double =

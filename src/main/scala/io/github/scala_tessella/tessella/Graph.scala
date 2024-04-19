@@ -1,6 +1,6 @@
 package io.github.scala_tessella.tessella
 
-import Coordinates.*
+import TilingCoordinates.*
 import Topology.{Degree, Edge, EdgesNodesSizeOrdering, EdgesSizeOrdering, Node, isFork, isThread}
 import utility.Utils.{filterUnique, toCouple}
 import utility.UtilsOption.firstDefined

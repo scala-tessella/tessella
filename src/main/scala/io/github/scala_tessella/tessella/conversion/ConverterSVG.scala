@@ -6,7 +6,6 @@ import SharedML.*
 import Geometry.Radian
 import Geometry.*
 
-import scala.jdk.CollectionConverters.*
 import scala.xml.{Elem, Null, UnprefixedAttribute}
 
 /** Generic methods for producing .SVG file from [[math.geom2d]]
@@ -47,9 +46,9 @@ trait ConverterSVG extends UtilsXML:
   val stroke: String => Attribute =
     Attribute.create("stroke")
 
-  private def framedViewBox(box9D: Box): String =
+  private def framedViewBox(box: Box): String =
     val enlarged: Box =
-      box9D.enlarge(0.5)
+      box.enlarge(0.5)
     val newMin: Point =
       Point(enlarged.x0, enlarged.y0)
     val (minX, minY): (Double, Double) =
@@ -60,11 +59,11 @@ trait ConverterSVG extends UtilsXML:
 
   /** `svg` element with `viewBox` to fit a given box
    *
-   * @param box2D box area with width and height to fit
+   * @param box   box area with width and height to fit
    * @param elems placed in `svg`
    */
-  def svg(box9D: Box, elems: Elem *): Elem =
-    <svg viewBox={ s"${framedViewBox(box9D)}" } xmlns="http://www.w3.org/2000/svg">{ elems.toNodeBuffer }</svg>
+  def svg(box: Box, elems: Elem *): Elem =
+    <svg viewBox={ s"${framedViewBox(box)}" } xmlns="http://www.w3.org/2000/svg">{ elems.toNodeBuffer }</svg>
 
   /** `metadata` element */
   def metadata(elems: Elem *): Elem =
@@ -94,12 +93,12 @@ trait ConverterSVG extends UtilsXML:
 
   /** `rect` element
    *
-   * @param box2D spatial coordinates
+   * @param box spatial coordinates
    */
-  def rect(box9D: Box): Elem =
+  def rect(box: Box): Elem =
     val methods: List[Box => Double] =
       List(_.width, _.height, _.x0, _.y0)
-    (methods.map(_.apply(box9D)).map(rescale): @unchecked) match
+    (methods.map(_.apply(box)).map(rescale): @unchecked) match
       case width :: height :: x :: y :: Nil =>
         <rect width={ s"$width" } height={ s"$height" } x={ s"$x" } y={ s"$y" }></rect>
 
@@ -115,9 +114,9 @@ trait ConverterSVG extends UtilsXML:
       <polygon>{ elems.toNodeBuffer }</polygon>
     ).withPoints(points)
 
-  /** `polygon` element from `Polygon2D` */
-  def polygon(simplePolygon9D: SimplePolygon): Elem =
-    polygon(simplePolygon9D.getVertices)
+  /** `polygon` element from `SimplePolygon` */
+  def polygon(simplePolygon: SimplePolygon): Elem =
+    polygon(simplePolygon.getVertices)
 
   /** `polyline` element
    *
@@ -143,7 +142,7 @@ trait ConverterSVG extends UtilsXML:
       point2.scaled
     <line x1={ s"$x1" } y1={ s"$y1" } x2={ s"$x2" } y2={ s"$y2" } />
 
-  /** `line` element from `LineSegment2D` */
+  /** `line` element from `LineSegment` */
   def line(segment: LineSegment): Elem =
     line(segment.point1, segment.point2)
 
@@ -176,7 +175,7 @@ trait ConverterSVG extends UtilsXML:
 
   /** Animated polygon
    *
-   * @param points spatial coordinates
+   * @param pointsSeries spatial coordinates
    */
   def animatedPolygon(pointsSeries: List[Iterable[Point]]): Elem =
     val animation: Elem =
@@ -218,7 +217,7 @@ trait ConverterSVG extends UtilsXML:
   /** Arrow head as a triangle
    *
    * @param tip spatial coordinates of endpoint with arrow
-   * @param point2 spatial coordinates of other endpoint
+   * @param origin spatial coordinates of other endpoint
    */
   def arrowHead(tip: Point, origin: Point, elems: Elem *): Elem =
     polygon(arrowHeadPoints(tip, origin), elems *)

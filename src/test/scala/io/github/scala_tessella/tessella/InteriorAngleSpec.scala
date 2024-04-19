@@ -1,6 +1,5 @@
 package io.github.scala_tessella.tessella
 
-import Coordinates.*
 import Geometry.*
 import Geometry.Radian.TAU
 import RegularPolygon.Polygon

@@ -1,6 +1,6 @@
 package io.github.scala_tessella.tessella
 
-import Coordinates.*
+import TilingCoordinates.*
 import Geometry.Radian.TAU
 import Geometry.*
 import RegularPolygon.{Polygon, Vertex}
@@ -111,7 +111,7 @@ object TilingErrorMessages:
     /** Error message for invalid tiling vertex coordinates, with SVG description */
     def invalidVertexCoordsErrMsg: String =
       val pointCouples: List[(Point, Point)] =
-        tiling.perimeterPoints2D.almostEqualCouples.toList
+        tiling.perimeterPoints.almostEqualCouples.toList
       val nodeCouples: List[(Node, Node)] =
         pointCouples.map((p1, p2) => (perimeterNodeFromPoint(p1, true), perimeterNodeFromPoint(p2, true)))
       val svg: String =
@@ -125,7 +125,7 @@ object TilingErrorMessages:
     /** Error message for invalid tiling edges intersection, with SVG description */
     def invalidIntersectionErrMsg: String =
       val sideCouples =
-        tiling.perimeterSimplePolygon2D.intersectingSides.toList
+        tiling.perimeterSimplePolygon.intersectingSides.toList
 
       def edgeFromSide(side: LineSegment): Edge =
         Edge((perimeterNodeFromPoint(side.point1), perimeterNodeFromPoint(side.point2)))

@@ -1,14 +1,14 @@
 package io.github.scala_tessella.tessella
 
-import io.github.scala_tessella.tessella.Geometry.{Box, LineSegment, Point}
+import Geometry.{Box, LineSegment, Point}
 import Topology.{Edge, Node}
 import utility.Utils.mapValues2
 
-/** Associations of node and spatial 2D coordinates */
-type Coords = Map[Node, Point]
-
 /** Methods to help the spatial representation of a tiling */
-object Coordinates:
+object TilingCoordinates:
+
+  /** Associations of node and spatial 2D coordinates */
+  type Coords = Map[Node, Point]
 
   /** Spatial coordinates for the first two nodes of a [[Tiling]] */
   val startingCoords: Coords =
@@ -32,17 +32,17 @@ object Coordinates:
 
   extension (edge: Edge)
 
-    /** Creates a `LineSegment2D` of the given coordinates */
+    /** Creates a `LineSegment` of the given coordinates */
     def toSegment(coords: Coords): LineSegment =
       LineSegment(coords(edge.lesserNode), coords(edge.greaterNode))
 
   extension (edges: List[Edge])
 
-    /** Creates a sequence of `LineSegment2D` of the given coordinates */
+    /** Creates a sequence of `LineSegment` of the given coordinates */
     def toSegments(coords: Coords): List[LineSegment] =
       edges.map(_.toSegment(coords))
 
-    /** Creates a bounding `Box2D` containing all edges with the given coordinates
+    /** Creates a bounding `Box` containing all edges with the given coordinates
      *
      * @param coords      map with the points of each node
      * @param enlargement extra space at each side

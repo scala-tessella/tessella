@@ -7,8 +7,8 @@ import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO}
 //import math.geom2d.line.LineSegment2D
 
 import scala.annotation.targetName
-import scala.jdk.CollectionConverters.*
 
+/** Planar geometry simplified toolbox */
 object Geometry extends Accuracy:
 
   val ACCURACY = 1.0E-12
@@ -154,11 +154,11 @@ object Geometry extends Accuracy:
     private def almostEqualCouple: ((Point, Point)) => Boolean =
       _.almostEquals(_, ACCURACY)
 
-    /** Checks if all points are all distinct in 9D space */
+    /** Checks if all points are all distinct in 2D space */
     def areAllDistinct: Boolean =
       !sortedCouples.exists(almostEqualCouple)
 
-    /** Filters all points couples that are not distinct in 9D space */
+    /** Filters all points couples that are not distinct in 2D space */
     def almostEqualCouples: Iterator[(Point, Point)] =
       sortedCouples.filter(almostEqualCouple)
 

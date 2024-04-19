@@ -2,7 +2,7 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
-import io.github.scala_tessella.tessella.Geometry.{LineSegment, Point, RegularPolygon2D, SimplePolygon}
+import Geometry.{LineSegment, Point, RegularPolygon2D}
 import SVG.LabelledNodes.PERIMETER_ONLY
 import SVG.MarkStyle.NONE
 import SharedML.*
@@ -13,7 +13,6 @@ import utility.Utils.toCouple
 import utility.UtilsOption.getDefined
 import io.github.scala_tessella.ring_seq.RingSeq.Index
 
-import scala.jdk.CollectionConverters.*
 import scala.xml.Elem
 
 /** Methods to convert a `Tiling` into an SVG file */
@@ -137,8 +136,8 @@ object SVG extends ConverterSVG:
       fill("red")
     )*)
 
-  private def markNode(point2D: Point): Elem =
-    circle(point2D, 0.075)
+  private def markNode(point: Point): Elem =
+    circle(point, 0.075)
 
   private def graphGroup(lines: Seq[Elem]): Elem =
     group(
@@ -251,8 +250,8 @@ object SVG extends ConverterSVG:
   extension (node: Node)
 
     /** Node label at given coordinates */
-    def label(point2D: Point): Elem =
-      text(point2D, node.toString)
+    def label(point: Point): Elem =
+      text(point, node.toString)
 
   extension (tiling: Tiling)
 

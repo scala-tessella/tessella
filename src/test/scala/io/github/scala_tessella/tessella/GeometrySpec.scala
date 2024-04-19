@@ -1,8 +1,8 @@
 package io.github.scala_tessella.tessella
 
-import Coordinates.*
 import Geometry.*
 import Geometry.Radian.TAU_4
+import TilingCoordinates.*
 import Topology.{--, Edge, Node}
 
 import org.scalatest.*
