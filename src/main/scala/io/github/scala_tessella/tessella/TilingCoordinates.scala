@@ -1,8 +1,12 @@
 package io.github.scala_tessella.tessella
 
-import Geometry.{Box, LineSegment, Point}
+import Geometry.{Box, LineSegment, Point, Radian}
+import Geometry.Radian.TAU_2
 import Topology.{Edge, Node}
-import utility.Utils.mapValues2
+import utility.Utils.{mapValues2, toCouple}
+
+import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO, startAt}
+import scala.annotation.tailrec
 
 /** Methods to help the spatial representation of a tiling */
 object TilingCoordinates:
@@ -11,8 +15,52 @@ object TilingCoordinates:
   type Coords = Map[Node, Point]
 
   /** Spatial coordinates for the first two nodes of a [[Tiling]] */
-  val startingCoords: Coords =
+  private val startingCoords: Coords =
     Map(Node(1) -> Point(), Node(2) -> Point(1, 0))
+
+  extension (tiling: Tiling)
+
+    /** Spatial coordinates of a [[Tiling]] */
+    def coordinates: Coords =
+
+      @tailrec
+      def loop(coords: Coords, polygons: List[tiling.PolygonPath]): Coords =
+        polygons.find(_.toPolygonPathNodes.slidingO(2).exists(_.forall(node => coords.contains(node)))) match
+          case None => coords
+          case Some(polygon) =>
+            val pairs: List[Vector[Node]] =
+              polygon.toPolygonPathNodes.slidingO(2).toList
+            val index: Index =
+              pairs.indexWhere(_.forall(node => coords.contains(node)))
+            val startingAngle: Radian =
+              coords(pairs(index)(0)).angleTo(coords(pairs(index)(1)))
+            val alpha: Radian =
+              polygon.toPolygon.alpha
+            val newCoords: Coords =
+              pairs.startAt(index - 1).drop(2).map(_.toCouple).foldLeft((coords, startingAngle))({
+                case ((cumulativeCoordinates, angle), (previous, node)) =>
+                  val newAngle: Radian =
+                    angle + TAU_2 - alpha
+                  val newCumulativeCoordinates: Coords =
+                    if cumulativeCoordinates.contains(node) then cumulativeCoordinates
+                    else cumulativeCoordinates + (node -> cumulativeCoordinates(previous).plusPolarUnit(newAngle))
+                  (newCumulativeCoordinates, newAngle)
+              })._1
+            val newPolygons: List[tiling.PolygonPath] =
+              polygons.diff(List(polygon)).filter(_.toPolygonPathNodes.exists(node => !newCoords.contains(node)))
+            loop(newCoords, newPolygons)
+
+      if tiling.edges.isEmpty then
+        Map()
+      else
+        loop(startingCoords, tiling.orientedPolygons).flipVertically
+
+  extension (nodes: Vector[Node])
+
+    def pointsFrom(angles: Map[Node, Radian]): Vector[Point] =
+      nodes.scanLeft((Point(1, 0), TAU_2: Radian))({
+        case ((point, acc), node) => (point.plusPolarUnit(acc), acc + angles(node) + TAU_2)
+      }).map((point, _) => point).tail
 
   extension (coords: Coords)
 
