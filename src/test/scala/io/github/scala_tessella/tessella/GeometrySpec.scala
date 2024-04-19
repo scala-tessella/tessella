@@ -129,7 +129,7 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
   val sameOrigin: LineSegment =
     LineSegment(Point(), Point(3.0, 3.0))
 
-  "A LineSegment9D" can "intersect with another one" in {
+  "A LineSegment" can "intersect with another one" in {
     segment.intersects(intersecting) shouldBe
       true
   }
