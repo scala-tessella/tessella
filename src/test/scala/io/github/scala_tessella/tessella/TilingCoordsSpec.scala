@@ -1,7 +1,7 @@
 package io.github.scala_tessella.tessella
 
 import Outliers.*
-import GeometryBase.*
+import Geometry.*
 import RegularPolygon.{Polygon, Vertex}
 import TilingGrowth.*
 import TilingGrowth.OtherNodeStrategy.BEFORE_PERIMETER
@@ -19,7 +19,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
   "A tiling made of triangles" can "return its coords" in {
     tri4x4Reticulate.coords.almostEqualsMap(
       Map(
-        1 -> Point(0, 0),
+        1 -> Point(),
         2 -> Point(1, 0),
         3 -> Point(2, 0),
         4 -> Point(-0.5, S6),
@@ -42,7 +42,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
   "A tiling made of hexagons" can "return its coords" in {
     hex4x4Reticulate.coords.almostEqualsMap(
       Map(
-        1 -> Point(0, 0),
+        1 -> Point(),
         2 -> Point(1, 0),
         3 -> Point(1.5, S6),
         4 -> Point(2.5, S6),
@@ -218,7 +218,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
   "A tiling made of squares" can "return its coords" in {
     sqr4x4Reticulate.coords.almostEqualsMap(
       Map(
-        1 -> Point(0, 0),
+        1 -> Point(),
         2 -> Point(1, 0),
         3 -> Point(2, 0),
         4 -> Point(3, 0),
@@ -359,7 +359,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
     val node2inside: Tiling =
       Tiling.maybe(1--2, 2--3, 3--4, 4--1, 3--5, 5--2, 5--6, 6--2, 6--7, 8--7, 8--2, 8--1).unsafe
     (
-      node2inside.coords(Node(1)).almostEquals(Point(0, 0), ACCURACY),
+      node2inside.coords(Node(1)).almostEquals(Point(), ACCURACY),
       node2inside.coords(Node(2)).almostEquals(Point(1, 0), ACCURACY)
     ) shouldBe
       (true, true)
@@ -385,7 +385,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
         5 -> Point(2.3660254037843274, -1.366025403784312),
         10 -> Point(-0.8660254037844171, -3.2320508075688883),
         14 -> Point(0.5000000000000021, 1.8660254037845023),
-        1 -> Point(0.0, 0.0),
+        1 -> Point(),
         6 -> Point(2.366025403784398, -2.366025403784312),
         9 -> Point(3.6415315207705135E-14, -3.7320508075688634),
         13 -> Point(-0.8660254037844263, -0.5000000000000214),
@@ -564,7 +564,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
         78 -> Point(-6.464101615137849, 1.4299672557172016E-13),
         29 -> Point(3.7320508075688754, -9.703349235223868E-14),
         61 -> Point(-1.3660254037843143, 4.0980762113533515),
-        1 -> Point(0.0, 0.0),
+        1 -> Point(),
         74 -> Point(-3.732050807568722, 6.464101615137818),
         6 -> Point(2.366025403784479, -2.366025403784522),
         60 -> Point(-3.732050807569234, -3.7320508075689087),

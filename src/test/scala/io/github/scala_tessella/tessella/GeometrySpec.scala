@@ -1,8 +1,8 @@
 package io.github.scala_tessella.tessella
 
+import Coordinates.*
 import Geometry.*
 import Geometry.Radian.TAU_4
-import GeometryBase.{ACCURACY, Box, LineSegment, Point, RegularPolygon2D, SimplePolygon}
 import Topology.{--, Edge, Node}
 
 import org.scalatest.*
@@ -226,7 +226,7 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
 
   it can "be aligned to the two start points" in {
     coords.alignWithStart.almostEqualsMap(Map(
-      Node(1) -> Point(0.0, 0.0),
+      Node(1) -> Point(),
       Node(2) -> Point(1.0, 0.0),
       Node(3) -> Point(1.0, 1.0),
       Node(4) -> Point(0.0, 1.0)

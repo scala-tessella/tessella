@@ -1,8 +1,8 @@
 package io.github.scala_tessella.tessella
 
+import Coordinates.*
 import Geometry.*
 import Geometry.Radian.{TAU, TAU_2}
-import GeometryBase.{Box, Point, SimplePolygon}
 import TilingGrowth.*
 import RegularPolygon.{Polygon, PolygonsSeqOrdering, Vertex}
 import TilingErrorMessages.*

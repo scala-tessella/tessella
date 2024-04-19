@@ -2,7 +2,7 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
-import io.github.scala_tessella.tessella.GeometryBase.{LineSegment, Point, RegularPolygon2D, SimplePolygon}
+import io.github.scala_tessella.tessella.Geometry.{LineSegment, Point, RegularPolygon2D, SimplePolygon}
 import SVG.LabelledNodes.PERIMETER_ONLY
 import SVG.MarkStyle.NONE
 import SharedML.*

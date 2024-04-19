@@ -2,7 +2,7 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
-import GeometryBase.SimplePolygon
+import Geometry.SimplePolygon
 import SharedML.{Attribute, Style, Title, withStyle}
 import SVG.*
 import Topology.{Edge, Node}

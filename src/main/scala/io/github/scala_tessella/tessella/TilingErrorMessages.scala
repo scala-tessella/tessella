@@ -1,8 +1,8 @@
 package io.github.scala_tessella.tessella
 
-import Geometry.*
+import Coordinates.*
 import Geometry.Radian.TAU
-import GeometryBase.*
+import Geometry.*
 import RegularPolygon.{Polygon, Vertex}
 import Topology.{Degree, Edge, Node}
 import conversion.ConverterSVG.Description
@@ -100,7 +100,7 @@ object TilingErrorMessages:
     private def perimeterNodeFromPoint(point: Point, strict: Boolean = false): Node =
       tiling.perimeterCoords
         .find((_, mappedPoint) =>
-          if !strict && point.almostEquals(Point(0.0, 0.0), ACCURACY) then
+          if !strict && point.almostEquals(Point(), ACCURACY) then
             mappedPoint.almostEquals(point, ACCURACY)
           else
             mappedPoint == point

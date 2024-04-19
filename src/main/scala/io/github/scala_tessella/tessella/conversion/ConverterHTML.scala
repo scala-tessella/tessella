@@ -1,6 +1,6 @@
 package io.github.scala_tessella.tessella.conversion
 
-import io.github.scala_tessella.tessella.GeometryBase.Box
+import io.github.scala_tessella.tessella.Geometry.Box
 import SharedML.*
 
 import scala.xml.Elem

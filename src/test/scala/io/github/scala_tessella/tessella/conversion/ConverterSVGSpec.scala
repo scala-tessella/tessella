@@ -1,7 +1,7 @@
 package io.github.scala_tessella.tessella
 package conversion
 
-import GeometryBase.Box
+import Geometry.Box
 import SharedML.addAttributes
 import SVG.*
 

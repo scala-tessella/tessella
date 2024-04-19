@@ -1,6 +1,6 @@
 package io.github.scala_tessella.tessella
 
-import Geometry.*
+import Coordinates.*
 import Geometry.Radian.TAU_6
 import RegularPolygon.Vertex
 import Topology.*
@@ -10,7 +10,7 @@ import utility.Utils.compareElems
 
 import scala.xml.{Elem, XML}
 
-trait Helper:
+trait Helper extends Accuracy:
 
   val S6: Double =
     Math.sin(TAU_6.toDouble)

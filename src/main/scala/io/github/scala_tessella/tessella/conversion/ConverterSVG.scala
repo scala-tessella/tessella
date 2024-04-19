@@ -4,7 +4,7 @@ package conversion
 import ConverterSVG.Description
 import SharedML.*
 import Geometry.Radian
-import GeometryBase.*
+import Geometry.*
 
 import scala.jdk.CollectionConverters.*
 import scala.xml.{Elem, Null, UnprefixedAttribute}

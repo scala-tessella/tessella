@@ -2,8 +2,8 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
-import Geometry.toBox
-import GeometryBase.{Box, LineSegment, Point}
+import Coordinates.toBox
+import Geometry.{Box, LineSegment, Point}
 import SharedML.*
 import SVG.*
 

@@ -2,7 +2,6 @@ package io.github.scala_tessella.tessella
 
 import Geometry.*
 import Geometry.Radian.{TAU_2, TAU_3, TAU_4, TAU_6}
-import GeometryBase.*
 import Outliers.*
 import RegularPolygon.{Polygon, Vertex}
 import TilingSymmetry.{countSymmetries, countRotationalSymmetries}
@@ -131,14 +130,14 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
 
   it can "transform perimeter into cartesian points" in {
     val expected: Vector[Point] =
-      Vector(Point(0, 0), Point(0.5, S6), Point(1, 0))
+      Vector(Point(), Point(0.5, S6), Point(1, 0))
     triangle.perimeterPoints2D.almostEquals(expected) shouldBe
       true
   }
 
   it can "have a map of nodes and cartesian points" in {
     triangle.perimeterCoords.almostEqualsMap(Map(
-      1 -> Point(0, 0),
+      1 -> Point(),
       3 -> Point(0.5, S6),
       2 -> Point(1, 0)
     ).mapKeys(Node(_))) shouldBe
@@ -176,7 +175,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   it can "transform perimeter into cartesian points" in {
     val expected: Vector[Point] =
       Vector(
-        Point(0, 0), Point(0, 1), Point(0, 2), Point(0, 3), Point(0, 4), Point(1, 4), Point(2, 4),
+        Point(), Point(0, 1), Point(0, 2), Point(0, 3), Point(0, 4), Point(1, 4), Point(2, 4),
         Point(3, 4), Point(4, 4), Point(4, 3), Point(4, 2), Point(4, 1), Point(4, 0), Point(3, 0),
         Point(2, 0), Point(1, 0)
       )
@@ -314,7 +313,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   it can "be converted to 2D points" in {
     sqr4x4Reticulate.perimeterPoints2D.almostEquals(
       Vector(
-        Point(0, 0),
+        Point(),
         Point(0, 1),
         Point(0, 2),
         Point(0, 3),
@@ -341,7 +340,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
         Node(5)  -> Point(0, 4),
         Node(10) -> Point(1, 4),
         Node(20) -> Point(3, 4),
-        Node(1)  -> Point(0, 0),
+        Node(1)  -> Point(),
         Node(6)  -> Point(1, 0),
         Node(21) -> Point(4, 0),
         Node(2)  -> Point(0, 1),
