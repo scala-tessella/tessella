@@ -2,13 +2,12 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.Description
-import SharedML.*
-import Geometry.Radian
 import Geometry.*
+import SharedML.*
 
 import scala.xml.{Elem, Null, UnprefixedAttribute}
 
-/** Generic methods for producing .SVG file from [[math.geom2d]]
+/** Generic methods for producing .SVG file
  *
  * @see https://en.wikipedia.org/wiki/Scalable_Vector_Graphics
  */
@@ -251,7 +250,7 @@ trait ConverterSVG extends UtilsXML:
       animatedArrowHead(points).withStyle(arrowHeadStyle)
     ) *)
 
-/** Companion methods for producing .SVG file from [[math.geom2d]] */
+/** Companion methods for producing .SVG file */
 object ConverterSVG:
 
   /** A description `desc` element
