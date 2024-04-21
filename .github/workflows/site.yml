@@ -1,0 +1,23 @@
+name: Continuous site publication
+on:
+  push:
+    tags: [v*]
+
+jobs:
+  publishSite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 11
+      - name: Generate site
+        run: sbt makeSite
+      - name: Deploy to GitHub pages
+        uses: JamesIves/github-pages-deploy-action@4.1.3
+        with:
+          branch: gh-pages
+          folder: target/site
