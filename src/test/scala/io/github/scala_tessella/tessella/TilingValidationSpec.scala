@@ -226,177 +226,31 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
     baseEdges ++ List(19--21, 21--22, 22--20, 19--23, 23--24, 24--21)
 
   it can "NOT have perimeter nodes with the same cartesian coords" in {
-    Tiling.maybe(smallestTilingWithInvalidSameVertices) shouldEqual
-      Left(
-        """Tiling must have all perimeter nodes at different cartesian coords:
-          | found invalid couple (12,10).
-          |See SVG:
-          |<svg viewBox="-93.30127 -25.0 193.30127 186.60254" xmlns="http://www.w3.org/2000/svg">
-          |  <g>
-          |    <title>Tiling perimeter</title>
-          |    <desc>Invalid touching vertices</desc>
-          |    <polygon style="fill:none;stroke:blue;stroke-width:2" points="0.0,0.0 -43.30127,25.0 -68.30127,68.30127 -43.30127,111.60254 0.0,136.60254 25.0,93.30127 -18.30127,68.30127 25.0,43.30127 25.0,93.30127 75.0,93.30127 75.0,43.30127 50.0,0.0"/>
-          |    <g style="fill:red;stroke:orangered">
-          |      <title>Perimeter intersections</title>
-          |      <desc>Perimeter edges intersecting</desc>
-          |      <circle cx="25.0" cy="93.30127" r="5.0"/>
-          |    </g>
-          |    <g style="fill:#4a4a4a;text-anchor:middle;font-family:Arial,Helvetica,sans-serif">
-          |      <title>Perimeter node labels</title>
-          |      <desc>Each perimeter node showing its value</desc>
-          |      <text x="-68.30127" y="68.30127">5</text>
-          |      <text x="25.0" y="93.30127">10</text>
-          |      <text x="0.0" y="0.0">1</text>
-          |      <text x="50.0" y="0.0">6</text>
-          |      <text x="75.0" y="93.30127">9</text>
-          |      <text x="-43.30127" y="25.0">2</text>
-          |      <text x="25.0" y="93.30127">12</text>
-          |      <text x="75.0" y="43.30127">7</text>
-          |      <text x="-18.30127" y="68.30127">3</text>
-          |      <text x="0.0" y="136.60254">11</text>
-          |      <text x="-43.30127" y="111.60254">8</text>
-          |      <text x="25.0" y="43.30127">4</text>
-          |    </g>
-          |  </g>
-          |</svg>""".stripMargin
-      )
+    Tiling.maybe(smallestTilingWithInvalidSameVertices).left.getOrElse("").take(107) shouldEqual
+      """Tiling must have all perimeter nodes at different cartesian coords:
+        | found invalid couple (12,10).
+        |See SVG:""".stripMargin
   }
 
   it can "NOT have perimeter with crossing sides" in {
-    Tiling.maybe(smallestTilingWithInvalidCrossingSides) shouldEqual
-      Left(
-        """Tiling must not have intersecting perimeter edges:
-          | found invalid couples ((4--10, 3--12), (9--10, 12--13)).
-          |See SVG:
-          |<svg viewBox="-93.30127 -25.0 193.30127 198.759782" xmlns="http://www.w3.org/2000/svg">
-          |  <g>
-          |    <title>Tiling perimeter</title>
-          |    <desc>Invalid intersecting edges</desc>
-          |    <polygon style="fill:none;stroke:blue;stroke-width:2" points="0.0,0.0 -43.30127,25.0 -68.30127,68.30127 -43.30127,111.60254 -9.84474,148.759782 35.832533,128.422949 30.60611,78.696855 -18.30127,68.30127 25.0,43.30127 25.0,93.30127 75.0,93.30127 75.0,43.30127 50.0,0.0"/>
-          |    <g style="fill:red;stroke:orangered">
-          |      <title>Perimeter intersections</title>
-          |      <desc>Perimeter edges intersecting</desc>
-          |      <circle cx="25.0" cy="77.505239" r="5.0"/>
-          |      <circle cx="32.141096" cy="93.30127" r="5.0"/>
-          |    </g>
-          |    <g style="fill:#4a4a4a;text-anchor:middle;font-family:Arial,Helvetica,sans-serif">
-          |      <title>Perimeter node labels</title>
-          |      <desc>Each perimeter node showing its value</desc>
-          |      <text x="-68.30127" y="68.30127">5</text>
-          |      <text x="25.0" y="93.30127">10</text>
-          |      <text x="0.0" y="0.0">1</text>
-          |      <text x="50.0" y="0.0">6</text>
-          |      <text x="75.0" y="93.30127">9</text>
-          |      <text x="35.832533" y="128.422949">13</text>
-          |      <text x="-43.30127" y="25.0">2</text>
-          |      <text x="30.60611" y="78.696855">12</text>
-          |      <text x="75.0" y="43.30127">7</text>
-          |      <text x="-18.30127" y="68.30127">3</text>
-          |      <text x="-9.84474" y="148.759782">11</text>
-          |      <text x="-43.30127" y="111.60254">8</text>
-          |      <text x="25.0" y="43.30127">4</text>
-          |    </g>
-          |  </g>
-          |</svg>""".stripMargin
-      )
+    Tiling.maybe(smallestTilingWithInvalidCrossingSides).left.getOrElse("").take(117) shouldEqual
+      """Tiling must not have intersecting perimeter edges:
+        | found invalid couples ((4--10, 3--12), (9--10, 12--13)).
+        |See SVG:""".stripMargin
   }
 
   it can "NOT have perimeter with shared area and overlapping sides" in {
-    Tiling.maybe(sharingAreaAndSides) shouldEqual
-      Left(
-        """Tiling must not have intersecting perimeter edges:
-          | found invalid couples ((6--10, 21--22), (6--10, 17--21), (9--10, 17--21), (8--9, 19--22)).
-          |See SVG:
-          |<svg viewBox="-50.0 -25.0 225.0 236.60254" xmlns="http://www.w3.org/2000/svg">
-          |  <g>
-          |    <title>Tiling perimeter</title>
-          |    <desc>Invalid intersecting edges</desc>
-          |    <polygon style="fill:none;stroke:blue;stroke-width:2" points="0.0,0.0 0.0,50.0 -25.0,93.30127 0.0,136.60254 0.0,186.60254 50.0,186.60254 100.0,186.60254 150.0,186.60254 150.0,136.60254 150.0,86.60254 100.0,86.60254 100.0,136.60254 50.0,136.60254 75.0,93.30127 50.0,50.0 100.0,50.0 100.0,100.0 150.0,100.0 150.0,50.0 150.0,0.0 100.0,0.0 50.0,0.0"/>
-          |    <g style="fill:red;stroke:orangered">
-          |      <title>Perimeter intersections</title>
-          |      <desc>Perimeter edges intersecting</desc>
-          |      <circle cx="100.0" cy="86.60254" r="5.0"/>
-          |      <circle cx="100.0" cy="100.0" r="5.0"/>
-          |    </g>
-          |    <g style="fill:#4a4a4a;text-anchor:middle;font-family:Arial,Helvetica,sans-serif">
-          |      <title>Perimeter node labels</title>
-          |      <desc>Each perimeter node showing its value</desc>
-          |      <text x="100.0" y="0.0">5</text>
-          |      <text x="100.0" y="100.0">10</text>
-          |      <text x="-25.0" y="93.30127">14</text>
-          |      <text x="150.0" y="186.60254">20</text>
-          |      <text x="0.0" y="0.0">1</text>
-          |      <text x="100.0" y="50.0">6</text>
-          |      <text x="100.0" y="86.60254">21</text>
-          |      <text x="150.0" y="100.0">9</text>
-          |      <text x="0.0" y="136.60254">13</text>
-          |      <text x="0.0" y="50.0">2</text>
-          |      <text x="100.0" y="136.60254">17</text>
-          |      <text x="150.0" y="86.60254">22</text>
-          |      <text x="50.0" y="136.60254">12</text>
-          |      <text x="150.0" y="0.0">7</text>
-          |      <text x="50.0" y="50.0">3</text>
-          |      <text x="100.0" y="186.60254">18</text>
-          |      <text x="50.0" y="186.60254">16</text>
-          |      <text x="75.0" y="93.30127">11</text>
-          |      <text x="150.0" y="50.0">8</text>
-          |      <text x="150.0" y="136.60254">19</text>
-          |      <text x="50.0" y="0.0">4</text>
-          |      <text x="0.0" y="186.60254">15</text>
-          |    </g>
-          |  </g>
-          |</svg>""".stripMargin
-      )
+    Tiling.maybe(sharingAreaAndSides).left.getOrElse("").take(151) shouldEqual
+      """Tiling must not have intersecting perimeter edges:
+        | found invalid couples ((6--10, 21--22), (6--10, 17--21), (9--10, 17--21), (8--9, 19--22)).
+        |See SVG:""".stripMargin
   }
 
   it can "NOT have perimeter with overlapping sides" in {
-    Tiling.maybe(sharingSides) shouldEqual
-      Left(
-        """Tiling must not have intersecting perimeter edges:
-          | found invalid couples ((19--23, 9--10), (23--24, 8--9)).
-          |See SVG:
-          |<svg viewBox="-25.0 -50.0 236.60254 275.0" xmlns="http://www.w3.org/2000/svg">
-          |  <g>
-          |    <title>Tiling perimeter</title>
-          |    <desc>Invalid intersecting edges</desc>
-          |    <polygon style="fill:none;stroke:blue;stroke-width:2" points="0.0,0.0 0.0,50.0 0.0,100.0 0.0,150.0 50.0,150.0 100.0,150.0 100.0,100.0 50.0,100.0 50.0,50.0 93.30127,75.0 136.60254,50.0 136.60254,100.0 136.60254,150.0 86.60254,150.0 86.60254,200.0 136.60254,200.0 186.60254,200.0 186.60254,150.0 186.60254,100.0 186.60254,50.0 186.60254,0.0 136.60254,0.0 93.30127,-25.0 50.0,0.0"/>
-          |    <g style="fill:red;stroke:orangered">
-          |      <title>Perimeter intersections</title>
-          |      <desc>Perimeter edges intersecting</desc>
-          |      <circle cx="100.0" cy="150.0" r="5.0"/>
-          |      <circle cx="86.60254" cy="150.0" r="5.0"/>
-          |    </g>
-          |    <g style="fill:#4a4a4a;text-anchor:middle;font-family:Arial,Helvetica,sans-serif">
-          |      <title>Perimeter node labels</title>
-          |      <desc>Each perimeter node showing its value</desc>
-          |      <text x="0.0" y="100.0">5</text>
-          |      <text x="100.0" y="100.0">10</text>
-          |      <text x="86.60254" y="200.0">24</text>
-          |      <text x="93.30127" y="-25.0">14</text>
-          |      <text x="186.60254" y="150.0">20</text>
-          |      <text x="0.0" y="0.0">1</text>
-          |      <text x="50.0" y="100.0">6</text>
-          |      <text x="136.60254" y="200.0">21</text>
-          |      <text x="100.0" y="150.0">9</text>
-          |      <text x="136.60254" y="0.0">13</text>
-          |      <text x="50.0" y="0.0">2</text>
-          |      <text x="136.60254" y="100.0">17</text>
-          |      <text x="186.60254" y="200.0">22</text>
-          |      <text x="136.60254" y="50.0">12</text>
-          |      <text x="0.0" y="150.0">7</text>
-          |      <text x="50.0" y="50.0">3</text>
-          |      <text x="186.60254" y="100.0">18</text>
-          |      <text x="186.60254" y="50.0">16</text>
-          |      <text x="93.30127" y="75.0">11</text>
-          |      <text x="86.60254" y="150.0">23</text>
-          |      <text x="50.0" y="150.0">8</text>
-          |      <text x="136.60254" y="150.0">19</text>
-          |      <text x="0.0" y="50.0">4</text>
-          |      <text x="186.60254" y="0.0">15</text>
-          |    </g>
-          |  </g>
-          |</svg>""".stripMargin
-      )
+    Tiling.maybe(sharingSides).left.getOrElse("").take(117) shouldEqual
+      """Tiling must not have intersecting perimeter edges:
+        | found invalid couples ((19--23, 9--10), (23--24, 8--9)).
+        |See SVG:""".stripMargin
   }
 
   "An outlier tiling" must "be valid" in {

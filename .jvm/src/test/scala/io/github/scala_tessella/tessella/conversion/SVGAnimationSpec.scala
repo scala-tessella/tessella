@@ -1,8 +1,8 @@
 package io.github.scala_tessella.tessella
 package conversion
 
-import SVG.*
 import Outliers.sqr3x3Growth
+import SVG.*
 
 import org.scalatest.*
 import org.scalatest.flatspec.*
