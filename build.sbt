@@ -37,7 +37,7 @@ lazy val tessella =
         "io.github.iltotore" %%% "iron" % "2.5.0",
         "org.scala-lang.modules" %%% "scala-xml" % "2.3.0",
         "org.scalatest" %%% "scalatest" % "3.2.18" % "test",
-        "org.scalacheck" %%% "scalacheck" % "1.17.1" % "test",
+        "org.scalacheck" %%% "scalacheck" % "1.18.0" % "test",
       )
     )
     .jvmSettings()
