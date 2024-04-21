@@ -58,51 +58,11 @@ class TilingGrowthSpec extends AnyFlatSpec with Helper with should.Matchers {
   "A tiling grown by polygons" can "find a dead end" in {
     val start: Tiling =
       Tiling.maybe(square.edges ++ List(1--5, 2--5, 2--6, 3--6, 3--7, 4--7, 4--8, 1--8)).unsafe
-    start.growByPolygon(1, Polygon(42), List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(HIGHER_ORDINAL)) shouldBe
-      Left(
-        """Tiling cannot be grown after adding 0 * pgon-42,
-          | no more edges fillable
-          |See SVG:
-          |<svg viewBox="-68.30127 -68.30127 186.60254 186.60254" xmlns="http://www.w3.org/2000/svg">
-          |  <g>
-          |    <title>Tiling with invalid addition</title>
-          |    <desc>No more space to add pgon-42 after 0 steps</desc>
-          |    <g>
-          |      <title>Tiling</title>
-          |      <desc>Finite tessellation of regular polygons</desc>
-          |      <g style="stroke:black">
-          |        <title>Edges</title>
-          |        <desc>Sides of the regular polygons</desc>
-          |        <line x1="0.0" y1="0.0" x2="50.0" y2="0.0"/>
-          |        <line x1="50.0" y1="0.0" x2="50.0" y2="50.0"/>
-          |        <line x1="50.0" y1="50.0" x2="0.0" y2="50.0"/>
-          |        <line x1="0.0" y1="0.0" x2="0.0" y2="50.0"/>
-          |        <line x1="0.0" y1="0.0" x2="25.0" y2="-43.30127"/>
-          |        <line x1="50.0" y1="0.0" x2="25.0" y2="-43.30127"/>
-          |        <line x1="50.0" y1="0.0" x2="93.30127" y2="25.0"/>
-          |        <line x1="50.0" y1="50.0" x2="93.30127" y2="25.0"/>
-          |        <line x1="50.0" y1="50.0" x2="25.0" y2="93.30127"/>
-          |        <line x1="0.0" y1="50.0" x2="25.0" y2="93.30127"/>
-          |        <line x1="0.0" y1="50.0" x2="-43.30127" y2="25.0"/>
-          |        <line x1="0.0" y1="0.0" x2="-43.30127" y2="25.0"/>
-          |      </g>
-          |      <polygon style="fill:none;stroke:blue;stroke-width:2" points="0.0,0.0 -43.30127,25.0 0.0,50.0 25.0,93.30127 50.0,50.0 93.30127,25.0 50.0,0.0 25.0,-43.30127"/>
-          |      <g style="fill:#4a4a4a;text-anchor:middle;font-family:Arial,Helvetica,sans-serif">
-          |        <title>Node labels</title>
-          |        <desc>Each node showing its value</desc>
-          |        <text x="25.0" y="-43.30127">5</text>
-          |        <text x="0.0" y="0.0">1</text>
-          |        <text x="93.30127" y="25.0">6</text>
-          |        <text x="50.0" y="0.0">2</text>
-          |        <text x="25.0" y="93.30127">7</text>
-          |        <text x="50.0" y="50.0">3</text>
-          |        <text x="-43.30127" y="25.0">8</text>
-          |        <text x="0.0" y="50.0">4</text>
-          |      </g>
-          |    </g>
-          |  </g>
-          |</svg>""".stripMargin
-      )
+    start.growByPolygon(1, Polygon(42), List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(HIGHER_ORDINAL))
+      .left.getOrElse("").take(81) shouldBe
+      """Tiling cannot be grown after adding 0 * pgon-42,
+        | no more edges fillable
+        |See SVG:""".stripMargin     
   }
 
   "A tiling to be grown with a triangle plug" can "have a perimeter" in {

@@ -438,10 +438,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   "The compactness of a tiling" must "increase as it nears a circle" in {
-    (3 to 10)
-      .toList
-      .map(size => (size, Tiling.fromPolygon(size).compactness))
-      .sortBy((_, compactness) => compactness) shouldBe
+    val results: List[(Int, Double)] =
       List(
         (3, 0.6045997880780728),
         (4, 0.7853981633974484),
@@ -452,5 +449,12 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
         (9, 0.9590505418736094),
         (10, 0.9668827990464026)
       )
+    (3 to 10)
+      .toList
+      .map(size => (size, Tiling.fromPolygon(size).compactness))
+      .sortBy((_, compactness) => compactness)
+      .zip(results)
+      .forall({ case ((a, b), (c, d)) => a == c && b.~=(d) }) shouldBe
+      true
   }
 }

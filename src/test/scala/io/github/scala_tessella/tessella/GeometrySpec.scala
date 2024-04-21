@@ -12,7 +12,8 @@ import org.scalatest.matchers.*
 class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
 
   "A radian" can "be created as an opaque type" in {
-    Radian(0).toString shouldBe "0.0"
+    Radian(0).toDouble shouldBe
+      0.0
   }
 
   def foo(radian: Radian) =
