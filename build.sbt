@@ -13,6 +13,11 @@ ThisBuild / licenses := Seq("APL2" -> url("https://www.apache.org/licenses/LICEN
 ThisBuild / publishTo := sonatypePublishToBundle.value
 ThisBuild / developers := List(Developer("scala-tessella", "scala-tessella", "mario.callisto@gmail.com", url("https://github.com/scala-tessella")))
 ThisBuild / homepage := Some(url("https://github.com/scala-tessella/tessella"))
+ThisBuild / scmInfo := Some(ScmInfo(
+  url("https://github.com/scala-tessella/tessella"),
+  "scm:git:https://github.com/scala-tessella/tessella.git",
+  "scm:git:git@github.com:scala-tessella/tessella.git"
+))
 
 lazy val root: Project =
   project
