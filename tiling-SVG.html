@@ -5,7 +5,7 @@
 <title>Conversion to SVG · Tessella</title>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="description" content='Tilings by regular polygons'/>
+<meta name="description" content='root'/>
 <link rel="canonical" href="https://github.com/scala-tessella/tessellatiling-SVG.html"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:100normal,100italic,300normal,300italic,400normal,400italic,500normal,500italic,700normal,700italic,900normal,900italicc" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
@@ -32,7 +32,7 @@
 <span class="home-icon">⌂</span>Tessella
 </a>
 <div class="version-number">
-0.1.3
+0.2.1
 </div>
 </div>
 <div class="nav-toc">
@@ -78,7 +78,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>Tessella
 </a>
 <div class="version-number">
-0.1.3
+0.2.1
 </div>
 </div>
 <div class="nav-toc">
@@ -122,7 +122,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <pre class="prettyprint"><code class="language-scala">import io.github.scala_tessella.tessella.conversion.SVG.*
 
 val uniform3gonal2: Tiling = Tiling.threeUniformTwoOne(4, 4).toOption.get
-uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE) // returns a SVG as scala.XML.Elem
+uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE) // returns a SVG as scala.XML.Elem
 </code></pre>
 <div style="width: 600px;">
 
@@ -146,7 +146,7 @@ uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE) 
 
 <h3><a href="#node-labels" name="node-labels" class="anchor"><span class="anchor-link"></span></a>Node labels</h3>
 
-<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.ALL)
+<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.ALL)
 </code></pre>
 <div style="width: 600px;">
 
@@ -166,7 +166,7 @@ uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE) 
 
 <h3><a href="#animated-node-order" name="animated-node-order" class="anchor"><span class="anchor-link"></span></a>Animated node order</h3>
 
-<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, showGrowth = true)
+<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, showGrowth = true)
 </code></pre>
 <div style="width: 600px;">
 
@@ -186,7 +186,7 @@ uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE) 
 
 <h3><a href="#perimeter" name="perimeter" class="anchor"><span class="anchor-link"></span></a>Perimeter</h3>
 
-<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = true, LabelledNodes = LabelledNodes.NONE)
+<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = true, labelledNodes = LabelledNodes.NONE)
 </code></pre>
 <div style="width: 600px;">
 
@@ -206,7 +206,7 @@ uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE) 
 
 <h3><a href="#polygons" name="polygons" class="anchor"><span class="anchor-link"></span></a>Polygons</h3>
 
-<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = false, fillPolygons = true, LabelledNodes = LabelledNodes.NONE)
+<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = false, fillPolygons = true, labelledNodes = LabelledNodes.NONE)
 </code></pre>
 <div style="width: 600px;">
 
@@ -226,7 +226,7 @@ uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE) 
 
 <h3><a href="#gonality" name="gonality" class="anchor"><span class="anchor-link"></span></a>Gonality</h3>
 
-<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, markStyle = MarkStyle.GONALITY)
+<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, markStyle = MarkStyle.GONALITY)
 </code></pre>
 <div style="width: 600px;">
 
@@ -246,7 +246,7 @@ uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE) 
 
 <h3><a href="#uniformity" name="uniformity" class="anchor"><span class="anchor-link"></span></a>Uniformity</h3>
 
-<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE, markStyle = MarkStyle.UNIFORMITY)
+<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, markStyle = MarkStyle.UNIFORMITY)
 </code></pre>
 <div style="width: 600px;">
 
@@ -264,8 +264,28 @@ uniform3gonal2.toSVG(showPerimeter = false, LabelledNodes = LabelledNodes.NONE) 
 </table>
 </div>
 
+<h3><a href="#inversion" name="inversion" class="anchor"><span class="anchor-link"></span></a>Inversion</h3>
+
+<pre class="prettyprint"><code class="language-scala">uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, showInversion = true)
+</code></pre>
+<div style="width: 600px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/inversion.svg" alt="inversion" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>_Finite set of a <strong>[2x(3⁶);(3⁴.6)]</strong> pattern with inverted tessellation |</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
 <div class="source-github">
-The source code for this page can be found <a href="https://github.com/scala-tessella/tessella/tree/v0.1.3/src/main/paradox/tiling-SVG.md">here</a>.
+The source code for this page can be found <a href="https://github.com/scala-tessella/tessella/tree/master/src/main/paradox/tiling-SVG.md">here</a>.
 </div>
 
 <div class="nav-next">
@@ -348,7 +368,7 @@ The source code for this page can be found <a href="https://github.com/scala-tes
 <script type="text/javascript" src="lib/prettify/prettify.js"></script>
 <script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
 <script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
-<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '0.1.3', 'https://github.com/scala-tessella/tessella')});</script>
+<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '0.2.1', 'https://github.com/scala-tessella/tessella')});</script>
 
 
 </html>
