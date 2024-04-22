@@ -2,7 +2,7 @@
 
 ## Tilings by regular polygons
 
-**Tessella** is a Scala 3 library
+**Tessella** is a Scala 3 library compatible with Scala.js
 that helps to deal with finite unit-regular-polygon tessellations of a flat surface,
 a classical theme in the wider field of @link:[tessellations](https://en.wikipedia.org/wiki/Tessellation) { open=new } (or _tilings_).
 
@@ -29,7 +29,7 @@ Add the following dependency to your `build.sbt` file:
 
 @@@vars
 ~~~ scala
-libraryDependencies += "io.github.scala-tessella" %% "tessella" % "$project.version$"
+libraryDependencies += "io.github.scala-tessella" %% "tessella" % "$project.version$" // Use %%% instead of %% if you're using ScalaJS
 ~~~
 @@@
 

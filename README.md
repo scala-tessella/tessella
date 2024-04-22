@@ -2,10 +2,11 @@
 
 [![tessella Scala version support](https://index.scala-lang.org/scala-tessella/tessella/tessella/latest.svg?platform=jvm)](https://index.scala-lang.org/scala-tessella/tessella/tessella)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.scala-tessella/tessella_3.svg?label=Maven%20Central)](https://central.sonatype.com/search?q=tessella_3)
+[![Scala.js](https://www.scala-js.org/assets/badges/scalajs-1.16.0.svg)](https://www.scala-js.org)
 [![CI](https://github.com/scala-tessella/tessella/actions/workflows/ci.yml/badge.svg)](https://github.com/scala-tessella/tessella/actions/workflows/ci.yml)
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 
-**Tessella** is a Scala 3 library
+**Tessella** is a Scala 3 library compatible with Scala.js
 that helps to deal with finite unit-regular-polygon tessellations of a flat surface,
 a classical theme in the wider field of [tessellations](https://en.wikipedia.org/wiki/Tessellation) (or _tilings_).
 
@@ -26,7 +27,7 @@ The graph describing the tessellation is a `Tiling` object.
 
 Add the following dependency to your `build.sbt` file:
 ```scala
-libraryDependencies += "io.github.scala-tessella" %% "tessella" % "0.1.3"
+libraryDependencies += "io.github.scala-tessella" %% "tessella" % "0.2.0" // Use %%% instead of %% if you're using ScalaJS
 ```
 
 ## Getting started
