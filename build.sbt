@@ -28,6 +28,11 @@ lazy val root: Project =
       sonatypeCredentialHost := "s01.oss.sonatype.org",
       SiteScaladoc / siteSubdirName := "api",
       paradoxProperties += ("scaladoc.base_url" -> "api"),
+      libraryDependencies ++= Seq(
+        "io.github.scala-tessella" %% "ring-seq" % "0.6.2",
+        "io.github.iltotore" %% "iron" % "2.5.0",
+        "org.scala-lang.modules" %% "scala-xml" % "2.3.0",
+      ),
       git.remoteRepo := sonatypeProjectHosting.value.get.scmUrl,
       ghpagesNoJekyll := true,
       scalacOptions += "-deprecation"
