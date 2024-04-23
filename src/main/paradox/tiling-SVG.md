@@ -124,7 +124,7 @@ uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, 
 ```
 | ![inversion](svg/inversion.svg)                                          |
 |--------------------------------------------------------------------------|
-| _Finite set of a **[2x(3⁶);(3⁴.6)]** pattern with inverted tessellation  |
+| _Finite set of a **[2x(3⁶);(3⁴.6)]** pattern with inverted tessellation_ |
 ```raw
 </div>
 ```
