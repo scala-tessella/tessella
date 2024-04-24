@@ -256,7 +256,7 @@ object SVG extends ConverterSVG:
   extension (tiling: Tiling)
 
     private def graphSVG: Option[Elem] =
-      Option(graphGroup(tiling.edges.map(edge => line(tiling.coords(edge.lesserNode), tiling.coords(edge.greaterNode)))))
+      Option(graphGroup(tiling.graphEdges.map(edge => line(tiling.coords(edge.lesserNode), tiling.coords(edge.greaterNode)))))
 
     private def polygonsSVG(fillPolygons: Boolean): Option[Elem] =
       if fillPolygons then

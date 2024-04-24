@@ -23,7 +23,7 @@ import scala.util.Try
  * @param edges the graph edges
  * @note being `private` a [[Tiling]] cannot be created outside the class, thus ensuring edges validation
  */
-case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling]:
+class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling]:
 
   override def toString: String =
     s"Tiling(${edges.stringify})"
@@ -410,6 +410,7 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
 
     any match
       case that: Tiling =>
+        TilingPolygonsCountOrdering.compare(this, that) == 0 &&
         EdgesSizeOrdering.orElse(EdgesNodesSizeOrdering).compare(this.graphEdges, that.graphEdges) == 0 &&
           this.orderedRoundedPerimeterAngles.isRotationOrReflectionOf(that.orderedRoundedPerimeterAngles) &&
           loop(
@@ -545,7 +546,7 @@ case class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[T
       TilingGrowth.genericGrowPerimeterNodeByVertex(this)(
         node,
         vertex,
-        (t, newEdges) => Tiling(t.edges ++ newEdges),
+        (t, newEdges) => Tiling(t.graphEdges ++ newEdges),
         otherNodeStrategies.toList
       )
     )
@@ -661,7 +662,7 @@ object Tiling extends UniTriangle with UniHex with Uni4Hex with Uni5Hex with Lay
       val unsafeTiling: Tiling =
         fromGraphUnsafe(tentative)
       if unsafeTiling.perimeter.toRingNodes.isEmpty then
-        maybePerimeterEdges(unsafeTiling.edges).map(_ => Tiling.empty)
+        maybePerimeterEdges(unsafeTiling.graphEdges).map(_ => Tiling.empty)
       else if !unsafeTiling.hasValidPerimeterVertices then
         Left(invalidPerimeterVertexErrMsg(unsafeTiling))
       else if !unsafeTiling.hasValidFullVertices then

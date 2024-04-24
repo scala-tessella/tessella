@@ -67,7 +67,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it can "be a single pentagon with 5 nodes and 5 edges" in {
-    (pentagon.graphNodes.size, pentagon.edges.size) shouldBe
+    (pentagon.graphNodes.size, pentagon.graphEdges.size) shouldBe
       (5, 5)
   }
 
@@ -77,12 +77,12 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it can " be publicly created with validation" in {
-    "Tiling.maybe(triangle.edges)" should
+    "Tiling.maybe(triangle.graphEdges)" should
       compile
   }
 
   it must "be publicly created as an Either" in {
-    Tiling.maybe(triangle.edges).isRight shouldBe
+    Tiling.maybe(triangle.graphEdges).isRight shouldBe
       true
   }
 
@@ -102,13 +102,13 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it must "discard duplicated edges" in {
-    Tiling.maybe(triangle.edges ++ triangle.edges) shouldEqual
+    Tiling.maybe(triangle.graphEdges ++ triangle.graphEdges) shouldEqual
       Right(triangle)
   }
 
   it must "have a perimeter" in {
     triangle.perimeter.toRingEdges.toList.sorted(EdgeOrdering) shouldEqual
-      triangle.edges.sorted(EdgeOrdering)
+      triangle.graphEdges.sorted(EdgeOrdering)
   }
 
   "A triangle" can "have perimeter nodes and perimeter path angles" in {
@@ -423,12 +423,12 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it can "be created from the polygons at a full vertex" in {
-    Tiling.fromVertex(FullVertex.s("(3⁶)").vertex).edges.sorted(EdgeOrdering) shouldBe
+    Tiling.fromVertex(FullVertex.s("(3⁶)").vertex).graphEdges.sorted(EdgeOrdering) shouldBe
       List(1--2, 1--3, 1--4, 1--5, 1--6, 1--7, 2--3, 2--7, 3--4, 4--5, 5--6, 6--7)
   }
 
   it can "be created from the polygons at a partial vertex" in {
-    Tiling.fromVertex(Vertex(Vector.fill(3)(Polygon(3)))).edges.sorted(EdgeOrdering) shouldBe
+    Tiling.fromVertex(Vertex(Vector.fill(3)(Polygon(3)))).graphEdges.sorted(EdgeOrdering) shouldBe
       List(1--2, 1--3, 1--4, 1--5, 2--3, 3--4, 4--5)
   }
 

@@ -29,7 +29,7 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
   }
 
   it can "NOT have a node originating just one edge" in {
-    val oneDegree = tiling.edges :+ 3--4
+    val oneDegree = tiling.graphEdges :+ 3--4
     Tiling.maybe(oneDegree) shouldEqual
       Left(
         """Tiling must have each node connected to min 2 and max 6 other nodes, these nodes are not compliant: (4 [degree 1]).
@@ -45,7 +45,8 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
   }
 
   it can "NOT have a node originating more than six edges" in {
-    val sevenDegree = Tiling.fromPolygon(7).edges ++ (1 to 7).map(_--8)
+    val sevenDegree: List[Edge] =
+      Tiling.fromPolygon(7).graphEdges ++ (1 to 7).map(_--8)
     Tiling.maybe(sevenDegree) shouldEqual
       Left(
         """Tiling must have each node connected to min 2 and max 6 other nodes, these nodes are not compliant: (8 [degree 7]).

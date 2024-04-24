@@ -34,12 +34,12 @@ class TilingGrowthNodePolygonSpec extends AnyFlatSpec with Helper with should.Ma
   }
 
   it can "have a square growing node 6 starting from 5" in {
-    minimalTriangleInsertion.maybeGrowNode(Node(6), Polygon(4), AFTER_PERIMETER).unsafe.edges.size shouldBe
+    minimalTriangleInsertion.maybeGrowNode(Node(6), Polygon(4), AFTER_PERIMETER).unsafe.graphEdges.size shouldBe
       14
   }
 
   it can "have the same with a fixed node 5 strategy" in {
-    minimalTriangleInsertion.maybeGrowNode(Node(6), Polygon(4), FIXED(Node(5))).unsafe.edges.size shouldBe
+    minimalTriangleInsertion.maybeGrowNode(Node(6), Polygon(4), FIXED(Node(5))).unsafe.graphEdges.size shouldBe
       14
   }
 
@@ -64,27 +64,27 @@ class TilingGrowthNodePolygonSpec extends AnyFlatSpec with Helper with should.Ma
   }
 
   it can "have the triangle inserted growing node 7 starting from 1" in {
-    minimalTriangleInsertion.maybeGrowNode(Node(7), Polygon(3), BEFORE_PERIMETER).unsafe.edges.size shouldBe
+    minimalTriangleInsertion.maybeGrowNode(Node(7), Polygon(3), BEFORE_PERIMETER).unsafe.graphEdges.size shouldBe
       12
   }
 
   it can "have the same with a fixed node 1 strategy" in {
-    minimalTriangleInsertion.maybeGrowNode(Node(7), Polygon(3), FIXED(Node(1))).unsafe.edges.size shouldBe
+    minimalTriangleInsertion.maybeGrowNode(Node(7), Polygon(3), FIXED(Node(1))).unsafe.graphEdges.size shouldBe
       12
   }
 
   it can "have the triangle inserted growing node 2 starting from 1" in {
-    minimalTriangleInsertion.maybeGrowNode(Node(2), Polygon(3), AFTER_PERIMETER).unsafe.edges.size shouldBe
+    minimalTriangleInsertion.maybeGrowNode(Node(2), Polygon(3), AFTER_PERIMETER).unsafe.graphEdges.size shouldBe
       12
   }
 
   it can "have the same result with a fixed node 1 strategy" in {
-    minimalTriangleInsertion.maybeGrowNode(Node(2), Polygon(3), FIXED(Node(1))).unsafe.edges.size shouldBe
+    minimalTriangleInsertion.maybeGrowNode(Node(2), Polygon(3), FIXED(Node(1))).unsafe.graphEdges.size shouldBe
       12
   }
 
   it can "have the triangle inserted growing node 2 starting from the lower ordinal" in {
-    minimalTriangleInsertion.maybeGrowNode(Node(2), Polygon(3), LOWER_ORDINAL).unsafe.edges.size shouldBe
+    minimalTriangleInsertion.maybeGrowNode(Node(2), Polygon(3), LOWER_ORDINAL).unsafe.graphEdges.size shouldBe
       12
   }
 
@@ -98,17 +98,17 @@ class TilingGrowthNodePolygonSpec extends AnyFlatSpec with Helper with should.Ma
   }
 
   it can "have the triangle inserted growing node 2 starting from the higher ordinal" in {
-    minimalTriangleInsertion.maybeGrowNode(Node(2), Polygon(3), HIGHER_ORDINAL).unsafe.edges.size shouldBe
+    minimalTriangleInsertion.maybeGrowNode(Node(2), Polygon(3), HIGHER_ORDINAL).unsafe.graphEdges.size shouldBe
       13
   }
 
   it can "have the triangle inserted growing node 2 starting from the wider external angle" in {
-    minimalTriangleInsertion.maybeGrowNode(Node(2), Polygon(3), WIDER_ANGLE, BEFORE_PERIMETER).unsafe.edges.size shouldBe
+    minimalTriangleInsertion.maybeGrowNode(Node(2), Polygon(3), WIDER_ANGLE, BEFORE_PERIMETER).unsafe.graphEdges.size shouldBe
       13
   }
 
   it can "have the triangle inserted growing node 2 starting from the narrower external angle" in {
-    minimalTriangleInsertion.maybeGrowNode(Node(2), Polygon(3), NARROWER_ANGLE, BEFORE_PERIMETER).unsafe.edges.size shouldBe
+    minimalTriangleInsertion.maybeGrowNode(Node(2), Polygon(3), NARROWER_ANGLE, BEFORE_PERIMETER).unsafe.graphEdges.size shouldBe
       12
   }
 
@@ -123,57 +123,57 @@ class TilingGrowthNodePolygonSpec extends AnyFlatSpec with Helper with should.Ma
   }
 
   it can "have a vertex inserted growing node 2 starting from 1" in {
-    minimalTriangleInsertion.maybeGrowNode(Node(2), Vertex(Vector(3, 4).map(Polygon(_))), AFTER_PERIMETER).unsafe.edges.size shouldBe
+    minimalTriangleInsertion.maybeGrowNode(Node(2), Vertex(Vector(3, 4).map(Polygon(_))), AFTER_PERIMETER).unsafe.graphEdges.size shouldBe
       15
   }
 
   it can "have a square growing on edge starting from the first edge's node on the perimeter" in {
-    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), BEFORE_PERIMETER).unsafe.edges.contains(5--8) shouldBe
+    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), BEFORE_PERIMETER).unsafe.graphEdges.contains(5--8) shouldBe
       true
   }
 
   it can "have a square growing on edge starting from the second edge's node on the perimeter" in {
-    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), AFTER_PERIMETER).unsafe.edges.contains(4--8) shouldBe
+    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), AFTER_PERIMETER).unsafe.graphEdges.contains(4--8) shouldBe
       true
   }
 
   it can "have a square growing on edge starting from one node" in {
-    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), FIXED(Node(4))).unsafe.edges.contains(4--8) shouldBe
+    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), FIXED(Node(4))).unsafe.graphEdges.contains(4--8) shouldBe
       true
   }
 
   it can "have a square growing on edge starting from the other node" in {
-    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), FIXED(Node(5))).unsafe.edges.contains(5--8) shouldBe
+    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), FIXED(Node(5))).unsafe.graphEdges.contains(5--8) shouldBe
       true
   }
 
   it can "have a square growing on edge starting from an incorrect node, falls back to perimeter direction" in {
-    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), FIXED(Node(100))).unsafe.edges.contains(5--8) shouldBe
+    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), FIXED(Node(100))).unsafe.graphEdges.contains(5--8) shouldBe
       true
   }
 
   it can "have a square growing on edge starting from the lower edge's node" in {
-    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), LOWER_ORDINAL).unsafe.edges.contains(4--8) shouldBe
+    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), LOWER_ORDINAL).unsafe.graphEdges.contains(4--8) shouldBe
       true
   }
 
   it can "have a square growing on edge starting from the higher edge's node" in {
-    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), HIGHER_ORDINAL).unsafe.edges.contains(5--8) shouldBe
+    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), HIGHER_ORDINAL).unsafe.graphEdges.contains(5--8) shouldBe
       true
   }
 
   it can "have a square growing on edge starting from the wider angle edge's node and then fallback to higher ordinal" in {
-    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), WIDER_ANGLE, HIGHER_ORDINAL).unsafe.edges.contains(5--8) shouldBe
+    minimalTriangleInsertion.maybeGrowEdge(4--5, Polygon(4), WIDER_ANGLE, HIGHER_ORDINAL).unsafe.graphEdges.contains(5--8) shouldBe
       true
   }
 
   it can "have a square growing on another edge starting from the narrower angle edge's node and then fallback to higher ordinal" in {
-    minimalTriangleInsertion.maybeGrowEdge(6--7, Polygon(4), NARROWER_ANGLE, HIGHER_ORDINAL).unsafe.edges.contains(6--8) shouldBe
+    minimalTriangleInsertion.maybeGrowEdge(6--7, Polygon(4), NARROWER_ANGLE, HIGHER_ORDINAL).unsafe.graphEdges.contains(6--8) shouldBe
       true
   }
 
   it can "have a square growing on another edge starting from the wider angle edge's node and then fallback to higher ordinal" in {
-    minimalTriangleInsertion.maybeGrowEdge(6--7, Polygon(4), WIDER_ANGLE, HIGHER_ORDINAL).unsafe.edges.contains(7--8) shouldBe
+    minimalTriangleInsertion.maybeGrowEdge(6--7, Polygon(4), WIDER_ANGLE, HIGHER_ORDINAL).unsafe.graphEdges.contains(7--8) shouldBe
       true
   }
 
@@ -213,7 +213,7 @@ class TilingGrowthNodePolygonSpec extends AnyFlatSpec with Helper with should.Ma
   }
 
   val intersectTestbed: Tiling =
-    Tiling.maybe(Tiling.squareNet(3, 3).unsafe.edges.diff(List(2--3, 6--7))).unsafe
+    Tiling.maybe(Tiling.squareNet(3, 3).unsafe.graphEdges.diff(List(2--3, 6--7))).unsafe
 
   it can "NOT have a vertex growing node 3 starting from 7 to intersect some perimeter edges" in {
     (
@@ -238,7 +238,7 @@ class TilingGrowthNodePolygonSpec extends AnyFlatSpec with Helper with should.Ma
     ).unsafe
 
   "Another tiling" can "NOT have triangle grown on edge 55--57" in {
-    Tiling.maybe(anotherIntersectTestbed.edges ++ List(55--68, 57--68)).isRight shouldBe
+    Tiling.maybe(anotherIntersectTestbed.graphEdges ++ List(55--68, 57--68)).isRight shouldBe
       false
   }
 
@@ -302,7 +302,7 @@ class TilingGrowthNodePolygonSpec extends AnyFlatSpec with Helper with should.Ma
   }
 
   it can "return all edges" in {
-    r1.edges shouldBe rEdges
+    r1.graphEdges shouldBe rEdges
   }
 
   val r2: Tiling =
@@ -314,7 +314,7 @@ class TilingGrowthNodePolygonSpec extends AnyFlatSpec with Helper with should.Ma
   }
 
   it can "return the same all edges" in {
-    r2.edges shouldBe rEdges
+    r2.graphEdges shouldBe rEdges
   }
 
 }

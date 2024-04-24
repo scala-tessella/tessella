@@ -32,7 +32,7 @@ object Outliers extends Helper:
     Tiling.hexTrianguloid(4).unsafe
 
   lazy val gonExperiment: Tiling =
-    Tiling.maybe(sqr3x3Growth.edges ++ List(
+    Tiling.maybe(sqr3x3Growth.graphEdges ++ List(
       8--17, 17--18, 18--19, 19--20, 20--9,
       10--21, 21--11,
       16--22, 22--5, 22--23, 23--5,
@@ -50,7 +50,7 @@ object Outliers extends Helper:
     ).unsafe
 
   val closer: Tiling =
-    Tiling.maybe(edges12Nodes8.edges ++ List(8--9, 9--7, 9--10, 10--7)).unsafe
+    Tiling.maybe(edges12Nodes8.graphEdges ++ List(8--9, 9--7, 9--10, 10--7)).unsafe
 
   lazy val pentagonGrown: Tiling =
     TilingGrowth.maybePolygonGrow(Polygon(5), 10).unsafe
@@ -185,16 +185,16 @@ object Outliers extends Helper:
     Tiling.fiveUniformIssue2(18, 12).unsafe
 
   private val triangleEdges =
-    triangle.edges
+    triangle.graphEdges
 
   private val hexTrianglesEdges =
-    Tiling.fromFullVertex(FullVertex.s("(3⁶)")).edges
+    Tiling.fromFullVertex(FullVertex.s("(3⁶)")).graphEdges
 
   val minimalDisconnected: Graph =
     Graph(triangleEdges ++ triangleEdges.compactStartingAt(Node(4)))
   
   lazy val minimalDifferentFromItsPeri: Graph =
-    Graph(square.edges :+ 1--3)
+    Graph(square.graphEdges :+ 1--3)
 
   val minimalThinlyConnected: Graph =
     Graph(triangleEdges ++ triangleEdges.compactStartingAt(Node(3)))
@@ -443,10 +443,10 @@ object Outliers extends Helper:
     Tiling.fromVertex(Vertex(3, 3, 3, 3, 3))
 
   lazy val minimalSquareInsertion: Tiling =
-    Tiling.maybe(squareNet(3, 2).unsafe.edges.filterNot(_ == 2--3)).unsafe
+    Tiling.maybe(squareNet(3, 2).unsafe.graphEdges.filterNot(_ == 2--3)).unsafe
 
   lazy val troubledGrowthByFullVertex: Tiling =
-     Tiling.maybe(Tiling.triangleNet(4, 3).unsafe.edges.diff(List(1--4, 4--7))).unsafe
+     Tiling.maybe(Tiling.triangleNet(4, 3).unsafe.graphEdges.diff(List(1--4, 4--7))).unsafe
 
   val problematicEdges: List[Edge] =
     List(

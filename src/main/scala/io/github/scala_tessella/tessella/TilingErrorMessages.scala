@@ -189,7 +189,7 @@ object TilingErrorMessages:
 
     /** Error message for invalid grown tiling from inner edge, with SVG description */
     def addToNonPerimeterEdgeErrMsg(edge: Edge): String =
-      if tiling.edges.contains(edge) then
+      if tiling.graphEdges.contains(edge) then
         val svg: String =
           addSVG(tiling.invalidTilingSVG(
             Description(s"Adding to inner edge ${edge.stringify}"),

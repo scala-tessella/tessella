@@ -46,7 +46,7 @@ class TilingGrowthSpec extends AnyFlatSpec with Helper with should.Matchers {
   "A tiling made of six triangles" can "be grown by polygons added to the perimeter edges" in {
     val sixTriangles: Tiling =
       triangle.growByPolygon(5, Polygon(3), List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(HIGHER_ORDINAL)).unsafe
-    sixTriangles.edges.sorted(EdgeOrdering).stringify shouldBe
+    sixTriangles.graphEdges.sorted(EdgeOrdering).stringify shouldBe
       "1--2, 1--3, 1--4, 1--5, 1--6, 1--7, 2--3, 2--7, 3--4, 4--5, 5--6, 6--7"
   }
 
@@ -57,7 +57,7 @@ class TilingGrowthSpec extends AnyFlatSpec with Helper with should.Matchers {
 
   "A tiling grown by polygons" can "find a dead end" in {
     val start: Tiling =
-      Tiling.maybe(square.edges ++ List(1--5, 2--5, 2--6, 3--6, 3--7, 4--7, 4--8, 1--8)).unsafe
+      Tiling.maybe(square.graphEdges ++ List(1--5, 2--5, 2--6, 3--6, 3--7, 4--7, 4--8, 1--8)).unsafe
     start.growByPolygon(1, Polygon(42), List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(HIGHER_ORDINAL))
       .left.getOrElse("").take(81) shouldBe
       """Tiling cannot be grown after adding 0 * pgon-42,

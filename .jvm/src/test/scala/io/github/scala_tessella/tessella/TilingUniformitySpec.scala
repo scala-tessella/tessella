@@ -756,7 +756,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
   }
 
   val matrixProblem: Map[Node, List[(List[Int], Boolean)]] =
-    uniformityProblem.outerOrderedStripFrom(uniformityProblem.edges.nodes.diff(uniformityProblem.perimeter.toRingNodes))
+    uniformityProblem.outerOrderedStripFrom(uniformityProblem.graphEdges.nodes.diff(uniformityProblem.perimeter.toRingNodes))
 
 //  "A uniformityProblem" can "return an uniform nodes tree" in {
 //    uniformityProblem.uniformNodesTree(matrixProblem) shouldBe
@@ -797,7 +797,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
   }
 
   val matrix: Map[Node, List[(List[Int], Boolean)]] =
-    triSqrHexHexoid.outerOrderedStripFrom(triSqrHexHexoid.edges.nodes.diff(triSqrHexHexoid.perimeter.toRingNodes))
+    triSqrHexHexoid.outerOrderedStripFrom(triSqrHexHexoid.graphEdges.nodes.diff(triSqrHexHexoid.perimeter.toRingNodes))
 
   it can "be examined for outer polygon strips from all nodes" in {
     matrix shouldBe

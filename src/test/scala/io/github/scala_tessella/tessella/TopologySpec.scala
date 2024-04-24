@@ -396,7 +396,7 @@ class TopologySpec extends AnyFlatSpec with should.Matchers {
   }
 
   val sqrEdges: List[Edge] =
-    sqr4x4Reticulate.edges
+    sqr4x4Reticulate.graphEdges
 
 //  it can "be searched with breadth-first" in {
 //    sqrEdges.bfs(Node(1)) shouldEqual

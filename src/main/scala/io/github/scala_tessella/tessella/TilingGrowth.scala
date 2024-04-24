@@ -191,7 +191,7 @@ object TilingGrowth:
         .filter((_, point) => tiling.perimeterCoords.values.exists(_.almostEquals(point, LESSER_ACCURACY)))
         .toList match
         case _ :: _ =>
-          Left((tiling.edges ++ newEdges, _.invalidVertexCoordsErrMsg))
+          Left((tiling.graphEdges ++ newEdges, _.invalidVertexCoordsErrMsg))
         case Nil =>
           val newEdgesCoords: Coords =
             newCoords ++ perimeterCoordsAt(end, start)
@@ -203,7 +203,7 @@ object TilingGrowth:
             tiling.perimeter.toRingEdges.toList.withoutNodes(List(node))
               .toSegments(tiling.perimeterCoords).filter(_.hasEndpointIn(enlargedBox))
           if lines.lesserIntersects(perimeterLines) then
-            Left((tiling.edges ++ newEdges, _.invalidIntersectionErrMsg))
+            Left((tiling.graphEdges ++ newEdges, _.invalidIntersectionErrMsg))
           else
             Right(newEdges)
 
@@ -234,11 +234,11 @@ object TilingGrowth:
 
     private def onPerimeterCheck(node: Node): Either[GrowthLeft, ?] =
       if tiling.perimeter.toRingNodes.contains(node) then Right(())
-      else Left((tiling.edges, _.addToNonPerimeterNodeErrMsg(node)))
+      else Left((tiling.graphEdges, _.addToNonPerimeterNodeErrMsg(node)))
 
     private def anglesCheck(nodes: List[Node], polygon: Polygon): Either[GrowthLeft, ?] =
       nodes.find(node => Try(Vertex(polygon +: tiling.perimeterOrderedPolygons(node))).isFailure) match
-        case Some(node) => Left((tiling.edges, _.addExceedingAngleErrMsg(node, Vertex(polygon))))
+        case Some(node) => Left((tiling.graphEdges, _.addExceedingAngleErrMsg(node, Vertex(polygon))))
         case None       => Right(())
 
     private def nodeImplementStrategy(otherNodeStrategies: List[OtherNodeStrategy]): Node => Either[GrowthLeft, Boolean] =
@@ -290,7 +290,7 @@ object TilingGrowth:
      */
     def edgesFromPerimeterEdgeGrowth(edge: Edge, polygon: Polygon, otherNodeStrategies: List[OtherNodeStrategy]): Either[GrowthLeft, List[Edge]] =
       tiling.perimeter.isOrientedAt(edge) match
-        case None                          => Left(tiling.edges, _.addToNonPerimeterEdgeErrMsg(edge))
+        case None                          => Left(tiling.graphEdges, _.addToNonPerimeterEdgeErrMsg(edge))
         case Some(edgeIsPerimeterOriented) =>
           val firstSecond: (Node, Node) =
             if edgeIsPerimeterOriented then edge.pair else edge.pair.swap
@@ -344,7 +344,7 @@ object TilingGrowth:
                                          f: (Tiling, List[Edge]) => Tiling,
                                          otherNodeStrategies: List[OtherNodeStrategy]): Either[GrowthLeft, Tiling] =
       if vertex.isFull then
-        Left((tiling.edges, _ => "Vertex to be added cannot be full"))
+        Left((tiling.graphEdges, _ => "Vertex to be added cannot be full"))
       else
         vertex.toPolygons.toList match
           case Nil => Right(tiling)
@@ -422,7 +422,7 @@ object TilingGrowth:
     /** Tries to create a simpler tiling by removing a node */
     def maybeRemoveNode(node: Node): Either[String, Tiling] =
       val removed: List[Edge] =
-        tiling.edges.withoutNodes(List(node))
+        tiling.graphEdges.withoutNodes(List(node))
       val newEdges: List[Edge] =
         removed.map(edge =>
           Edge(edge.nodes.map({

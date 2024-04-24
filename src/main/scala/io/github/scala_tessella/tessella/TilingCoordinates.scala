@@ -50,7 +50,7 @@ object TilingCoordinates:
               polygons.diff(List(polygon)).filter(_.toPolygonPathNodes.exists(node => !newCoords.contains(node)))
             loop(newCoords, newPolygons)
 
-      if tiling.edges.isEmpty then
+      if tiling.graphEdges.isEmpty then
         Map()
       else
         loop(startingCoords, tiling.orientedPolygons).flipVertically

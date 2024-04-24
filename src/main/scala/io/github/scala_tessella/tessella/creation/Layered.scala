@@ -24,7 +24,7 @@ trait Layered extends Reticulate:
         if f(i, j)
       yield Node(i + topRight.toInt * j)
     val edges: List[Edge] =
-      triangleNet((l + 1) * 2, h + 1).toOption.get.edges.withoutNodes(topRight :: bottomLeft :: emptyNodes.toList).compact
+      triangleNet((l + 1) * 2, h + 1).toOption.get.graphEdges.withoutNodes(topRight :: bottomLeft :: emptyNodes.toList).compact
     (edges, Node(edges.nodes.max(NodeOrdering).toInt - l))
 
   /** Grid of 2 * l triangles with in between a full hexagon net
@@ -39,8 +39,8 @@ trait Layered extends Reticulate:
     triHexBase(l, h)((i, j) => (i + invertedStep + j % 3) % 3 == 0)
 
   private val fs: Map[Int, Int => (List[Edge], Node)] = Map(
-    3 -> { l => (triangleNet(l * 2, 1).toOption.get.edges, Node(l + 2)) },
-    4 -> { l => (squareNet(l, 1).toOption.get.edges, Node(l + 2)) },
+    3 -> { l => (triangleNet(l * 2, 1).toOption.get.graphEdges, Node(l + 2)) },
+    4 -> { l => (squareNet(l, 1).toOption.get.graphEdges, Node(l + 2)) },
     36 -> { triHexBase(_, 1)((i, _) => i % 2 == 1) },
     63 -> { triHexBase(_, 1)((i, _) => i % 2 == 0) },
     336 -> { triHexBase(_, 1)((i, _) => i % 3 == 1) },

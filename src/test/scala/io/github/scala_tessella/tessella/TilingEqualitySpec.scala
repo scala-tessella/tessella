@@ -30,8 +30,8 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
   }
   
   they can "have a different count of edges" in {
-    twoPgonsSevenEdges.edges.size should not equal
-      twoPgonsFiveEdges.edges.size
+    twoPgonsSevenEdges.graphEdges.size should not equal
+      twoPgonsFiveEdges.graphEdges.size
   }
   
   they must "be then ordered by ascending count of edges, if count of polygons is equal" in {
@@ -57,8 +57,8 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
   }
 
   they can "have the same number of edges" in {
-    tiling1.edges.size shouldEqual
-      tiling2.edges.size
+    tiling1.graphEdges.size shouldEqual
+      tiling2.graphEdges.size
   }
 
   they must "be then ordered by ascending list of perimeter edge polygons, if all other is equal" in {
@@ -74,8 +74,8 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
   }
 
   it can "have a different edge count from another" in {
-    twoSquares.edges.size should not equal
-      hexagon.edges.size
+    twoSquares.graphEdges.size should not equal
+      hexagon.graphEdges.size
   }
 
   it must "be different from other with different edges size" in {
@@ -87,8 +87,8 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
     Tiling.fromPolygon(7)
 
   it can "have the same edge count of another" in {
-    twoSquares.edges.size shouldEqual
-      eptagon.edges.size
+    twoSquares.graphEdges.size shouldEqual
+      eptagon.graphEdges.size
   }
 
   it can "have a different node count from another" in {
@@ -102,8 +102,8 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
   }
 
   "Two tilings" can "have the same edge count" in {
-    edges12Nodes8.edges.size shouldEqual
-      edges12Nodes8Similar.edges.size
+    edges12Nodes8.graphEdges.size shouldEqual
+      edges12Nodes8Similar.graphEdges.size
   }
   
   they can "have the same node count" in {

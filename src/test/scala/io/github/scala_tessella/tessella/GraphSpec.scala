@@ -9,7 +9,7 @@ import org.scalatest.matchers.should
 class GraphSpec extends AnyFlatSpec with should.Matchers {
 
   val reticulate: Graph =
-    Graph(sqr4x4Reticulate.edges)
+    Graph(sqr4x4Reticulate.graphEdges)
 
   "A path of a graph" can "be created" in {
     reticulate.Path(Vector(1, 2, 3, 4, 5, 10, 15, 20, 25).map(Node(_))) shouldEqual
@@ -227,7 +227,7 @@ class GraphSpec extends AnyFlatSpec with should.Matchers {
   }
 
   val graph: Graph =
-    Graph(triangle.edges)
+    Graph(triangle.graphEdges)
 
   "A Graph" can "be printed" in {
     graph.toString shouldBe
