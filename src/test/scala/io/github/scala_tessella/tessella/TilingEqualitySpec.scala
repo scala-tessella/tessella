@@ -3,6 +3,7 @@ package io.github.scala_tessella.tessella
 import Outliers.{edges12Nodes8, edges12Nodes8Similar, minimalDifferentFromItsPeri, sqr4x4Reticulate}
 import TilingGrowth.*
 import Topology.{--, Edge, Node}
+
 import io.github.scala_tessella.ring_seq
 import org.scalatest.*
 import org.scalatest.flatspec.*
@@ -167,6 +168,11 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
 
   val listed: List[Tiling] =
     List(tiling1almostEqual, tiling2almostEqual)
+  
+  they can "have a different hash code due to a non specialized implementation" in {
+    listed.map(_.hashCode()).distinct.size shouldBe
+      2
+  }
 
   they can "WRONGLY be seen as distinct with standard method" in {
     listed.distinct.size shouldBe
