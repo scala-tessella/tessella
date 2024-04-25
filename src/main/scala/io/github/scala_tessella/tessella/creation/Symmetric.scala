@@ -85,7 +85,7 @@ object Symmetric:
               yield
                 grown
          )
-      Tiling.distinctSafe(tilings.getDefined)
+      tilings.getDefined.distinct
 
     /** Expands by symmetric axes
      *
@@ -94,5 +94,5 @@ object Symmetric:
      */
     def expansion(steps: Int, validity: Tiling => Boolean = _ => true): List[Tiling] =
       (0 until steps).foldLeft(List(tiling))((tilings, step) =>
-        Tiling.distinctSafe(tilings.flatMap(_.expansionStep)).filter(validity)
+        tilings.flatMap(_.expansionStep).distinct.filter(validity)
       )

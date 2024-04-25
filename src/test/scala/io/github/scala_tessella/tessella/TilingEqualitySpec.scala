@@ -146,43 +146,48 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
       2--7, 2--3, 3--4, 4--5, 5--6, 6--7, 1--7, 1--6, 1--5, 1--4,
       1--3, 1--2, 2--8, 8--9, 9--10, 10--11, 11--12, 7--12
     )
-  val tiling1almostEqual: Tiling =
+  val tiling1almostSame: Tiling =
     Tiling.maybe(List(3--8, 2--12) ++ baseEdges).toOption.get
-  val tiling2almostEqual: Tiling =
+  val tiling2almostSame: Tiling =
     Tiling.maybe(List(7--8, 6--12) ++ baseEdges).toOption.get
 
-  "Two tilings" can "be evaluated with ==" in {
-    tiling1almostEqual == tiling2almostEqual shouldBe
+  "Two tilings with different edges" can "be evaluated with ==" in {
+    tiling1almostSame == tiling2almostSame shouldBe
       true
   }
 
   they can "be evaluated as equals" in {
-    tiling1almostEqual.equals(tiling2almostEqual) shouldBe
+    tiling1almostSame.equals(tiling2almostSame) shouldBe
       true
   }
 
   they can "be compared" in {
-    tiling1almostEqual.compare(tiling2almostEqual) shouldBe
+    tiling1almostSame.compare(tiling2almostSame) shouldBe
       0
   }
 
   val listed: List[Tiling] =
-    List(tiling1almostEqual, tiling2almostEqual)
+    List(tiling1almostSame, tiling2almostSame)
   
-  they can "have a different hash code due to a non specialized implementation" in {
+  they can "have the same hash code" in {
     listed.map(_.hashCode()).distinct.size shouldBe
-      2
-  }
-
-  they can "WRONGLY be seen as distinct with standard method" in {
-    listed.distinct.size shouldBe
-      2 // WRONG!
-  }
-
-  they can "be seen as same with dedicated method" in {
-    Tiling.distinctSafe(listed).size shouldBe
       1
   }
+
+  they can "have a hash code for the first one" in {
+    tiling1almostSame.hashCode() shouldBe
+      -425435535
+  }
+
+  they can "have a hash code for the second one" in {
+    tiling2almostSame.hashCode() shouldBe
+      -425435535
+  }
+
+//  they can "be seen as same with dedicated method" in {
+//    Tiling.distinctSafe(listed).size shouldBe
+//      1
+//  }
 
   val t: Tiling =
     sqr4x4Reticulate.maybeRemoveNode(Node(21)).flatMap(_.maybeRemoveNode(Node(5))).unsafe

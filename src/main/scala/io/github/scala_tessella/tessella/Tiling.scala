@@ -419,6 +419,24 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
           )
       case _ => false
 
+  /** Initial list of values for equality comparison */
+  private def startingCode: List[Int] =
+    List(countPolygons, graphEdges.size, graphNodes.size) ++
+      orderedRoundedPerimeterAngles.rotationsAndReflections.min.map(_.toInt).toList
+
+  /** Full list of values for equality comparison */
+  private def code: List[Int] =
+    startingCode ++
+      inner(tilings =>
+        val flattened: List[PolygonEdges] =
+          tilings.flatten
+        List(tilings.size, flattened.flatten.size, flattened.flatten.nodes.size) ++
+          flattened.map(_.size).groupBySize.toList.sorted(Ordering[(Int, Int)].reverse).flatMap(List(_, _))
+      ).flatten
+
+  override def hashCode(): Int =
+    code.hashCode()
+
   /** Finds the 2D box */
   def toBox: Box =
     edges.toBox(coords)
@@ -682,20 +700,20 @@ object Tiling extends UniTriangle with UniHex with Uni4Hex with Uni5Hex with Lay
   def maybe(edges: Edge*): Either[String, Tiling] =
     maybe(edges.toList)
 
-  /** Filters out duplicate tilings.
-   *
-   * @note Reimplementing the wheel, but test shows that factory `distinct` can fail.
-   */
-  def distinctSafe(tilings: List[Tiling]): List[Tiling] =
-    val found: mutable.ArrayBuffer[Tiling] =
-      mutable.ArrayBuffer.empty[Tiling]
-
-    @tailrec
-    def loop(remaining: List[Tiling]): List[Tiling] =
-      remaining match
-        case Nil => found.toList
-        case h :: t =>
-          if !found.contains(h) then found += h
-          loop(t)
-
-    loop(tilings)
+//  /** Filters out duplicate tilings.
+//   *
+//   * @note Reimplementing the wheel, but `distinct` can fail if hashCode is not properly implemented.
+//   */
+//  def distinctSafe(tilings: List[Tiling]): List[Tiling] =
+//    val found: mutable.ArrayBuffer[Tiling] =
+//      mutable.ArrayBuffer.empty[Tiling]
+//
+//    @tailrec
+//    def loop(remaining: List[Tiling]): List[Tiling] =
+//      remaining match
+//        case Nil => found.toList
+//        case h :: t =>
+//          if !found.contains(h) then found += h
+//          loop(t)
+//
+//    loop(tilings)
