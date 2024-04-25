@@ -238,7 +238,7 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
   val anEdge: Edge =
     1--2
 
-  "An Edge" can "be converted to a LineSegment9D" in {
+  "An Edge" can "be converted to a LineSegment2D" in {
     anEdge.toSegment(Map(Node(1) -> Point(), Node(2) -> Point(1.0, 0.0))) shouldBe
       LineSegment(Point(), Point(1.0, 0.0))
   }
@@ -246,7 +246,7 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
   val second: Edge =
     3--1
 
-  it can "be converted to LineSegment2D" in {
+  "A sequence of edges" can "be converted to a sequence of LineSegment2D" in {
     List(anEdge, second).toSegments(Map(
       Node(1) -> Point(),
       Node(2) -> Point(1.0, 0.0),
