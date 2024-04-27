@@ -9,28 +9,66 @@ import scala.util.Random
 
 object Randomic:
 
+  extension (polygons: Vertex)
+
+    private def isContainedInAtLeastOne(containers: List[Vertex]): Boolean =
+      containers.exists(polygons.isContainedIn)
+
+    private def isContainedInPattern(pattern: Pattern): Boolean =
+      isContainedInAtLeastOne(pattern.distinctVertices.map(_.vertex))
+
   extension (tiling: Tiling)
 
-    def isEmpty: Boolean =
+    private def isEmpty: Boolean =
       tiling.graphEdges.isEmpty
 
-    def randomStep(polygons: Option[List[Polygon]] = None): Option[Tiling] =
-      val randomPolygons: List[Polygon] =
-        Random.shuffle(polygons.getOrElse(Vertex.tessellablePolygons))
+    /** Tries adding a random polygon, with an optional addition validity clause
+     *
+     * @param maybePolygons polygons that can be added, if None all tessellable polygons
+     * @param validity      function to filter tilings
+     */
+    def randomStep(maybePolygons: Option[List[Polygon]] = None,
+                   validity: Tiling => Boolean = _ => true): Option[Tiling] =
+      val polygons: List[Polygon] =
+        maybePolygons.getOrElse(Vertex.tessellablePolygons)
       if isEmpty then
-        Option(Tiling.fromPolygon(randomPolygons.head))
+        Option(Tiling.fromPolygon(polygons(Random.nextInt(polygons.size))))
       else
         val combinations: List[(Edge, Polygon)] =
           for
-            polygon <- randomPolygons
+            polygon <- polygons
             edge    <- tiling.perimeter.toRingEdges
           yield
             (edge, polygon)
-        combinations
+        Random.shuffle(combinations)
           .view
           .map(tiling.maybeGrowEdge(_, _, BEFORE_PERIMETER))
-          .find(_.isRight)
+          .find(maybeTiling => maybeTiling.isRight && validity(maybeTiling.toOption.get))
           .map(_.toOption.get)
 
-    def randomSteps(steps: Int, polygons: Option[List[Polygon]] = None): Option[Tiling] =
-      (0 until steps).foldLeft(Option(tiling))((maybeTiling, _) => maybeTiling.flatMap(_.randomStep(polygons)))
+    /** Tries adding sequentially random polygons, with an optional addition validity clause
+     *
+     * @param steps         number of additions
+     * @param maybePolygons polygons that can be added, if None all tessellable polygons
+     * @param validity      function to filter tilings
+     * @return
+     */
+    def randomSteps(steps: Int,
+                    maybePolygons: Option[List[Polygon]] = None,
+                    validity: Tiling => Boolean = _ => true): Option[Tiling] =
+      (0 until steps).foldLeft(Option(tiling))((maybeTiling, _) =>
+        maybeTiling.flatMap(_.randomStep(maybePolygons, validity))
+      )
+
+    /** Tries adding sequentially random polygons, within a given pattern
+     *
+     * @param steps   number of additions
+     * @param pattern a [[Pattern]] each new polygon must follow
+     * @return
+     */
+    def randomStepsWithinPattern(steps: Int, pattern: Pattern): Option[Tiling] =
+      val polygons: List[Polygon] =
+        pattern.vertices.flatMap(_.vertex.toPolygons).distinct
+      val validity: Tiling => Boolean =
+        _.orderedPerimeterMinorVertices.forall(_.isContainedInPattern(pattern))
+      randomSteps(steps, Option(polygons), validity)
