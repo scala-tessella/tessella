@@ -72,13 +72,12 @@ object Geometry extends Accuracy:
     def minus(that: Point): Point =
       Point(this.x - that.x, this.y - that.y)
 
-    private def rotate(theta: Radian): Point = {
+    private def rotate(theta: Radian): Point =
       val cot: Double =
         Math.cos(theta.toDouble)
       val sit: Double =
         Math.sin(theta.toDouble)
       Point(x * cot - y * sit, x * sit + y * cot)
-    }
 
     /** Tests whether this `Point` is approximately equal to another, within a given accuracy. */
     def almostEquals(that: Point, accuracy: Double = ACCURACY): Boolean =
