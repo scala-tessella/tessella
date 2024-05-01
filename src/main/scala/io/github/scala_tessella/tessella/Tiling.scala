@@ -608,12 +608,13 @@ object Tiling extends UniTriangle with UniHex with Uni4Hex with Uni5Hex with Lay
   /** A tiling made of the edges of the given polygon
    *
    * @param sides polygon or its number of sides
+   * @throws IllegalArgumentException if sides <= 2
    */
   def fromPolygon(sides: Polygon | Int): Tiling =
-    val s: Int =
+    val validatedSides: Int =
       (sides: @unchecked) match
-        case i: Int  => i
-    Tiling(Vector.range(1, s + 1).map(Node(_)).toEdgesO.toList)
+        case i: Int => Polygon(i).toSides
+    Tiling(Vector.range(1, validatedSides + 1).map(Node(_)).toEdgesO.toList)
 
   /** A tiling made of the edges of the given adjacent polygons
    *

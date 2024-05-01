@@ -457,4 +457,5 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
       .forall({ case ((a, b), (c, d)) => a == c && b.~=(d) }) shouldBe
       true
   }
+
 }
