@@ -7,6 +7,7 @@ import Topology.Edge
 
 import scala.util.Random
 
+/** Contains slow methods to create a [[Tiling]] with growth governed by randomic functions */
 object Randomic:
 
   extension (polygons: Vertex)

@@ -30,7 +30,17 @@ Taking advantage of new features introduced in Scala 3, like _extension_ and _op
   named @link:[RingSeq](https://github.com/scala-tessella/ring-seq) { open=new },
   to deal with the most common operations.
 
+
+* **Creation algorithms**
+
+  added methods for growing both random and symmetric tessellations
+
 ### **New features**
+
+* **Support for Scala.js**:
+
+  opening up a new world of possibilities for browsers, Node.js, and serverless apps
+
 
 * **Conversion to DOT**:
 

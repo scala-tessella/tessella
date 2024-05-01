@@ -10,6 +10,7 @@ import utility.UtilsOption.getDefined
 
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, applyO}
 
+/** Contains slow methods to create a [[Tiling]] with growth governed by symmetric functions */
 object Symmetric:
 
   private val mappedPrimeDivisors: Map[Int, List[Int]] =
