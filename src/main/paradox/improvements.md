@@ -46,4 +46,4 @@ Taking advantage of new features introduced in Scala 3, like _extension_ and _op
 
 **Tessella** no longer depends, for the time being, on the excellent
 @link:[Graph for Scala](https://scala-graph.org/) { open=new } library by Peter Empen,
-which is still highly recommended.
+which is still highly recommended for its completeness and depth.
