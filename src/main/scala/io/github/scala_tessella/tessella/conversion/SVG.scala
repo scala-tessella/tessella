@@ -323,27 +323,18 @@ object SVG extends ConverterSVG:
       else
         None
 
-    private def polygonsCentreCoords: Map[List[Edge], Point] =
-      tiling.orientedPolygons.map(path =>
-        path.toPolygonEdges -> RegularPolygon2D(path.toPolygonPathNodes.map(tiling.coords).toList).center()
-      ).toMap
-
-    private def innerEdges: List[Edge] =
-      tiling.graphEdges.diff(tiling.perimeter.toRingEdges.toList)
-
-    private def dualSegments: List[LineSegment] =
-      innerEdges
-        .map(edge => polygonsCentreCoords.filter((edges, _) => edges.contains(edge)).values)
-        .map(_.toList.toCouple)
-        .map(LineSegment(_, _))
-
     private def dualSVG(showDual: Boolean): Option[Elem] =
       if showDual then
         Option(
           group(
             Option(Title("Dual")),
             Option(Description("Dual tessellation by joining the centres of each two polygons sharing an edge")),
-            dualSegments.map(line)*
+            tiling.dualTransform(
+              _.map(path =>
+                path.toPolygonEdges -> RegularPolygon2D(path.toPolygonPathNodes.map(tiling.coords).toList).center()
+              ).toMap,
+              LineSegment(_, _)
+            ).map(line)*
           ).withStyle(dualStyle)
         )
       else

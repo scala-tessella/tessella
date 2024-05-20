@@ -206,7 +206,11 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
   /** Unit length of the perimeter */
   val perimeterLength: Int =
     perimeter.toRingNodes.size
-    
+
+  /** Edges inside of the perimeter */
+  def nonPerimeterEdges: List[Edge] =
+    graphEdges.diff(perimeter.toRingEdges.toList)
+
   /** All [[PolygonPath]], those touching the perimeter and those that don't */
   private lazy val (perimeterPolygons, innerPolygons) : (List[PolygonPath], List[PolygonPath]) =
     orientedPolygons.partition(_.hasSharedNodesWith(perimeter.toRingNodes))
@@ -597,6 +601,26 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
 
     def compare(a: Edge, b: Edge): Int =
       MinAngleEdgeNodeOrdering.orElse(MaxAngleEdgeNodeOrdering).compare(a, b)
+
+  /** Extracts data from the dual of the tiling
+   *
+   * @param f   map polygons to an element U
+   * @param g   transforms couples of U into target
+   * @tparam T  target
+   * @tparam U  element associated to a polygon
+   */
+  def dualTransform[T, U](f: List[PolygonPath] => Map[List[Edge], U], g: (U, U) => T): List[T] =
+    nonPerimeterEdges
+      .map(edge => f(orientedPolygons).filter((edges, _) => edges.contains(edge)).values)
+      .map(_.toList.toCouple)
+      .map(g(_, _))
+
+  /** Dual graph obtained by connecting each adjacent polygon */
+  def dual: Graph =
+    Graph(dualTransform(
+      _.map(_.toPolygonEdges).zipWithIndex.map((edges, i) => (edges, Node(i + 1))).toMap,
+      Edge(_, _)
+    ))
 
 /** Companion object for [[Tiling]] */
 object Tiling extends UniTriangle with UniHex with Uni4Hex with Uni5Hex with Layered with Quadratic:

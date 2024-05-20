@@ -457,5 +457,23 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
       .forall({ case ((a, b), (c, d)) => a == c && b.~=(d) }) shouldBe
       true
   }
+  
+  "A tiling" can "have an empty dual graph" in {
+    triangle.dual.graphEdges.isEmpty shouldBe
+      true
+  }
+  
+  it can "have a dual graph that is a valid tiling" in {
+    sqr4x4Reticulate.dual.toMaybeTiling.isRight shouldBe
+      true
+  }
+  
+  it can "have a dual graph" in {
+    tri4x4Reticulate.dual.graphEdges shouldBe
+      List(
+        6--8, 9--10, 14--15, 3--4, 2--7, 11--12, 4--5, 2--8, 10--11,
+        13--15, 5--6, 8--9, 10--14, 15--16, 1--4, 2--3, 7--11, 12--13
+      )
+  }
 
 }
