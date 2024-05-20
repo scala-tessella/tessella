@@ -234,7 +234,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
       ).mapKeys(_.map(Node(_)))
   }
 
-  "A tricky 3-uniform pattern [(3.4².6);2x(3.4.6.4)]" can "have its nodes grouped in uniform sets" in {
+  "A tricky 3-uniform pattern [(3.4₂.6);2x(3.4.6.4)]" can "have its nodes grouped in uniform sets" in {
     earlyUniform3.groupUniforms shouldBe
       Map(
         (Vector(3, 4, 6, 4), List(0)) -> Vector(79, 56, 57, 3, 16, 55, 58, 4, 15, 64, 17, 63, 18),
@@ -343,7 +343,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
       3
   }
 
-  "A 7 uniform tiling [(3⁶);2x(3².6²);4x(6³)]" can "have its nodes grouped in uniform sets" in {
+  "A 7 uniform tiling [(3₆);2x(3₂.6₂);4x(6₃)]" can "have its nodes grouped in uniform sets" in {
     uniform7gonal3.groupUniforms shouldBe
       Map(
         (Vector(6, 6, 6), List(1)) -> Vector(111, 159, 33, 75, 123, 69, 138, 84, 61, 137, 97, 112, 48, 83, 76, 98, 47, 62),
@@ -380,7 +380,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
       (3, 7)
   }
 
-  "A uniform5v1 [2x(3³.4²);2x(3.4².6);(3.6.3.6)]" can "have its nodes grouped in uniform sets" in {
+  "A uniform5v1 [2x(3₃.4₂);2x(3.4₂.6);(3.6.3.6)]" can "have its nodes grouped in uniform sets" in {
     uniform5v1.groupUniforms shouldBe
       Map(
         (Vector(3, 4, 4, 6), List(1)) -> Vector(90, 242, 190, 146, 246, 104, 240, 236, 176, 148, 244, 160, 102, 88, 234, 158, 188, 238, 174, 184, 152, 92, 156, 96, 180, 98, 150, 182, 154, 186, 94, 178, 100),
@@ -464,7 +464,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
       2 // should be 3
   }
 
-  "A uniform5v2 [2x(3³.4²);2x(3.4².6);(3.6.3.6)]" can "have uniformity value 5" in {
+  "A uniform5v2 [2x(3₃.4₂);2x(3.4₂.6);(3.6.3.6)]" can "have uniformity value 5" in {
     uniform5v2.uniformity shouldBe
       5
   }
@@ -545,14 +545,14 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
       2
   }
 
-  "A 3-uniform 2-Archimedean tiling [2x(3⁶);(3⁴.6)]" can "be described" in {
+  "A 3-uniform 2-Archimedean tiling [2x(3₆);(3₄.6)]" can "be described" in {
     val t: Tiling =
       uniform3gonal2
     (t.gonality, t.uniformity) shouldBe
       (2, 3)
   }
 
-  "A 4-uniform 4-Archimedean tiling [(3⁶);(3⁴.6);(3².6²);(6³)]" can "be described" in {
+  "A 4-uniform 4-Archimedean tiling [(3₆);(3₄.6);(3₂.6₂);(6₃)]" can "be described" in {
     val t: Tiling =
       uniform4gonal4
     (t.gonality, t.uniformity) shouldBe
@@ -582,7 +582,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
       2 // should be 3
   }
 
-  "A complex tiling [3x(3.4.3.12);2x(3.4.6.4);2x(3.12²)]" must "be described" in {
+  "A complex tiling [3x(3.4.3.12);2x(3.4.6.4);2x(3.12₂)]" must "be described" in {
     uniformityProblem.uniformity shouldBe
       7
   }

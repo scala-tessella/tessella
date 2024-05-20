@@ -159,7 +159,7 @@ object Outliers extends Helper:
     ).unsafe
 
   val symmetryByAnglesFailing: Tiling =
-    Tiling.fromFullVertex(FullVertex.s("(3⁴.6)"))
+    Tiling.fromFullVertex(FullVertex.s("(3₄.6)"))
 
   val uniformTricky: Tiling =
     Tiling.maybe(
@@ -188,7 +188,7 @@ object Outliers extends Helper:
     triangle.graphEdges
 
   private val hexTrianglesEdges =
-    Tiling.fromFullVertex(FullVertex.s("(3⁶)")).graphEdges
+    Tiling.fromFullVertex(FullVertex.s("(3₆)")).graphEdges
 
   val minimalDisconnected: Graph =
     Graph(triangleEdges ++ triangleEdges.compactStartingAt(Node(4)))

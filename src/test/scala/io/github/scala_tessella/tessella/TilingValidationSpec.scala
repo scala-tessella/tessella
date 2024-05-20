@@ -107,7 +107,7 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
       )
   }
 
-  it can "NOT have an invalid (4³,5) more than full vertex on a non-perimeter node" in {
+  it can "NOT have an invalid (4₃,5) more than full vertex on a non-perimeter node" in {
     val withInvalidVertex =
       (squareReticulate(2).graphEdges ++ List(9--10, 8--10)).filterNot(_ == 8--9)
     Tiling.maybe(withInvalidVertex) shouldEqual
@@ -134,7 +134,7 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
       )
   }
 
-  it can "NOT have an invalid (4³,5) more than full vertex on a perimeter node" in {
+  it can "NOT have an invalid (4₃,5) more than full vertex on a perimeter node" in {
     val withInvalidVertex =
       (squareReticulate(2).graphEdges ++ List(9--10, 10--11, 11--5)).filterNot(_ == 8--9)
     Tiling.maybe(withInvalidVertex) shouldEqual

@@ -15,7 +15,7 @@ uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE) 
 ```
 | ![minimal](svg/minimal.svg)                                   |
 |---------------------------------------------------------------|
-| _Finite set of a **[2x(3⁶);(3⁴.6)]** pattern with edges only_ |
+| _Finite set of a **[2x(3₆);(3₄.6)]** pattern with edges only_ |
 ```raw
 </div>
 ```
@@ -34,7 +34,7 @@ uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.ALL)
 ```
 | ![labels](svg/labels.svg)                                      |
 |----------------------------------------------------------------|
-| _Finite set of a **[2x(3⁶);(3⁴.6)]** pattern with node labels_ |
+| _Finite set of a **[2x(3₆);(3₄.6)]** pattern with node labels_ |
 ```raw
 </div>
 ```
@@ -49,7 +49,7 @@ uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, 
 ```
 | ![gonality](svg/nodeOrder.svg)                                                    |
 |-----------------------------------------------------------------------------------|
-| _Finite set of a **[2x(3⁶);(3⁴.6)]** pattern with animation following node order_ |
+| _Finite set of a **[2x(3₆);(3₄.6)]** pattern with animation following node order_ |
 ```raw
 </div>
 ```
@@ -64,7 +64,7 @@ uniform3gonal2.toSVG(showPerimeter = true, labelledNodes = LabelledNodes.NONE)
 ```
 | ![perimeter](svg/perimeter.svg)                                          |
 |--------------------------------------------------------------------------|
-| _Finite set of a **[2x(3⁶);(3⁴.6)]** pattern with highlighted perimeter_ |
+| _Finite set of a **[2x(3₆);(3₄.6)]** pattern with highlighted perimeter_ |
 ```raw
 </div>
 ```
@@ -79,7 +79,7 @@ uniform3gonal2.toSVG(showPerimeter = false, fillPolygons = true, labelledNodes =
 ```
 | ![polygons](svg/polygons.svg)                                                                |
 |----------------------------------------------------------------------------------------------|
-| _Finite set of a **[2x(3⁶);(3⁴.6)]** pattern with filled polygons colored according to size_ |
+| _Finite set of a **[2x(3₆);(3₄.6)]** pattern with filled polygons colored according to size_ |
 ```raw
 </div>
 ```
@@ -94,7 +94,7 @@ uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, 
 ```
 | ![gonality](svg/gonality.svg)                                                                         |
 |-------------------------------------------------------------------------------------------------------|
-| _Finite set of a **[2x(3⁶);(3⁴.6)]** pattern with dots marking nodes with the same adjacent polygons_ |
+| _Finite set of a **[2x(3₆);(3₄.6)]** pattern with dots marking nodes with the same adjacent polygons_ |
 ```raw
 </div>
 ```
@@ -109,7 +109,7 @@ uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, 
 ```
 | ![uniformity](svg/uniformity.svg)                                                                    |
 |------------------------------------------------------------------------------------------------------|
-| _Finite set of a **[2x(3⁶);(3⁴.6)]** pattern with dots marking nodes with the same adjacent pattern_ |
+| _Finite set of a **[2x(3₆);(3₄.6)]** pattern with dots marking nodes with the same adjacent pattern_ |
 ```raw
 </div>
 ```
@@ -124,7 +124,7 @@ uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE, 
 ```
 | ![inversion](svg/inversion.svg)                                          |
 |--------------------------------------------------------------------------|
-| _Finite set of a **[2x(3⁶);(3⁴.6)]** pattern with inverted tessellation_ |
+| _Finite set of a **[2x(3₆);(3₄.6)]** pattern with inverted tessellation_ |
 ```raw
 </div>
 ```

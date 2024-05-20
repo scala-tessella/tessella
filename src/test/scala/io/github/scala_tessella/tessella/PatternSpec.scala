@@ -15,17 +15,17 @@ class PatternSpec extends AnyFlatSpec with should.Matchers {
 
   "A pattern" can "be printed" in {
     pattern.toString shouldBe
-      "[2x(3².4.3.4);(4⁴)]"
+      "[2x(3₂.4.3.4);(4₄)]"
   }
 
   "A different pattern" can "also be printed" in {
-    Pattern.s("[(3⁶);(3⁴.6)]").toString shouldBe
-      "[(3⁶);(3⁴.6)]"
+    Pattern.s("[(3₆);(3₄.6)]").toString shouldBe
+      "[(3₆);(3₄.6)]"
   }
 
   it must "be created with sorted vertices" in {
     pattern.vertices.last.toString shouldBe
-      "(4⁴)"
+      "(4₄)"
   }
 
   it must "be created with polygons sorted in each vertex" in {
@@ -35,12 +35,12 @@ class PatternSpec extends AnyFlatSpec with should.Matchers {
 
   it can "be created from one FullVertex" in {
     Pattern(FullVertex.s("(4.3.4.3.3)")).toString shouldBe
-      "[(3².4.3.4)]"
+      "[(3₂.4.3.4)]"
   }
 
   it can "be printed as a compilable string" in {
     pattern.toCompilableString shouldBe
-      """Pattern.s("[2x(3².4.3.4);(4⁴)]")"""
+      """Pattern.s("[2x(3₂.4.3.4);(4₄)]")"""
   }
 
   it must "have a gonality" in {
@@ -59,7 +59,7 @@ class PatternSpec extends AnyFlatSpec with should.Matchers {
   }
 
   val sp: String =
-    "[2x(3².4.3.4);(4⁴)]"
+    "[2x(3₂.4.3.4);(4₄)]"
   val maybePattern: Either[String, Pattern] =
     Pattern.maybe(sp)
 
@@ -74,17 +74,17 @@ class PatternSpec extends AnyFlatSpec with should.Matchers {
   }
 
   it can "NOT be created from a malformed string with an invalid full vertex" in {
-    Pattern.maybe("[2x(3².4);(4⁴)]") shouldBe
+    Pattern.maybe("[2x(3₂.4);(4₄)]") shouldBe
       Left("malformed pattern")
   }
 
   it can "NOT be created from a malformed string with an unknown 'z' char " in {
-    Pattern.maybe("[z2x(3².4.3.4);(4⁴)]") shouldBe
+    Pattern.maybe("[z2x(3₂.4.3.4);(4₄)]") shouldBe
       Left("malformed pattern")
   }
 
   it can "NOT be created from a malformed string with an unknown 'q' char" in {
-    Pattern.maybe("[2x(3².4.3.4);(q)]") shouldBe
+    Pattern.maybe("[2x(3₂.4.3.4);(q)]") shouldBe
       Left("malformed pattern")
   }
 

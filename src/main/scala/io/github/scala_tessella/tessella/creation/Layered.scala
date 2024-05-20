@@ -68,7 +68,7 @@ trait Layered extends Reticulate:
       t  
 
   /**
-   * uniform tessellation (3³.4²) (t=2, e=3)
+   * uniform tessellation (3₃.4₂) (t=2, e=3)
    *
    * @see https://en.wikipedia.org/wiki/Elongated_triangular_tiling
    */
@@ -84,7 +84,7 @@ trait Layered extends Reticulate:
     netVariant(List(36, 63), width, height)
 
   /**
-   * uniform tessellation (3⁴.6; 3³.4²; 3.4².6)
+   * uniform tessellation (3₄.6; 3₃.4₂; 3.4₂.6)
    *
    * @see https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons#5-uniform_tilings,_2_vertex_types_(4:1)_and_(3:2)
    */
@@ -92,7 +92,7 @@ trait Layered extends Reticulate:
     netVariant(List(4, 363), width, height)
 
   /**
-   * uniform tessellation (3³.4²; 3².6²; 3.4².6) (t=5, e=8)
+   * uniform tessellation (3₃.4₂; 3₂.6₂; 3.4₂.6) (t=5, e=8)
    *
    * @see https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons#3-uniform_tilings,_3_vertex_types
    */
@@ -100,7 +100,7 @@ trait Layered extends Reticulate:
     netVariant(List(4, 3632, 4, 6332, 4, 3362), width, height)
 
   /**
-   * uniform tessellation (3³.4²; [2x 3².6²]; [2x 3.4².6])
+   * uniform tessellation (3₃.4₂; [2x 3₂.6₂]; [2x 3.4₂.6])
    *
    * @see https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons#5-uniform_tilings,_3_vertex_types_(3:1:1)_and_(2:2:1)
    */
@@ -108,7 +108,7 @@ trait Layered extends Reticulate:
     netVariant(List(4, 6332), width, height)
 
   /**
-   * uniform tessellation ([4x 3.6.3.6]; 3.4².6)
+   * uniform tessellation ([4x 3.6.3.6]; 3.4₂.6)
    *
    * @see https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons#5-uniform_tilings,_2_vertex_types_(4:1)_and_(3:2)
    */
@@ -116,7 +116,7 @@ trait Layered extends Reticulate:
     netVariant(List(4, 36, 63, 36, 63), width, height)
 
   /**
-   * uniform tessellation ([4x 3.6.3.6]; 3.4².6)
+   * uniform tessellation ([4x 3.6.3.6]; 3.4₂.6)
    *
    * @see https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons#5-uniform_tilings,_2_vertex_types_(4:1)_and_(3:2)
    */

@@ -98,21 +98,21 @@ object SVG extends ConverterSVG:
   private def fillVertexStyle(vertex: Vertex): Style =
     val color =
       FullVertex.maybe(vertex.toPolygons).toOption.map(_.toString).getOrElse("") match
-        case "(6³)"       => "yellow"
-        case "(4⁴)"       => "hotpink"
-        case "(3⁶)"       => "grey"
-        case "(3⁴.6)"     => "coral"
-        case "(3³.4²)"    => "darkgreen"
-        case "(3².4.3.4)" => "fuchsia"
+        case "(6₃)"       => "yellow"
+        case "(4₄)"       => "hotpink"
+        case "(3₆)"       => "grey"
+        case "(3₄.6)"     => "coral"
+        case "(3₃.4₂)"    => "darkgreen"
+        case "(3₂.4.3.4)" => "fuchsia"
         case "(3.4.6.4)"  => "dodgerblue"
         case "(3.6.3.6)"  => "goldenrod"
-        case "(3.12²)"    => "orchid"
+        case "(3.12₂)"    => "orchid"
         case "(4.6.12)"   => "tomato"
-        case "(4.8²)"     => "palegreen"
-        case "(3².4.12)"  => "indigo"
-        case "(3².6²)"    => "pink"
+        case "(4.8₂)"     => "palegreen"
+        case "(3₂.4.12)"  => "indigo"
+        case "(3₂.6₂)"    => "pink"
         case "(3.4.3.12)" => "red"
-        case "(3.4².6)"   => "lightgreen"
+        case "(3.4₂.6)"   => "lightgreen"
         case _            => "green"
     Style(List(
       stroke(color),

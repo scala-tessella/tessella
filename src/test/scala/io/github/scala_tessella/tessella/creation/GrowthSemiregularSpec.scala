@@ -10,7 +10,7 @@ import org.scalatest.matchers.*
 
 class GrowthSemiregularSpec extends AnyFlatSpec with should.Matchers {
 
-  "A (3⁴.6) pattern grown quadratically" must "have gonality 1" in {
+  "A (3₄.6) pattern grown quadratically" must "have gonality 1" in {
     triHexHexoid.gonality shouldBe
       1
   }
@@ -30,7 +30,7 @@ class GrowthSemiregularSpec extends AnyFlatSpec with should.Matchers {
       6
   }
 
-  "A (3³.4²) pattern grown quadratically" must "have gonality 1" in {
+  "A (3₃.4₂) pattern grown quadratically" must "have gonality 1" in {
     triSqrSquaroid.gonality shouldBe
       1
   }
@@ -90,7 +90,7 @@ class GrowthSemiregularSpec extends AnyFlatSpec with should.Matchers {
       6
   }
 
-  "A (3.12²) pattern grown quadratically" must "have gonality 1" in {
+  "A (3.12₂) pattern grown quadratically" must "have gonality 1" in {
     triDodHexoid.gonality shouldBe
       1
   }
@@ -130,7 +130,7 @@ class GrowthSemiregularSpec extends AnyFlatSpec with should.Matchers {
       6
   }
 
-  "A (4.8²) pattern grown quadratically" must "have gonality 1" in {
+  "A (4.8₂) pattern grown quadratically" must "have gonality 1" in {
     sqrOctSquaroid.gonality shouldBe
       1
   }

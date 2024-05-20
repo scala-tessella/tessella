@@ -374,7 +374,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
       )
     ).unsafe
 
-  "A (3.12²) pattern with an inner triangle" can "be made of 4 polygons" in {
+  "A (3.12₂) pattern with an inner triangle" can "be made of 4 polygons" in {
     innerTriangle.countPolygons shouldBe
       4
   }
@@ -537,7 +537,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
       77--78, 78--79, 79--80, 80--81, 81--82, 70--82, 77--57, 71--82
     ).unsafe
 
-  "A more complex (3.12²) pattern" can "be made of 28 polygons" in {
+  "A more complex (3.12₂) pattern" can "be made of 28 polygons" in {
     t0.countPolygons shouldBe
       28
   }
@@ -871,7 +871,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
   val t1: Tiling =
     t0.maybeGrowNode(Node(25), Vertex(Polygon(12)), BEFORE_PERIMETER).unsafe
 
-  "A grown (3.12²) pattern" can "be made of 29 polygons" in {
+  "A grown (3.12₂) pattern" can "be made of 29 polygons" in {
     t1.countPolygons shouldBe
       29
   }
@@ -1251,7 +1251,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
   val t2: Tiling =
     Tiling.maybe(grownEdges).unsafe
 
-  "A larger (3.12²) pattern" can "be made of 55 polygons" in {
+  "A larger (3.12₂) pattern" can "be made of 55 polygons" in {
     t2.countPolygons shouldBe
       55
   }
@@ -1653,7 +1653,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
       grownEdges ++ List(143--145, 145--146, 146--147, 147--148, 148--149, 149--150, 150--151, 151--152, 64--152)
     ).unsafe
 
-  "An even larger (3.12²) pattern" can "be made of 56 polygons" in {
+  "An even larger (3.12₂) pattern" can "be made of 56 polygons" in {
     t3.countPolygons shouldBe
       56
   }

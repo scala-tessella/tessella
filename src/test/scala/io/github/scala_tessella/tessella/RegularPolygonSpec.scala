@@ -129,15 +129,15 @@ class RegularPolygonSpec extends AnyFlatSpec with Accuracy with should.Matchers 
   they can "be listed" in {
     Vertex.fullMinors.map(FullVertex.maybe(_).toOption.get.toString) shouldEqual
       List(
-        "(3⁶)", "(3³.4²)", "(3².4.3.4)", "(4⁴)", "(3⁴.6)", "(3.4².6)", "(3.4.6.4)",
-        "(3².6²)", "(3.6.3.6)", "(6³)", "(4.8²)", "(5².10)", "(3².4.12)", "(3.4.3.12)",
-        "(4.6.12)", "(3.12²)", "(3.10.15)", "(3.9.18)", "(4.5.20)", "(3.8.24)", "(3.7.42)"
+        "(3₆)", "(3₃.4₂)", "(3₂.4.3.4)", "(4₄)", "(3₄.6)", "(3.4₂.6)", "(3.4.6.4)",
+        "(3₂.6₂)", "(3.6.3.6)", "(6₃)", "(4.8₂)", "(5₂.10)", "(3₂.4.12)", "(3.4.3.12)",
+        "(4.6.12)", "(3.12₂)", "(3.10.15)", "(3.9.18)", "(4.5.20)", "(3.8.24)", "(3.7.42)"
       )
   }
 
   "Only 3 full vertices" must "be monohedral" in {
     Vertex.monoHedrals.map(vertex => FullVertex.maybe(vertex.toPolygons).toOption.get.toString) shouldEqual
-      List("(3⁶)", "(4⁴)", "(6³)")
+      List("(3₆)", "(4₄)", "(6₃)")
   }
 
   "Only 12 polygons" can "be tessellable" in {

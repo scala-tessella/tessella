@@ -121,7 +121,7 @@ class TilingPerimeterSpec extends AnyFlatSpec with IteratingOps with SymmetryOps
   }
 
   val p33336: Tiling =
-    Tiling.fromFullVertex(FullVertex.s("(3⁴.6)"))
+    Tiling.fromFullVertex(FullVertex.s("(3₄.6)"))
 
   val angles: Vector[Radian] =
     p33336.orderedPerimeterAngles

@@ -45,7 +45,7 @@ trait Quadratic:
    * @param side length in units
    */
   def triangularHex(side: Int): Either[String, Tiling] =
-    fullOfSide(FullVertex.s("(3⁶)"), side, (i: Int) => fromTerms((6, -12, 6), i + 1), standardStrategy)
+    fullOfSide(FullVertex.s("(3₆)"), side, (i: Int) => fromTerms((6, -12, 6), i + 1), standardStrategy)
 
   /** Grows a (4*4) square of given side
    *
@@ -53,7 +53,7 @@ trait Quadratic:
    * @param side length in units
    */
   def squareNet(side: Int): Either[String, Tiling] =
-    fullOfSide(FullVertex.s("(4⁴)"), side, fromTerms((1, 0, 0), _), standardStrategy)
+    fullOfSide(FullVertex.s("(4₄)"), side, fromTerms((1, 0, 0), _), standardStrategy)
 
   /** Grows a (6*3) hexoid of given side
    *
@@ -61,7 +61,7 @@ trait Quadratic:
    * @param side length in hexagons (approx. √3 each)
    */
   def hexagonalHexoid(side: Int): Either[String, Tiling] =
-    fullOfSide(FullVertex.s("(6³)"), side, fromTerms((3, -3, 1), _), standardStrategy)
+    fullOfSide(FullVertex.s("(6₃)"), side, fromTerms((3, -3, 1), _), standardStrategy)
 
   /** Grows a (3*4.6) hexoid of given side
    *
@@ -73,7 +73,7 @@ trait Quadratic:
       (List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(NARROWER_ANGLE, LOWER_ORDINAL), false)
     val sizes: List[Int] =
       List(1, 19, 37, 61, 103, 139, 193, 247, 319, 391, 469, 565)
-    fullOfSide(FullVertex.s("(3⁴.6)"), side, (i: Int) => sizes(i - 1), strategy)
+    fullOfSide(FullVertex.s("(3₄.6)"), side, (i: Int) => sizes(i - 1), strategy)
 
   /** Grows a (3*3.4*2) squaroid of given side
    *
@@ -84,7 +84,7 @@ trait Quadratic:
   def triSquareSquaroid(side: Int): Either[String, Tiling] =
     val strategy: FullStrategy =
       (List(LOWEST_ORDINAL), List(BEFORE_PERIMETER), true)
-    fullOfSide(FullVertex.s("(3³.4²)"), side, fromTerms((21, -27, 8), _), strategy)
+    fullOfSide(FullVertex.s("(3₃.4₂)"), side, fromTerms((21, -27, 8), _), strategy)
 
   /** Grows a (3.4.6.4) hexoid of given side
    *
@@ -108,15 +108,15 @@ trait Quadratic:
    * @param side length in dodecagons (approx. ???)
    */
   def triDodecagonalHexoid(side: Int): Either[String, Tiling] =
-    fullOfSide(FullVertex.s("(3.12²)"), side, fromTerms((9, -9, 1), _), standardStrategy)
+    fullOfSide(FullVertex.s("(3.12₂)"), side, fromTerms((9, -9, 1), _), standardStrategy)
 
-  /** Grows a (3².4.3.4) squaroid of given side
+  /** Grows a (3₂.4.3.4) squaroid of given side
    *
    * @note the size in polygons is 12x&#94;2+16x+1 where x = side
    * @param side length in
    */
   def triSquareSquaroid2(side: Int): Either[String, Tiling] =
-    fullOfSide(FullVertex.s("(3².4.3.4)"), side, fromTerms((12, 16, 1), _), standardStrategyFromSmaller)
+    fullOfSide(FullVertex.s("(3₂.4.3.4)"), side, fromTerms((12, 16, 1), _), standardStrategyFromSmaller)
 
   /** Grows a (4.6.12) hexoid of given side
    *
@@ -132,4 +132,4 @@ trait Quadratic:
    * @param side length in squares (approx. ? each)
    */
   def squareOctogonalSquaroid(side: Int): Either[String, Tiling] =
-    fullOfSide(FullVertex.s("(4.8²)"), side, fromTerms((4, -4, 1), _), standardStrategyFromSmaller)
+    fullOfSide(FullVertex.s("(4.8₂)"), side, fromTerms((4, -4, 1), _), standardStrategyFromSmaller)

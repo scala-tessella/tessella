@@ -423,7 +423,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it can "be created from the polygons at a full vertex" in {
-    Tiling.fromVertex(FullVertex.s("(3⁶)").vertex).graphEdges.sorted(EdgeOrdering) shouldBe
+    Tiling.fromVertex(FullVertex.s("(3₆)").vertex).graphEdges.sorted(EdgeOrdering) shouldBe
       List(1--2, 1--3, 1--4, 1--5, 1--6, 1--7, 2--3, 2--7, 3--4, 4--5, 5--6, 6--7)
   }
 

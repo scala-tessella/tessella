@@ -4,7 +4,7 @@ Finite sets of the 8 semi regular tessellations
 (see @link:[Wikipedia](https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons#Archimedean,_uniform_or_semiregular_tilings) { open=new })
 can be created.
 
-## 1, pattern [(3⁴.6)]
+## 1, pattern [(3₄.6)]
 
 ```scala
 Tiling.triHexagonalHexoid(5)
@@ -14,12 +14,12 @@ Tiling.triHexagonalHexoid(5)
 ```
 | ![hexHexOfSide3](svg/triHexHexoid.svg)  |
 |-----------------------------------------|
-| _Finite set of a **(3⁴.6)** tiling_     |
+| _Finite set of a **(3₄.6)** tiling_     |
 ```raw
 </div>
 ```
 
-## 2, pattern [(3³.4²)]
+## 2, pattern [(3₃.4₂)]
 
 ### Fast method
 
@@ -31,7 +31,7 @@ Tiling.elongatedTriangular(6, 6)
 ```
 | ![perimeter](svg/triHexLayered.svg)  |
 |--------------------------------------|
-| _Finite set of a **(3³.4²)** tiling_ |
+| _Finite set of a **(3₃.4₂)** tiling_ |
 ```raw
 </div>
 ```
@@ -46,12 +46,12 @@ Tiling.triSquareSquaroid(2)
 ```
 | ![perimeter](svg/triSqrSquaroid.svg)  |
 |---------------------------------------|
-| _Finite set of a **(3³.4²)** tiling_  |
+| _Finite set of a **(3₃.4₂)** tiling_  |
 ```raw
 </div>
 ```
 
-## 3, pattern [(3².4.3.4)]
+## 3, pattern [(3₂.4.3.4)]
 
 ```scala
 Tiling.triSquareSquaroid2(3)
@@ -61,7 +61,7 @@ Tiling.triSquareSquaroid2(3)
 ```
 | ![labels](svg/triSqrSquaroid2.svg)      |
 |-----------------------------------------|
-| _Finite set of a **(3².4.3.4)** tiling_ |
+| _Finite set of a **(3₂.4.3.4)** tiling_ |
 ```raw
 </div>
 ```
@@ -113,7 +113,7 @@ Tiling.triHexagonalHex(3)
 </div>
 ```
 
-## 6, pattern [(3.12²)]
+## 6, pattern [(3.12₂)]
 
 ```scala
 Tiling.triDodecagonalHexoid(2)
@@ -123,7 +123,7 @@ Tiling.triDodecagonalHexoid(2)
 ```
 | ![labels](svg/triDodHexoid.svg)         |
 |-----------------------------------------|
-| _Finite set of a **[(3.12²)]** pattern_ |
+| _Finite set of a **[(3.12₂)]** pattern_ |
 ```raw
 </div>
 ```
@@ -143,7 +143,7 @@ Tiling.squareHexDodecagonalHexoid(2)
 </div>
 ```
 
-## 8, pattern [(4.8²)]
+## 8, pattern [(4.8₂)]
 
 ```scala
 Tiling.squareOctogonalSquaroid(4)
@@ -153,7 +153,7 @@ Tiling.squareOctogonalSquaroid(4)
 ```
 | ![labels](svg/sqrOctSquaroid.svg)       |
 |-----------------------------------------|
-| _Finite set of a **[((4.8²)]** pattern_ |
+| _Finite set of a **[((4.8₂)]** pattern_ |
 ```raw
 </div>
 ```

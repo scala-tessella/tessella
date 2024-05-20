@@ -10,7 +10,7 @@ import org.scalatest.matchers.*
 
 class GrowthRegularSpec extends AnyFlatSpec with should.Matchers {
 
-  "A (3⁶) pattern grown quadratically" must "have gonality 1" in {
+  "A (3₆) pattern grown quadratically" must "have gonality 1" in {
     triHexOfSide3.gonality shouldBe
       1
   }
@@ -30,7 +30,7 @@ class GrowthRegularSpec extends AnyFlatSpec with should.Matchers {
       6
   }
 
-  "A (4⁴) pattern grown quadratically" must "have gonality 1" in {
+  "A (4₄) pattern grown quadratically" must "have gonality 1" in {
     sqr3x3Growth.gonality shouldBe
       1
   }
@@ -50,7 +50,7 @@ class GrowthRegularSpec extends AnyFlatSpec with should.Matchers {
       4
   }
 
-  "A (6³) pattern grown quadratically" must "have gonality 1" in {
+  "A (6₃) pattern grown quadratically" must "have gonality 1" in {
     hexHexOfSide3.gonality shouldBe
       1
   }

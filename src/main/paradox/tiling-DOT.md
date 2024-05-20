@@ -7,14 +7,14 @@ describing the undirected graph.
 ```scala
 import io.github.scala_tessella.tessella.conversion.DOT.*
 
-Tiling.fromFullVertex(FullVertex.s("(3⁴.6)")).toDot() // """graph{...
+Tiling.fromFullVertex(FullVertex.s("(3₄.6)")).toDot() // """graph{...
 ```
 ```raw
 <div style="width: 300px;">
 ```
 | ![convertible](svg/dot-sample.svg)     |
 |----------------------------------------|
-| _Finite set of a **[(3⁴.6)]** pattern_ |
+| _Finite set of a **[(3₄.6)]** pattern_ |
 ```raw
 </div>
 ```

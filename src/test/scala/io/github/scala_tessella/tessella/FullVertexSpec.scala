@@ -42,17 +42,17 @@ class FullVertexSpec extends AnyFlatSpec with Helper with should.Matchers {
   }
 
   it can "be created as an Either from a third different string" in {
-    FullVertex.maybe("(6³)").isRight shouldBe
+    FullVertex.maybe("(6₃)").isRight shouldBe
       true
   }
 
   it can "NOT be created from a string if opening parenthesis is missing" in {
-    FullVertex.maybe("6³)") shouldBe
+    FullVertex.maybe("6₃)") shouldBe
       Left("Must start with (")
   }
 
   it can "NOT be created from a string if closing parenthesis is missing" in {
-    FullVertex.maybe("(6³") shouldBe
+    FullVertex.maybe("(6₃") shouldBe
       Left("Must end with )")
   }
 
@@ -97,12 +97,12 @@ class FullVertexSpec extends AnyFlatSpec with Helper with should.Matchers {
 
   "A valid full vertex" can "be printed as a compilable string" in {
     FullVertex.p(6, 6, 6).toCompilableString shouldBe
-      """FullVertex.s("(6³)")"""
+      """FullVertex.s("(6₃)")"""
   }
 
   it can "be converted to a Pattern" in {
     Pattern(FullVertex.p(6, 6, 6)).toString shouldBe
-      "[(6³)]"
+      "[(6₃)]"
   }
 
   it can "be compared to itself" in {

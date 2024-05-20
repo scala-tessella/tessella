@@ -184,7 +184,7 @@ trait Reticulate:
       triangleNetVariant(_, _)(_ % 2 == 1 && _ % 2 == 1)
     )
 
-  /** Uniform Tessellation (3⁴.6) (t=3, e=3) */
+  /** Uniform Tessellation (3₄.6) (t=3, e=3) */
   def uniform2(width: Int, height: Int): Either[String, Tiling] =
     rectangular(
       width,
@@ -195,7 +195,7 @@ trait Reticulate:
     )
 
 
-  /** 2-uniform Tessellation (3⁴.6; 3².6²) (t=2, e=4) */
+  /** 2-uniform Tessellation (3₄.6; 3₂.6₂) (t=2, e=4) */
   def twoUniform4(width: Int, height: Int): Either[String, Tiling] =
     rectangular(
       width,
@@ -205,7 +205,7 @@ trait Reticulate:
       triangleNetVariant(_, _)((i, j) => (i + 3 * j) % 5 == 0)
     )
 
-  /** 2-uniform Tessellation (3.6.3.6; 3².6²) (t=2, e=3) */
+  /** 2-uniform Tessellation (3.6.3.6; 3₂.6₂) (t=2, e=3) */
   def twoUniform5(width: Int, height: Int): Either[String, Tiling] =
     rectangular(
       width,
@@ -215,7 +215,7 @@ trait Reticulate:
       triangleNetVariant(_, _)((i, j) => (i + 2 * j) % 4 == 0)
     )
 
-  /** 3-uniform Tessellation (3².6²; 3.6.3.6; 6³) (t=4, e=5) */
+  /** 3-uniform Tessellation (3₂.6₂; 3.6.3.6; 6₃) (t=4, e=5) */
   def threeUniformOneOneOne4(width: Int, height: Int): Either[String, Tiling] =
     val f: (Int, Int) => Boolean =
       (i, j) => j % 5 match
@@ -251,7 +251,7 @@ trait Reticulate:
       p <- List(0, 1, 2)
     yield (j + q) * ((x + 1) * 2) + i * 2 + p + 1 - q
 
-  /** Builds variants of hex grid by filling hex with 3⁶ according to function
+  /** Builds variants of hex grid by filling hex with 3₆ according to function
    *
    * @param x number of hexagons on the x-axis
    * @param y number of hexagons on the y-axis

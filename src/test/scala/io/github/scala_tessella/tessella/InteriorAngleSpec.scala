@@ -14,7 +14,7 @@ class InteriorAngleSpec extends AnyFlatSpec {
   def interiorAngle(sides: Int): Double =
     Polygon(sides).alpha.toDouble
 
-  "The only monohedral tilings by regular polygons" must "be (3⁶), (4⁴) and (6³)" in {
+  "The only monohedral tilings by regular polygons" must "be (3₆), (4₄) and (6₃)" in {
 
     def isFillingWithoutRemainder(sides: Int): Boolean =
       (TAU.toDouble % interiorAngle(sides)) ~= 0.0

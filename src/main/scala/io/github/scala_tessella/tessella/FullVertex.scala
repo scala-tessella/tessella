@@ -39,17 +39,17 @@ case class FullVertex private(vertex: Vertex) extends Ordered[FullVertex]:
 /** Companion object for [[FullVertex]] */
 object FullVertex:
 
-  private val sups: Map[Int, Char] =
+  private val subs: Map[Int, Char] =
     Map(
-      2 -> '²',
-      3 -> '³',
-      4 -> '⁴',
-      5 -> '⁵',
-      6 -> '⁶'
+      2 -> '₂',
+      3 -> '₃',
+      4 -> '₄',
+      5 -> '₅',
+      6 -> '₆'
     )
 
   private lazy val supsInverted: Map[Char, Int] =
-    sups.invert
+    subs.invert
 
   private def maybePolygonFromString(s: String): Option[Polygon] =
     Try(s.trim.toInt).toOption.flatMap(Vertex.maybeTessellablePolygon)
@@ -156,7 +156,7 @@ object FullVertex:
             else
               (cumulativeDescriptions :+ (stackable match
                 case single :: Nil => single
-                case _             => s"${stackable.headOption.getOrElse("")}${FullVertex.sups(stackable.size)}"
+                case _             => s"${stackable.headOption.getOrElse("")}${FullVertex.subs(stackable.size)}"
               ), List(d))
       })
     s"(${descriptions.mkString(".")})"
@@ -168,23 +168,23 @@ object FullVertex:
   /** The full vertices able to form edge-to-edge 1-uniform, 2 or 3-hedral tilings */
   private val semiRegularPatterns: List[FullVertex] =
     List(
-      "(3⁴.6)",
-      "(3³.4²)",
-      "(3².4.3.4)",
+      "(3₄.6)",
+      "(3₃.4₂)",
+      "(3₂.4.3.4)",
       "(3.4.6.4)",
       "(3.6.3.6)",
-      "(3.12²)",
+      "(3.12₂)",
       "(4.6.12)",
-      "(4.8²)"
+      "(4.8₂)"
     ).map(s)
 
   /** The full vertices able to be part of edge-to-edge k-uniform tilings */
   private val otherRegularPatterns: List[FullVertex] =
     List(
-      "(3².4.12)",
-      "(3².6²)",
+      "(3₂.4.12)",
+      "(3₂.6₂)",
       "(3.4.3.12)",
-      "(3.4².6)"
+      "(3.4₂.6)"
     ).map(s)
 
   /** The full vertices not able to form tilings */
@@ -195,7 +195,7 @@ object FullVertex:
       "(3.9.18)",
       "(3.10.15)",
       "(4.5.20)",
-      "(5².10)"
+      "(5₂.10)"
     ).map(s)
 
   /** All 21 different valid full vertices */
