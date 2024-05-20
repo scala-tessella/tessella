@@ -1,4 +1,4 @@
-addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.12.0")
+addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.12.1")
 addSbtPlugin("com.github.sbt" % "sbt-site" % "1.7.0")
 addSbtPlugin("com.github.sbt" % "sbt-site-paradox" % "1.7.0")
 addSbtPlugin("com.github.sbt" % "sbt-ghpages" % "0.8.0")
