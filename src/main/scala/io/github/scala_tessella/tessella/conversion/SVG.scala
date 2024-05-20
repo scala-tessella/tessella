@@ -75,7 +75,7 @@ object SVG extends ConverterSVG:
       strokeWidth(2)
     ) *)
 
-  private val inversionStyle: Style =
+  private val dualStyle: Style =
     Style(List(
       fill("none"),
       stroke("red"),
@@ -331,20 +331,20 @@ object SVG extends ConverterSVG:
     private def innerEdges: List[Edge] =
       tiling.graphEdges.diff(tiling.perimeter.toRingEdges.toList)
 
-    private def inversionSegments: List[LineSegment] =
+    private def dualSegments: List[LineSegment] =
       innerEdges
         .map(edge => polygonsCentreCoords.filter((edges, _) => edges.contains(edge)).values)
         .map(_.toList.toCouple)
         .map(LineSegment(_, _))
 
-    private def inversionSVG(showInversion: Boolean): Option[Elem] =
-      if showInversion then
+    private def dualSVG(showDual: Boolean): Option[Elem] =
+      if showDual then
         Option(
           group(
-            Option(Title("Inversion")),
-            Option(Description("Inverted tessellation by joining the centres of each two polygons sharing an edge")),
-            inversionSegments.map(line)*
-          ).withStyle(inversionStyle)
+            Option(Title("Dual")),
+            Option(Description("Dual tessellation by joining the centres of each two polygons sharing an edge")),
+            dualSegments.map(line)*
+          ).withStyle(dualStyle)
         )
       else
         None
@@ -356,21 +356,21 @@ object SVG extends ConverterSVG:
      * @param labelledNodes strategy for labelling nodes
      * @param markStyle     strategy for marking nodes
      * @param showGrowth    if true, growth by ordinal nodes is shown
-     * @param showInversion if true, the inverted tessellation is shown
+     * @param showDual      if true, the dual tessellation is shown
      */
     def tessellationGroup(showPerimeter: Boolean = true,
                           fillPolygons: Boolean = false,
                           labelledNodes: LabelledNodes = PERIMETER_ONLY,
                           markStyle: MarkStyle = MarkStyle.NONE,
                           showGrowth: Boolean = false,
-                          showInversion: Boolean = false): Elem =
+                          showDual: Boolean = false): Elem =
       group(
         Option(Title("Tiling")),
         Option(Description("Finite tessellation of regular polygons")),
         List(
           graphSVG,
           polygonsSVG(fillPolygons),
-          inversionSVG(showInversion),
+          dualSVG(showDual),
           perimeterSVG(showPerimeter),
           growthSVG(showGrowth),
           marksSVG(markStyle),
@@ -389,14 +389,14 @@ object SVG extends ConverterSVG:
      * @param labelledNodes strategy for labelling nodes
      * @param markStyle     strategy for marking nodes
      * @param showGrowth    if true, growth by ordinal nodes is shown
-     * @param showInversion if true, the inverted tessellation is shown
+     * @param showDual if true, the inverted tessellation is shown
      */
     def toSVG(showPerimeter: Boolean = true,
               fillPolygons: Boolean = false,
               labelledNodes: LabelledNodes = PERIMETER_ONLY,
               markStyle: MarkStyle = NONE,
               showGrowth: Boolean = false,
-              showInversion: Boolean = false): Elem =
+              showDual: Boolean = false): Elem =
       toViewBox(
-        tessellationGroup(showPerimeter, fillPolygons, labelledNodes, markStyle, showGrowth, showInversion)
+        tessellationGroup(showPerimeter, fillPolygons, labelledNodes, markStyle, showGrowth, showDual)
       )
