@@ -49,7 +49,7 @@ lazy val tessella =
         "io.github.scala-tessella" %%% "ring-seq" % "0.6.2",
         "io.github.iltotore" %%% "iron" % "2.5.0",
         "org.scala-lang.modules" %%% "scala-xml" % "2.3.0",
-        "org.scalatest" %%% "scalatest" % "3.2.18" % "test",
+        "org.scalatest" %%% "scalatest" % "3.2.19" % "test",
         "org.scalacheck" %%% "scalacheck" % "1.18.0" % "test",
       )
     )
