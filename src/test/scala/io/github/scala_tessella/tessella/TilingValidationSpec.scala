@@ -164,7 +164,7 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
 
   it can "NOT have an inside gap" in {
     val withInvalidVertex =
-      Tiling.squareNet(3, 4).toOption.get.graphEdges.filterNot(_ == 10--11)
+      Tiling.pattern_4444(3, 4).toOption.get.graphEdges.filterNot(_ == 10--11)
     Tiling.maybe(withInvalidVertex) shouldEqual
       Left(
         """Tiling must have all internal nodes as valid FullVertex:

@@ -1,5 +1,7 @@
 package io.github.scala_tessella.tessella
 
+import RegularPolygon.{Polygon, PolygonOrdering}
+import TilingUniformity.*
 import utility.Utils.*
 import utility.UtilsOption.sequence
 
@@ -29,9 +31,13 @@ case class Pattern(vertices: List[FullVertex]) extends Ordered[Pattern]:
   lazy val distinctVertices: List[FullVertex] =
     vertices.distinct
 
+  /** Different polygons in the pattern */
+  private def distinctPolygons: List[Polygon] =
+    vertices.flatMap(_.vertex.toPolygons).distinct
+
   /** Number of different polygons in the pattern */
   def hedrality: Int =
-    vertices.flatMap(_.vertex.toPolygons).distinct.size
+    distinctPolygons.size
 
   /** Number of different full vertices in the pattern */
   def gonality: Int =
@@ -40,6 +46,34 @@ case class Pattern(vertices: List[FullVertex]) extends Ordered[Pattern]:
   /** Number of full vertices in the pattern */
   def uniformity: Int =
     vertices.size
+
+  /** Checks whether the given tiling has the same polygons of the pattern */
+  def hasSamePolygonsOf(tiling: Tiling): Boolean =
+    distinctPolygons.sorted(PolygonOrdering) == tiling.distinctPolygons.sorted(PolygonOrdering)
+
+  /** Checks whether the polygons of the given tiling are all contained in the pattern */
+  def containsAllPolygonsOf(tiling: Tiling): Boolean =
+    tiling.distinctPolygons.diff(distinctPolygons).isEmpty
+
+  /** Checks whether the given tiling has the same full vertex configurations of the pattern */
+  def hasSameFullVerticesOf(tiling: Tiling): Boolean =
+    hasSamePolygonsOf(tiling) &&
+      distinctVertices.sorted == tiling.distinctVertices.sorted
+
+  /** Checks whether the full vertex configurations of the given tiling are all contained in the pattern */
+  def containsAllFullVerticesOf(tiling: Tiling): Boolean =
+    containsAllPolygonsOf(tiling) &&
+      tiling.distinctVertices.diff(distinctVertices).isEmpty
+
+  /** Checks whether the given tiling has the same symmetry classes of the pattern */
+  def hasSameSymmetryClassesOf(tiling: Tiling): Boolean =
+    hasSameFullVerticesOf(tiling) &&
+      vertices.sorted == tiling.symmetryClasses.sorted
+
+  /** Checks whether the symmetry classes of the given tiling are all contained in the pattern */
+  def containsAllSymmetryClassesOf(tiling: Tiling): Boolean =
+    containsAllFullVerticesOf(tiling) &&
+      tiling.symmetryClasses.diff(vertices).isEmpty
 
 /** Companion object for [[Pattern]] */
 object Pattern:

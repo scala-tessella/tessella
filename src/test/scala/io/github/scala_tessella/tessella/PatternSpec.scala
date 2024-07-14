@@ -4,7 +4,7 @@ import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
 
-class PatternSpec extends AnyFlatSpec with should.Matchers {
+class PatternSpec extends AnyFlatSpec with Helper with should.Matchers {
 
   val pattern: Pattern =
     Pattern(List(
@@ -86,6 +86,56 @@ class PatternSpec extends AnyFlatSpec with should.Matchers {
   it can "NOT be created from a malformed string with an unknown 'q' char" in {
     Pattern.maybe("[2x(3₂.4.3.4);(q)]") shouldBe
       Left("malformed pattern")
+  }
+  
+  "A pattern" can "be checked for having the same polygons of a tiling" in {
+    Pattern.s("[2x(3₃.4₂);(3₂.4.3.4)]").hasSamePolygonsOf(Tiling.pattern_2x33344_33434(6, 6).unsafe) shouldBe
+      true
+  }
+  
+  it can "be checked for NOT having the same polygons of a tiling" in {
+    Pattern.s("[2x(3₃.4₂);(3₂.4.3.4)]").hasSamePolygonsOf(Tiling.pattern_333333(6, 6).unsafe) shouldBe
+      false
+  }
+
+  it can "be checked for having all the polygons of a tiling" in {
+    Pattern.s("[2x(3₃.4₂);(3₂.4.3.4)]").containsAllPolygonsOf(Tiling.pattern_333333(6, 6).unsafe) shouldBe
+      true
+  }
+
+  "A pattern" can "be checked for having the same vertex configurations of a tiling" in {
+    Pattern.s("[2x(3₃.4₂);(3₂.4.3.4)]").hasSameFullVerticesOf(Tiling.pattern_2x33344_33434(6, 6).unsafe) shouldBe
+      true
+  }
+
+  it can "be checked for NOT having the same vertex configurations of a tiling" in {
+    Pattern.s("[2x(3₃.4₂);(3₂.4.3.4)]").hasSameFullVerticesOf(Tiling.pattern_333333(6, 6).unsafe) shouldBe
+      false
+  }
+
+  it can "be checked for having all the vertex configurations of a tiling" in {
+    Pattern.s("[2x(3₃.4₂);(3₂.4.3.4)]").containsAllFullVerticesOf(Tiling.pattern_33434(6, 6).unsafe) shouldBe
+      true
+  }
+
+  "A pattern" can "be checked for having the same symmetry classes of a tiling" in {
+    Pattern.s("[2x(3₃.4₂);(3₂.4.3.4)]").hasSameSymmetryClassesOf(Tiling.pattern_2x33344_33434(6, 6).unsafe) shouldBe
+      true
+  }
+
+  it can "be checked for NOT having the same symmetry classes of a tiling" in {
+    Pattern.s("[2x(3₃.4₂);(3₂.4.3.4)]").hasSameSymmetryClassesOf(Tiling.pattern_333333(6, 6).unsafe) shouldBe
+      false
+  }
+
+  it can "be checked for having all the symmetry classes of a tiling" in {
+    Pattern.s("[2x(3₃.4₂);(3₂.4.3.4)]").containsAllSymmetryClassesOf(Tiling.pattern_33434(6, 6).unsafe) shouldBe
+      true
+  }
+
+  it can "be checked for NOT having all the symmetry classes of a tiling" in {
+    Pattern.s("[(3.4₂.6);(3.6.3.6)]").containsAllSymmetryClassesOf(Tiling.pattern_3446_4x3636(10, 10).unsafe) shouldBe
+      false
   }
 
 }

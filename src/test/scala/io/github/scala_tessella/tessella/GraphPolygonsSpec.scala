@@ -9,7 +9,7 @@ import org.scalatest.matchers.*
 class GraphPolygonsSpec extends AnyFlatSpec with Helper with should.Matchers {
 
   "A sqr4x4Reticulate" can "be divided in oriented polygons" in {
-    sqr4x4Reticulate.tilingOrientedPolygons shouldBe
+    p4444_4by4_reticulate.tilingOrientedPolygons shouldBe
       Option(
         List(
           Vector(17, 22, 21, 16), Vector(11, 6, 7, 12), Vector(7, 6, 1, 2), Vector(18, 23, 22, 17),
@@ -21,7 +21,7 @@ class GraphPolygonsSpec extends AnyFlatSpec with Helper with should.Matchers {
   }
 
   "A triHexOfSide3" can "be divided in oriented polygons" in {
-    triHexOfSide3.tilingOrientedPolygons shouldBe
+    p333333_grown_hexagon.tilingOrientedPolygons shouldBe
       Option(
         List(
           Vector(12, 26, 27), Vector(13, 27, 28), Vector(28, 29, 13), Vector(11, 24, 25), Vector(25, 26, 11),
@@ -52,7 +52,7 @@ class GraphPolygonsSpec extends AnyFlatSpec with Helper with should.Matchers {
   }
 
   "A hex4x4Reticulate" can "be divided in oriented polygons" in {
-    hex4x4Reticulate.tilingOrientedPolygons shouldBe
+    p666_4by4_reticulate.tilingOrientedPolygons shouldBe
       Option(
         List(
           Vector(37, 46, 47, 48, 39, 38), Vector(44, 45, 46, 37, 36, 35), Vector(32, 31, 40, 41, 42, 33),
@@ -110,7 +110,7 @@ class GraphPolygonsSpec extends AnyFlatSpec with Helper with should.Matchers {
   }
 
   "A uniform7gonal3" can "be divided in oriented polygons" in {
-    uniform7gonal3.tilingOrientedPolygons shouldBe
+    p333333_2x3366_4x666.tilingOrientedPolygons shouldBe
       Option(
         List(
           Vector(183, 171, 172), Vector(170, 171, 183), Vector(176, 177, 178, 161, 160, 159),
@@ -150,7 +150,7 @@ class GraphPolygonsSpec extends AnyFlatSpec with Helper with should.Matchers {
   }
 
   "A uniform3gonal2" can "be divided in oriented polygons" in {
-    uniform3gonal2.tilingOrientedPolygons shouldBe
+    p2x333333_33336.tilingOrientedPolygons shouldBe
       Option(
         List(
           Vector(1, 2, 49), Vector(49, 10, 1), Vector(38, 39, 48, 47, 46, 37), Vector(55, 5, 6), Vector(6, 7, 55),

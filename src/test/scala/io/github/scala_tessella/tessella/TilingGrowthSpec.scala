@@ -8,7 +8,7 @@ import RegularPolygon.{Polygon, Vertex}
 import Topology.{--, EdgeOrdering, Node}
 import Geometry.Radian.{TAU_2, TAU_3, TAU_4, TAU_6}
 import TilingSymmetry.countSymmetries
-import Tiling.squareNet
+import Tiling.pattern_4444
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
@@ -29,17 +29,17 @@ class TilingGrowthSpec extends AnyFlatSpec with Helper with should.Matchers {
   }
 
   "A reticulate of triangles" can "have a perimeter node removed" in {
-    tri4x4Reticulate.maybeRemoveNode(Node(1)).getOrElse(triangle).toString shouldBe
+    p333333_4by4_reticulate.maybeRemoveNode(Node(1)).getOrElse(triangle).toString shouldBe
       "Tiling(1--2, 1--4, 1--5, 2--5, 3--4, 3--6, 3--7, 4--5, 4--7, 4--8, 5--8, 6--7, 6--9, 6--10, 7--8, 7--10, 7--11, 8--11, 9--10, 9--12, 9--13, 10--11, 10--13, 10--14, 11--14, 12--13, 13--14)"
   }
 
   it can "have an inner node removed" in {
-    tri4x4Reticulate.maybeRemoveNode(Node(5)).isRight shouldBe
+    p333333_4by4_reticulate.maybeRemoveNode(Node(5)).isRight shouldBe
       true
   }
 
   it can "fail to have another perimeter node removed" in {
-    tri4x4Reticulate.maybeRemoveNode(Node(2)).isRight shouldBe
+    p333333_4by4_reticulate.maybeRemoveNode(Node(2)).isRight shouldBe
       false
   }
 

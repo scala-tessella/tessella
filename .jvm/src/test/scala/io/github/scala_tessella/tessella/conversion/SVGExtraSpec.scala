@@ -3,7 +3,7 @@ package conversion
 
 import SVG.*
 import SVGExtra.*
-import Outliers.hexTrianguloidOfSide4
+import Outliers.p666_triangle
 
 import org.scalatest.*
 import org.scalatest.flatspec.*
@@ -13,7 +13,7 @@ class SVGExtraSpec extends AnyFlatSpec with Helper with should.Matchers {
 
   "A tiling" can "be concentric" in {
     prettyPrinter.format(
-      hexTrianguloidOfSide4.toNestedPerimetersSVG()
+      p666_triangle.toNestedPerimetersSVG()
     ) shouldBe
       """<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-50.0 -25.0 375.0 396.410162" xmlns="http://www.w3.org/2000/svg">
         |  <g style="stroke:purple;stroke-width:5;fill:none">

@@ -1,7 +1,7 @@
 package io.github.scala_tessella.tessella
 package conversion
 
-import Outliers.sqr3x3Growth
+import Outliers.p4444_3by3_grown
 import SVG.*
 
 import org.scalatest.*
@@ -12,7 +12,7 @@ class SVGAnimationSpec extends AnyFlatSpec with Helper with should.Matchers {
 
   "A tiling" can "be converted to an animation showing the nodes growth" in {
     prettyPrinter.format(
-      sqr3x3Growth.toSVG(
+      p4444_3by3_grown.toSVG(
         labelledNodes = LabelledNodes.NONE,
         showGrowth = true
       )

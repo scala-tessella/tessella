@@ -51,14 +51,14 @@ class TilingGrowthEdgeSpec extends AnyFlatSpec with Helper with should.Matchers 
 //  }
 
   "A tiling" can "NOT have a polygon added to a non existing edge" in {
-    Tiling.squareNet(2, 2).unsafe.maybeGrowEdge(1--5, Polygon(4), BEFORE_PERIMETER).left.getOrElse("").take(83) shouldBe
+    Tiling.pattern_4444(2, 2).unsafe.maybeGrowEdge(1--5, Polygon(4), BEFORE_PERIMETER).left.getOrElse("").take(83) shouldBe
       """Tiling can add polygons only to perimeter edges:
         | found unknown edge 1--5.
         |See SVG:""".stripMargin
   }
 
   it can "NOT have a polygon added to a non perimeter edge" in {
-    Tiling.squareNet(2, 2).unsafe.maybeGrowEdge(2--5, Polygon(4), BEFORE_PERIMETER).left.getOrElse("").take(81) shouldBe
+    Tiling.pattern_4444(2, 2).unsafe.maybeGrowEdge(2--5, Polygon(4), BEFORE_PERIMETER).left.getOrElse("").take(81) shouldBe
       """Tiling can add polygons only to perimeter edges:
         | found inner edge 2--5.
         |See SVG:""".stripMargin

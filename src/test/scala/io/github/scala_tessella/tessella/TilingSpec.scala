@@ -2,45 +2,44 @@ package io.github.scala_tessella.tessella
 
 import Geometry.*
 import Geometry.Radian.{TAU_2, TAU_3, TAU_4, TAU_6}
-import Outliers.*
+import Outliers.{p4444_4by4_reticulate, *}
 import RegularPolygon.{Polygon, Vertex}
-import TilingSymmetry.{countSymmetries, countRotationalSymmetries}
+import TilingSymmetry.{countRotationalSymmetries, countSymmetries}
 import Topology.*
 import utility.Utils.{mapKeys, mapValues2}
-
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
 
 class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
 
-  val path1: sqr4x4Reticulate.Path =
-    sqr4x4Reticulate.Path(Vector(1, 2, 3, 4, 5, 10, 15, 20, 25).map(Node(_)))
+  val path1: p4444_4by4_reticulate.Path =
+    p4444_4by4_reticulate.Path(Vector(1, 2, 3, 4, 5, 10, 15, 20, 25).map(Node(_)))
 
-  val path2: sqr4x4Reticulate.Path =
-    sqr4x4Reticulate.Path(Vector(1, 2, 7, 8).map(Node(_)))
+  val path2: p4444_4by4_reticulate.Path =
+    p4444_4by4_reticulate.Path(Vector(1, 2, 7, 8).map(Node(_)))
 
-  val ringPath1: sqr4x4Reticulate.PolygonPath =
-    sqr4x4Reticulate.PolygonPath(Vector(1, 2, 7, 6).map(Node(_)))
+  val ringPath1: p4444_4by4_reticulate.PolygonPath =
+    p4444_4by4_reticulate.PolygonPath(Vector(1, 2, 7, 6).map(Node(_)))
 
-  val ringPath2: sqr4x4Reticulate.PolygonPath =
-    sqr4x4Reticulate.PolygonPath(Vector(3, 2, 7, 8).map(Node(_)))
+  val ringPath2: p4444_4by4_reticulate.PolygonPath =
+    p4444_4by4_reticulate.PolygonPath(Vector(3, 2, 7, 8).map(Node(_)))
 
-  val ringPath3: sqr4x4Reticulate.PolygonPath =
-    sqr4x4Reticulate.PolygonPath(Vector(6, 7, 12, 11).map(Node(_)))
+  val ringPath3: p4444_4by4_reticulate.PolygonPath =
+    p4444_4by4_reticulate.PolygonPath(Vector(6, 7, 12, 11).map(Node(_)))
 
-  val ringPath4: sqr4x4Reticulate.PolygonPath =
-    sqr4x4Reticulate.PolygonPath(Vector(8, 7, 12, 13).map(Node(_)))
+  val ringPath4: p4444_4by4_reticulate.PolygonPath =
+    p4444_4by4_reticulate.PolygonPath(Vector(8, 7, 12, 13).map(Node(_)))
 
-  val full: List[sqr4x4Reticulate.PolygonPath] =
+  val full: List[p4444_4by4_reticulate.PolygonPath] =
     List(ringPath1, ringPath2, ringPath3, ringPath4)
 
   "A tiling" must "have a perimeter as a circular path" in {
-    sqr4x4Reticulate.perimeter shouldEqual
+    p4444_4by4_reticulate.perimeter shouldEqual
       Vector(1, 2, 3, 4, 5, 10, 15, 20, 25, 24, 23, 22, 21, 16, 11, 6)
   }
 
   it must "have a map of perimeter polygons as circular paths" in {
-    sqr4x4Reticulate.perimeterOrderedPolygonPaths shouldEqual
+    p4444_4by4_reticulate.perimeterOrderedPolygonPaths shouldEqual
       Map(
         5 -> Vector(Vector(5, 10, 9, 4)),
         10 -> Vector(Vector(10, 15, 14, 9), Vector(10, 9, 4, 5)),
@@ -146,8 +145,8 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
 
   "A sqr4x4Reticulate" can "have perimeter nodes and perimeter path angles" in {
     (
-      sqr4x4Reticulate.perimeter.toRingNodes,
-      sqr4x4Reticulate.orderedPerimeterAngles,
+      p4444_4by4_reticulate.perimeter.toRingNodes,
+      p4444_4by4_reticulate.orderedPerimeterAngles,
     ) shouldBe
       (
         Vector(1, 2, 3, 4, 5, 10, 15, 20, 25, 24, 23, 22, 21, 16, 11, 6),
@@ -160,9 +159,9 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
 
   it must "have perimeter length, area and compactness measured" in {
     (
-      sqr4x4Reticulate.perimeterLength,
-      sqr4x4Reticulate.area,
-      sqr4x4Reticulate.compactness
+      p4444_4by4_reticulate.perimeterLength,
+      p4444_4by4_reticulate.area,
+      p4444_4by4_reticulate.compactness
     ) shouldBe
       (16, 16.000000000000004, 0.7853981633974484)
   }
@@ -179,24 +178,24 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
         Point(3, 4), Point(4, 4), Point(4, 3), Point(4, 2), Point(4, 1), Point(4, 0), Point(3, 0),
         Point(2, 0), Point(1, 0)
       )
-    sqr4x4Reticulate.perimeterPoints.almostEquals(expected) shouldBe
+    p4444_4by4_reticulate.perimeterPoints.almostEquals(expected) shouldBe
       true
   }
 
   it must "have a gonality value" in {
-    sqr4x4Reticulate.gonality shouldBe
+    p4444_4by4_reticulate.gonality shouldBe
       1
   }
 
   it can "be checked for reflectional and rotational symmetry" in {
-    (sqr4x4Reticulate.countSymmetries, sqr4x4Reticulate.countRotationalSymmetries) shouldBe
+    (p4444_4by4_reticulate.countSymmetries, p4444_4by4_reticulate.countRotationalSymmetries) shouldBe
       (4, 4)
   }
 
   "A tri4x4Reticulate" can "have perimeter nodes and perimeter path angles" in {
     (
-      tri4x4Reticulate.perimeter.toRingNodes,
-      tri4x4Reticulate.orderedPerimeterAngles,
+      p333333_4by4_reticulate.perimeter.toRingNodes,
+      p333333_4by4_reticulate.orderedPerimeterAngles,
     ) shouldBe
       (
         Vector(1, 2, 3, 6, 9, 12, 15, 14, 13, 10, 7, 4),
@@ -206,27 +205,27 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
 
   it must "have perimeter length, area and compactness measured" in {
     (
-      tri4x4Reticulate.perimeterLength,
-      tri4x4Reticulate.area,
-      tri4x4Reticulate.compactness
+      p333333_4by4_reticulate.perimeterLength,
+      p333333_4by4_reticulate.area,
+      p333333_4by4_reticulate.compactness
     ) shouldBe
       (12, 6.928203230275511, 0.6045997880780728)
   }
 
   it must "have a gonality value" in {
-    tri4x4Reticulate.gonality shouldBe
+    p333333_4by4_reticulate.gonality shouldBe
       1
   }
 
   it can "be checked for reflectional and rotational symmetry" in {
-    (tri4x4Reticulate.countSymmetries, tri4x4Reticulate.countRotationalSymmetries) shouldBe
+    (p333333_4by4_reticulate.countSymmetries, p333333_4by4_reticulate.countRotationalSymmetries) shouldBe
       (0, 2)
   }
 
   "A hex4x4Reticulate" can "have perimeter nodes and perimeter path angles" in {
     (
-      hex4x4Reticulate.perimeter.toRingNodes,
-      hex4x4Reticulate.orderedPerimeterAngles,
+      p666_4by4_reticulate.perimeter.toRingNodes,
+      p666_4by4_reticulate.orderedPerimeterAngles,
     ) shouldBe
       (
         Vector(
@@ -242,21 +241,21 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it must "have a gonality value" in {
-    hex4x4Reticulate.gonality shouldBe
+    p666_4by4_reticulate.gonality shouldBe
       1
   }
 
   it must "have perimeter length, area and compactness measured" in {
     (
-      hex4x4Reticulate.perimeterLength,
-      hex4x4Reticulate.area,
-      hex4x4Reticulate.compactness
+      p666_4by4_reticulate.perimeterLength,
+      p666_4by4_reticulate.area,
+      p666_4by4_reticulate.compactness
     ) shouldBe
       (30, 41.569219381653056, 0.5804157965549497)
   }
 
   it can "be checked for reflectional and rotational symmetry" in {
-    (hex4x4Reticulate.countSymmetries, hex4x4Reticulate.countRotationalSymmetries) shouldBe
+    (p666_4by4_reticulate.countSymmetries, p666_4by4_reticulate.countRotationalSymmetries) shouldBe
       (2, 2)
   }
 
@@ -270,8 +269,8 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
       4
   }
 
-  val polygonPath: sqr4x4Reticulate.PolygonPath =
-    sqr4x4Reticulate.PolygonPath(Vector(1, 2, 7, 6).map(Node(_)))
+  val polygonPath: p4444_4by4_reticulate.PolygonPath =
+    p4444_4by4_reticulate.PolygonPath(Vector(1, 2, 7, 6).map(Node(_)))
 
   "A polygon path of a tiling" can "be created" in {
     polygonPath.toPolygon shouldEqual
@@ -279,7 +278,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   "A perimeter circular path" can "be converted to ordered polygons" in {
-    sqr4x4Reticulate.perimeterOrderedPolygons.mapValues2(_.map(_.toSides)) shouldBe
+    p4444_4by4_reticulate.perimeterOrderedPolygons.mapValues2(_.map(_.toSides)) shouldBe
       Map(
         5 -> Vector(4),
         10 -> Vector(4, 4),
@@ -301,7 +300,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it can "be converted to angles" in {
-    sqr4x4Reticulate.perimeterAngles shouldBe
+    p4444_4by4_reticulate.perimeterAngles shouldBe
       Map(
         5 -> TAU_4, 10 -> TAU_2, 20 -> TAU_2, 1 -> TAU_4,
         6 -> TAU_2, 21 -> TAU_4, 2 -> TAU_2, 22 -> TAU_2,
@@ -311,7 +310,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it can "be converted to 2D points" in {
-    sqr4x4Reticulate.perimeterPoints.almostEquals(
+    p4444_4by4_reticulate.perimeterPoints.almostEquals(
       Vector(
         Point(),
         Point(0, 1),
@@ -335,7 +334,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it can "be mapped to coords" in {
-    sqr4x4Reticulate.perimeterCoords.almostEqualsMap(
+    p4444_4by4_reticulate.perimeterCoords.almostEqualsMap(
       Map(
         Node(5)  -> Point(0, 4),
         Node(10) -> Point(1, 4),
@@ -359,19 +358,19 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   "A path of a regular polygon" can "be created" in {
-    triSqrHexHexoid.PolygonPath(Vector(7, 18, 19, 20).map(Node(_))) shouldEqual
+    p3464.PolygonPath(Vector(7, 18, 19, 20).map(Node(_))) shouldEqual
       Vector(7, 18, 19, 20)
   }
 
   it must "fail if smaller than size 3" in {
     val caught: IllegalArgumentException =
-      intercept[IllegalArgumentException] { triSqrHexHexoid.PolygonPath(Vector(1, 2).map(Node(_))) }
+      intercept[IllegalArgumentException] { p3464.PolygonPath(Vector(1, 2).map(Node(_))) }
     caught.getMessage shouldBe "Invalid number of sides: 2"
   }
 
   it must "fail if not a circular path" in {
     val caught: IllegalArgumentException =
-      intercept[IllegalArgumentException] { triSqrHexHexoid.PolygonPath(Vector(1, 2, 4, 11).map(Node(_))) }
+      intercept[IllegalArgumentException] { p3464.PolygonPath(Vector(1, 2, 4, 11).map(Node(_))) }
     caught.getMessage shouldBe "Invalid path: nodes 2 and 4 are not connected"
   }
 
@@ -380,7 +379,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
 
   it must "fail if not a regular polygon" in {
     val caught: IllegalArgumentException =
-      intercept[IllegalArgumentException] { triSqrHexHexoid.PolygonPath(notAPolygon) }
+      intercept[IllegalArgumentException] { p3464.PolygonPath(notAPolygon) }
     caught.getMessage shouldBe
       "Invalid regular polygon path: node 9 and node 1 are connected internally"
   }
@@ -388,14 +387,14 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   it must "fail if also not a regular polygon" in {
     val caught: IllegalArgumentException =
       intercept[IllegalArgumentException] {
-        triSqrHexHexoid.PolygonPath(Vector(9, 1, 2, 10, 27, 26, 25, 24).map(Node(_)))
+        p3464.PolygonPath(Vector(9, 1, 2, 10, 27, 26, 25, 24).map(Node(_)))
       }
     caught.getMessage shouldBe
       "Invalid regular polygon path: node 9 and node 2 are connected internally"
   }
 
   it must "not fail if created unsafe" in {
-    triSqrHexHexoid.PolygonPath.unsafe(notAPolygon) shouldEqual
+    p3464.PolygonPath.unsafe(notAPolygon) shouldEqual
       Vector(1, 2, 10, 9, 8)
   }
 
@@ -403,12 +402,12 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
     minimalDifferentFromItsPeri.toMaybeTiling.unsafe
 
   "A triHexOfSide3" can "be checked for reflectional and rotational symmetry" in {
-    (triHexOfSide3.countSymmetries, triHexOfSide3.countRotationalSymmetries) shouldBe
+    (p333333_grown_hexagon.countSymmetries, p333333_grown_hexagon.countRotationalSymmetries) shouldBe
       (6, 6)
   }
 
   "A hexHexOfSide3" can "be checked for reflectional and rotational symmetry" in {
-    (hexHexOfSide3.countSymmetries, hexHexOfSide3.countRotationalSymmetries) shouldBe
+    (p666_grown_hexagon.countSymmetries, p666_grown_hexagon.countRotationalSymmetries) shouldBe
       (6, 6)
   }
 
@@ -464,12 +463,12 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
   
   it can "have a dual graph that is a valid tiling" in {
-    sqr4x4Reticulate.dual.toMaybeTiling.isRight shouldBe
+    p4444_4by4_reticulate.dual.toMaybeTiling.isRight shouldBe
       true
   }
   
   it can "have a dual graph" in {
-    tri4x4Reticulate.dual.graphEdges shouldBe
+    p333333_4by4_reticulate.dual.graphEdges shouldBe
       List(
         6--8, 9--10, 14--15, 3--4, 2--7, 11--12, 4--5, 2--8, 10--11,
         13--15, 5--6, 8--9, 10--14, 15--16, 1--4, 2--3, 7--11, 12--13

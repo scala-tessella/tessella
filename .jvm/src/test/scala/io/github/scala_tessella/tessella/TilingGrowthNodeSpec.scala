@@ -399,7 +399,7 @@ class TilingGrowthNodeSpec extends AnyFlatSpec with Helper with should.Matchers 
   }
 
   it can "NOT have a polygon added to a non existing node" in {
-    Tiling.squareNet(2, 2).unsafe.maybeGrowNode(Node(100), Vertex(Polygon(4)), BEFORE_PERIMETER) shouldBe
+    Tiling.pattern_4444(2, 2).unsafe.maybeGrowNode(Node(100), Vertex(Polygon(4)), BEFORE_PERIMETER) shouldBe
       Left(
         """Tiling can add polygons only to perimeter nodes:
           | found unknown node 100.
@@ -448,7 +448,7 @@ class TilingGrowthNodeSpec extends AnyFlatSpec with Helper with should.Matchers 
   }
 
   it can "NOT have a polygon added to a non perimeter node" in {
-    Tiling.squareNet(2, 2).unsafe.maybeGrowNode(Node(5), Vertex(Polygon(4)), BEFORE_PERIMETER) shouldBe
+    Tiling.pattern_4444(2, 2).unsafe.maybeGrowNode(Node(5), Vertex(Polygon(4)), BEFORE_PERIMETER) shouldBe
       Left(
         """Tiling can add polygons only to perimeter nodes:
           | found inner node 5.

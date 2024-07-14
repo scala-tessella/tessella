@@ -40,7 +40,7 @@ trait Helper extends Accuracy:
     Tiling.fromPolygon(12)
 
   lazy val sixSquares: Tiling =
-    Tiling.squareNet(3, 2).unsafe
+    Tiling.pattern_4444(3, 2).unsafe
 
   extension (maybe: Either[_, Tiling])
 
@@ -73,7 +73,7 @@ trait Helper extends Accuracy:
       coords.compareElems(others)((l1, l2) => l1._1 == l2._1 && l1._2.almostEquals(l2._2, LESSER_ACCURACY))
 
   def squareReticulate(side: Int): Tiling =
-    Tiling.squareNet(side, side).unsafe
+    Tiling.pattern_4444(side, side).unsafe
   
   private def saveFile(elem: Elem, filename: String)(extension: String): Unit =
     XML.save(

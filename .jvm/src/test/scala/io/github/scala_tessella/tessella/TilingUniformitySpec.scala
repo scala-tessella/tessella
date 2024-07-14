@@ -208,21 +208,21 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
 //  }
 
   "A sqr4x4Reticulate" can "return the nodes belonging to each different gonality" in {
-    sqr4x4Reticulate.groupGonals shouldBe
+    p4444_4by4_reticulate.groupGonals shouldBe
       Map(
         Vector(4, 4, 4, 4) -> List(14, 9, 13, 17, 12, 7, 18, 8, 19)
       ).mapKeys(_.map(Node(_)))
   }
 
   it can "have its nodes grouped in uniform sets" in {
-    sqr4x4Reticulate.groupUniforms shouldBe
+    p4444_4by4_reticulate.groupUniforms shouldBe
       Map(
         (Vector(4, 4, 4, 4), List()) -> Vector(14, 9, 13, 17, 12, 7, 18, 8, 19)
       ).mapValues2(_.map(Node(_)))
   }
 
   it can "have an uniformity value 1" in {
-    sqr4x4Reticulate.uniformity shouldBe
+    p4444_4by4_reticulate.uniformity shouldBe
       1
   }
 
@@ -276,31 +276,31 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
   }
 
   "A triangleTriangleOfSide5" can "have its nodes grouped in uniform sets" in {
-    triangleTriangleOfSide5.groupUniforms shouldBe
+    p333333_triangle.groupUniforms shouldBe
       Map(
         (Vector(3, 3, 3, 3, 3, 3), List()) -> Vector(5, 14, 9, 13, 12, 8)
       ).mapValues2(_.map(Node(_)))
   }
 
   it can "have uniformity value 1" in {
-    triangleTriangleOfSide5.uniformity shouldBe
+    p333333_triangle.uniformity shouldBe
       1
   }
 
   "A hexTrianguloidOfSide4" can "have its nodes grouped in uniform sets" in {
-    hexTrianguloidOfSide4.groupUniforms shouldBe
+    p666_triangle.groupUniforms shouldBe
       Map(
         (Vector(6, 6, 6), List()) -> Vector(14, 13, 22, 12, 16, 23, 15, 28, 21)
       ).mapValues2(_.map(Node(_)))
   }
 
   it can "have uniformity value 1" in {
-    hexTrianguloidOfSide4.uniformity shouldBe
+    p666_triangle.uniformity shouldBe
       1
   }
 
-  "A uniform3gonal2" can "have its nodes grouped in uniform sets" in {
-    uniform3gonal2.groupUniforms shouldBe
+  "A tiling with pattern [2x(3₆);(3₄.6)]" can "have its nodes grouped in uniform sets" in {
+    p2x333333_33336.groupUniforms shouldBe
       Map(
         (Vector(3, 3, 3, 3, 3, 3), List(0)) -> Vector(51, 55, 50, 53, 56, 57, 54),
         (Vector(3, 3, 3, 3, 6), List()) -> Vector(14, 33, 13, 35, 15, 24, 37, 34, 17, 22, 27, 26, 23),
@@ -309,12 +309,12 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
   }
 
   it can "have uniformity value 3" in {
-    uniform3gonal2.uniformity shouldBe
+    p2x333333_33336.uniformity shouldBe
       3
   }
 
-  "A 5-uniform 3-Archimedean tiling" can "have its nodes grouped in uniform sets" in {
-    uniform5gonal3.groupUniforms shouldBe
+  "A tiling with pattern [2x(3₆);2x(3₄.6);(3.3.6.6)]" can "have its nodes grouped in uniform sets" in {
+    p2x333333_2x33336_3366.groupUniforms shouldBe
       Map(
         (Vector(3, 3, 3, 3, 3, 3), List(0)) -> Vector(101, 106, 102, 113, 108, 104),
         (Vector(3, 3, 3, 3, 6), List(1)) -> Vector(37, 78, 33, 48, 23, 47, 34, 64),
@@ -325,7 +325,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
   }
 
   it can "have uniformity value 5 and gonality value 3" in {
-    (uniform5gonal3.gonality, uniform5gonal3.uniformity) shouldBe
+    (p2x333333_2x33336_3366.gonality, p2x333333_2x33336_3366.uniformity) shouldBe
       (3, 5)
   }
 
@@ -344,7 +344,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
   }
 
   "A 7 uniform tiling [(3₆);2x(3₂.6₂);4x(6₃)]" can "have its nodes grouped in uniform sets" in {
-    uniform7gonal3.groupUniforms shouldBe
+    p333333_2x3366_4x666.groupUniforms shouldBe
       Map(
         (Vector(6, 6, 6), List(1)) -> Vector(111, 159, 33, 75, 123, 69, 138, 84, 61, 137, 97, 112, 48, 83, 76, 98, 47, 62),
         (Vector(3, 3, 6, 6), List(1)) -> Vector(110, 92, 153, 78, 64, 49, 81, 67, 154, 139, 82, 77, 96, 63, 95),
@@ -357,7 +357,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
   }
 
   it can "have them grouped by vertex" in {
-    uniform7gonal3.groupUniformsNestedComplete shouldBe
+    p333333_2x3366_4x666.groupUniformsNestedComplete shouldBe
       Map(
         Vector(3, 3, 6, 6) -> List(
           (List(0), Vector(170, 142, 52, 93, 65, 156, 169, 141, 66, 155, 108, 3, 80, 18, 51, 4, 79, 94)),
@@ -376,7 +376,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
   }
 
   it can "have uniformity value 7 and gonality value 3" in {
-    (uniform7gonal3.gonality, uniform7gonal3.uniformity) shouldBe
+    (p333333_2x3366_4x666.gonality, p333333_2x3366_4x666.uniformity) shouldBe
       (3, 7)
   }
 
@@ -547,14 +547,14 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
 
   "A 3-uniform 2-Archimedean tiling [2x(3₆);(3₄.6)]" can "be described" in {
     val t: Tiling =
-      uniform3gonal2
+      p2x333333_33336
     (t.gonality, t.uniformity) shouldBe
       (2, 3)
   }
 
   "A 4-uniform 4-Archimedean tiling [(3₆);(3₄.6);(3₂.6₂);(6₃)]" can "be described" in {
     val t: Tiling =
-      uniform4gonal4
+      p333333_33336_3366_666
     (t.gonality, t.uniformity) shouldBe
       (4, 4)
   }
@@ -785,7 +785,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
   }
 
   "Another smaller tiling [(3.4.6.4)]" can "be examined for outer polygon strips from perimeter node 22" in {
-    triSqrHexHexoid.outerOrderedStripFromSingle(Node(22)) shouldBe
+    p3464.outerOrderedStripFromSingle(Node(22)) shouldBe
       List(
         (List(6), false),
         (List(4), false),
@@ -797,7 +797,7 @@ class TilingUniformitySpec extends AnyFlatSpec with Helper with should.Matchers 
   }
 
   val matrix: Map[Node, List[(List[Int], Boolean)]] =
-    triSqrHexHexoid.outerOrderedStripFrom(triSqrHexHexoid.graphEdges.nodes.diff(triSqrHexHexoid.perimeter.toRingNodes))
+    p3464.outerOrderedStripFrom(p3464.graphEdges.nodes.diff(p3464.perimeter.toRingNodes))
 
   it can "be examined for outer polygon strips from all nodes" in {
     matrix shouldBe

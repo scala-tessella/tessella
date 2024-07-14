@@ -7,7 +7,7 @@ can be created.
 ## 1, pattern [(3₄.6)]
 
 ```scala
-Tiling.triHexagonalHexoid(5)
+Tiling.pattern_33336(5)
 ```
 ```raw
 <div style="width: 540px;">
@@ -24,7 +24,7 @@ Tiling.triHexagonalHexoid(5)
 ### Fast method
 
 ```scala
-Tiling.elongatedTriangular(6, 6)
+Tiling.pattern_33344(6, 6)
 ```
 ```raw
 <div style="width: 400px;">
@@ -39,7 +39,7 @@ Tiling.elongatedTriangular(6, 6)
 ### Slow method
 
 ```scala
-Tiling.triSquareSquaroid(2)
+Tiling.pattern_33344(2)
 ```
 ```raw
 <div style="width: 360px;">
@@ -53,8 +53,25 @@ Tiling.triSquareSquaroid(2)
 
 ## 3, pattern [(3₂.4.3.4)]
 
+### Fast method
+
 ```scala
-Tiling.triSquareSquaroid2(3)
+Tiling.pattern_33434(7, 7)
+```
+```raw
+<div style="width: 480px;">
+```
+| ![labels](svg/pattern_33434.svg)        |
+|-----------------------------------------|
+| _Finite set of a **(3₂.4.3.4)** tiling_ |
+```raw
+</div>
+```
+
+### Slow method
+
+```scala
+Tiling.pattern_33434(3)
 ```
 ```raw
 <div style="width: 480px;">
@@ -69,7 +86,7 @@ Tiling.triSquareSquaroid2(3)
 ## 4, pattern [(3.4.6.4)]
 
 ```scala
-Tiling.triSquareHexagonalHexoid(3)
+Tiling.pattern_3464(3)
 ```
 ```raw
 <div style="width: 660px;">
@@ -86,7 +103,7 @@ Tiling.triSquareHexagonalHexoid(3)
 ### Fast method
 
 ```scala
-Tiling.triHexagonal(6, 6)
+Tiling.pattern_3636(6, 6)
 ```
 ```raw
 <div style="width: 400px;">
@@ -101,7 +118,7 @@ Tiling.triHexagonal(6, 6)
 ### Slow method
 
 ```scala
-Tiling.triHexagonalHex(3)
+Tiling.pattern_3636(3)
 ```
 ```raw
 <div style="width: 540px;">
@@ -116,7 +133,7 @@ Tiling.triHexagonalHex(3)
 ## 6, pattern [(3.12₂)]
 
 ```scala
-Tiling.triDodecagonalHexoid(2)
+Tiling.pattern_31212(2)
 ```
 ```raw
 <div style="width: 600px;">
@@ -131,7 +148,7 @@ Tiling.triDodecagonalHexoid(2)
 ## 7, pattern [(4.6.12)]
 
 ```scala
-Tiling.squareHexDodecagonalHexoid(2)
+Tiling.pattern_4612(2)
 ```
 ```raw
 <div style="width: 800px;">
@@ -146,7 +163,7 @@ Tiling.squareHexDodecagonalHexoid(2)
 ## 8, pattern [(4.8₂)]
 
 ```scala
-Tiling.squareOctogonalSquaroid(4)
+Tiling.pattern_488(4)
 ```
 ```raw
 <div style="width: 660px;">

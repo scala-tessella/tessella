@@ -110,7 +110,7 @@ trait Reticulate:
    * @param width size must be even and greater than 0
    * @param height size must be greater then 0
    */
-  def triangleNet(width: Int, height: Int): Either[String, Tiling] =
+  def pattern_333333(width: Int, height: Int): Either[String, Tiling] =
     rectangular(width, height, width_even_gt_zero, height_gt_zero, triangleNetEdges)
 
   /** Creates a rectangular reticulate of width by height squares
@@ -118,7 +118,7 @@ trait Reticulate:
    * @param width size must be greater then 0
    * @param height size must be greater then 0
    */
-  def squareNet(width: Int, height: Int): Either[String, Tiling] =
+  def pattern_4444(width: Int, height: Int): Either[String, Tiling] =
     rectangular(width, height, width_gt_zero, height_gt_zero, squareNetEdges)
 
   /** Creates a rectangular reticulate of width by height hexagons
@@ -126,15 +126,15 @@ trait Reticulate:
    * @param width  size must be greater then 0
    * @param height size must be greater then 0
    */
-  def hexagonNet(width: Int, height: Int): Either[String, Tiling] =
+  def pattern_666(width: Int, height: Int): Either[String, Tiling] =
     rectangular(width, height, width_gt_zero, height_gt_zero, hexagonNetEdges)
 
   /** Creates a triangle of triangles of given side */
-  def triangleTriangle(side: Int): Either[String, Tiling] =
+  def pattern_333333_triangle(side: Int): Either[String, Tiling] =
     triangular(side, side_gt_zero, triangleTriangleEdges)
 
   /** Creates a trianguloid of hexagons of given side */
-  def hexTrianguloid(side: Int): Either[String, Tiling] =
+  def pattern_666_trianguloid(side: Int): Either[String, Tiling] =
     triangular(side, side_gt_zero, hexTrianguloidEdges)
 
   /** Builds variants of triangle grid by emptying hex according to function
@@ -174,8 +174,70 @@ trait Reticulate:
 
     cutCorners(cutCorners(edges, bottomLeft, blCorners), topRight, trCorners).compact
 
+  /** Builds variants of square grid by converting square to two triangles according to function
+   *
+   * @param x number of triangles on the x-axis
+   * @param y number of triangles on the y-axis
+   * @param f function telling if given i node in a row must be converted or not
+   * @param g function telling if given j row must be reversed or not
+   */
+  private def squareNetVariant(x: Int, y: Int)(f: Int => Boolean)(g: Int => Boolean): List[Edge] =
+    val start: List[Edge] =
+      squareNetEdges(x, y)
+    val additional: IndexedSeq[Edge] =
+      for
+        j <- 0 until y
+        isRowEven = g(j)
+        i <- 0 until x
+        h = i + 1 + (x + 1) * j
+        if f(i) ^ isRowEven
+      yield
+        if isRowEven then
+          Edge(Node(h), Node(h + x + 2))
+        else
+          Edge(Node(h + 1), Node(h + x + 1))
+    start ++ additional
+
+  def pattern_33434(width: Int, height: Int): Either[String, Tiling] =
+    rectangular(
+      width,
+      height,
+      width_gt_zero,
+      height_gt_zero,
+      squareNetVariant(_, _)(_ % 2 < 1)(_ % 2 == 0)
+    )
+
+  def pattern_33344_33434(width: Int, height: Int): Either[String, Tiling] =
+    rectangular(
+      width,
+      height,
+      width_gt_zero,
+      height_gt_zero,
+      squareNetVariant(_, _)(_ % 4 < 2)(_ % 2 == 0)
+    )
+
+  /** @see https://probabilitysports.com/tilings.html?u=0&n=3&t=53 */
+  def pattern_2x33344_33434(width: Int, height: Int): Either[String, Tiling] =
+    rectangular(
+      width,
+      height,
+      width_gt_zero,
+      height_gt_zero,
+      squareNetVariant(_, _)(_ % 6 < 3)(_ % 2 == 0)
+    )
+
+  /** @see https://probabilitysports.com/tilings.html?u=0&n=3&t=23 */
+  def pattern_33344_33434_4444(width: Int, height: Int): Either[String, Tiling] =
+    rectangular(
+      width,
+      height,
+      width_gt_zero,
+      height_gt_zero,
+      squareNetVariant(_, _)(_ % 3 == 0)(_ % 3 == 0)
+    )
+
   /** Uniform tessellation (3.6.3.6) (t=2, e=1) */
-  def uniform(width: Int, height: Int): Either[String, Tiling] =
+  def pattern_3636_other(width: Int, height: Int): Either[String, Tiling] =
     rectangular(
       width,
       height,
@@ -185,7 +247,7 @@ trait Reticulate:
     )
 
   /** Uniform Tessellation (3₄.6) (t=3, e=3) */
-  def uniform2(width: Int, height: Int): Either[String, Tiling] =
+  def pattern_33336(width: Int, height: Int): Either[String, Tiling] =
     rectangular(
       width,
       height,
@@ -194,9 +256,8 @@ trait Reticulate:
       triangleNetVariant(_, _)((i, j) => (i + 2 * j) % 7 == 0)
     )
 
-
   /** 2-uniform Tessellation (3₄.6; 3₂.6₂) (t=2, e=4) */
-  def twoUniform4(width: Int, height: Int): Either[String, Tiling] =
+  def pattern_33336_3366(width: Int, height: Int): Either[String, Tiling] =
     rectangular(
       width,
       height,
@@ -206,7 +267,7 @@ trait Reticulate:
     )
 
   /** 2-uniform Tessellation (3.6.3.6; 3₂.6₂) (t=2, e=3) */
-  def twoUniform5(width: Int, height: Int): Either[String, Tiling] =
+  def pattern_3636_3366(width: Int, height: Int): Either[String, Tiling] =
     rectangular(
       width,
       height,
@@ -216,7 +277,7 @@ trait Reticulate:
     )
 
   /** 3-uniform Tessellation (3₂.6₂; 3.6.3.6; 6₃) (t=4, e=5) */
-  def threeUniformOneOneOne4(width: Int, height: Int): Either[String, Tiling] =
+  def pattern_3366_3636_666_alt(width: Int, height: Int): Either[String, Tiling] =
     val f: (Int, Int) => Boolean =
       (i, j) => j % 5 match
         case e if e == 2 || e == 4 => i % 5 == (e / 2 + 1) || i % 5 == (e / 2 - 1)

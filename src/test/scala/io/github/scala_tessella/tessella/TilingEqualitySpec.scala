@@ -1,6 +1,6 @@
 package io.github.scala_tessella.tessella
 
-import Outliers.{edges12Nodes8, edges12Nodes8Similar, minimalDifferentFromItsPeri, sqr4x4Reticulate}
+import Outliers.{edges12Nodes8, edges12Nodes8Similar, minimalDifferentFromItsPeri, p4444_4by4_reticulate}
 import TilingGrowth.*
 import Topology.{--, Edge, Node}
 
@@ -22,7 +22,7 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
       List(onePgonTenEdges, twoPgonsFiveEdges)
   }
   val twoPgonsSevenEdges: Tiling =
-    Tiling.squareNet(1, 2).unsafe
+    Tiling.pattern_4444(1, 2).unsafe
 
   "Two tilings" can "have the same number of polygons" in {
     twoPgonsSevenEdges.countPolygons shouldEqual
@@ -67,7 +67,7 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
   }
 
   val twoSquares: Tiling =
-    Tiling.squareNet(1, 2).unsafe
+    Tiling.pattern_4444(1, 2).unsafe
 
   "A Tiling" must "be equal to itself" in {
     twoSquares shouldEqual twoSquares
@@ -122,8 +122,8 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
   }
 
   "Two square nets" must "be equal" in {
-    Tiling.squareNet(4).unsafe shouldEqual
-      sqr4x4Reticulate
+    Tiling.pattern_4444(4).unsafe shouldEqual
+      p4444_4by4_reticulate
   }
 
   "Two tilings" must "be equal in rounded path angles" in {
@@ -190,7 +190,7 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
 //  }
 
   val t: Tiling =
-    sqr4x4Reticulate.maybeRemoveNode(Node(21)).flatMap(_.maybeRemoveNode(Node(5))).unsafe
+    p4444_4by4_reticulate.maybeRemoveNode(Node(21)).flatMap(_.maybeRemoveNode(Node(5))).unsafe
 
   "A tiling" can "have two separate inner tilings" in {
     t.nestedTilings(isStrict = false) shouldBe
@@ -207,7 +207,7 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
   }
 
   "Another tiling" can "have only one inner tiling" in {
-    sqr4x4Reticulate.nestedTilings(isStrict = false) shouldBe
+    p4444_4by4_reticulate.nestedTilings(isStrict = false) shouldBe
       List(
         List(
           List(
@@ -221,7 +221,7 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
   }
 
   val aTriangleNet: Tiling =
-    Tiling.triangleNet(6, 3).unsafe
+    Tiling.pattern_333333(6, 3).unsafe
 
   "A triangle net" can "return the concentric polygons" in {
     aTriangleNet.nestedTilings(isStrict = false) shouldBe

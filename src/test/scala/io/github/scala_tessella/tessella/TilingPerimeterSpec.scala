@@ -21,48 +21,48 @@ class TilingPerimeterSpec extends AnyFlatSpec with IteratingOps with SymmetryOps
 
   "The perimeter of sqr4x4Reticulate" can "have symmetries" in {
     (
-      sqr4x4Reticulate.perimeterRotationalSymmetry,
-      sqr4x4Reticulate.orderedPerimeterAngles.symmetryIndices,
-      sqr4x4Reticulate.perimeterReflectionSymmetry
+      p4444_4by4_reticulate.perimeterRotationalSymmetry,
+      p4444_4by4_reticulate.orderedPerimeterAngles.symmetryIndices,
+      p4444_4by4_reticulate.perimeterReflectionSymmetry
     ) shouldBe
       (4, List(0, 4, 8, 12), 4)
   }
 
   it can "have reduced fillable nodes thanks to symmetries" in {
-    sqr4x4Reticulate.perimeterDistinctSymmetricNodes shouldBe
+    p4444_4by4_reticulate.perimeterDistinctSymmetricNodes shouldBe
       Vector(11, 6, 1)
   }
 
   "The perimeter of tri4x4Reticulate" can "have symmetries" in {
     (
-      tri4x4Reticulate.perimeterRotationalSymmetry,
-      tri4x4Reticulate.orderedPerimeterAngles.symmetryIndices,
-      tri4x4Reticulate.perimeterReflectionSymmetry
+      p333333_4by4_reticulate.perimeterRotationalSymmetry,
+      p333333_4by4_reticulate.orderedPerimeterAngles.symmetryIndices,
+      p333333_4by4_reticulate.perimeterReflectionSymmetry
     ) shouldBe
       (2, Nil, 0)
   }
 
   it can "have reduced fillable nodes thanks to symmetries" in {
-    tri4x4Reticulate.perimeterDistinctSymmetricNodes shouldBe
+    p333333_4by4_reticulate.perimeterDistinctSymmetricNodes shouldBe
       Vector(1, 2, 3, 6, 9, 12)
   }
 
   "The perimeter of hex4x4Reticulate" can "have symmetries" in {
     (
-      hex4x4Reticulate.perimeterRotationalSymmetry,
-      hex4x4Reticulate.orderedPerimeterAngles.symmetryIndices,
-      hex4x4Reticulate.perimeterReflectionSymmetry
+      p666_4by4_reticulate.perimeterRotationalSymmetry,
+      p666_4by4_reticulate.orderedPerimeterAngles.symmetryIndices,
+      p666_4by4_reticulate.perimeterReflectionSymmetry
     ) shouldBe
       (2, List(0, 15), 2)
   }
 
   it can "have reduced fillable nodes thanks to symmetries" in {
-    hex4x4Reticulate.perimeterDistinctSymmetricNodes shouldBe
+    p666_4by4_reticulate.perimeterDistinctSymmetricNodes shouldBe
       Vector(8, 7, 6, 5, 4, 3, 2, 1)
   }
 
   val asymmetricalHex: Tiling =
-    Tiling.hexagonNet(4, 3).unsafe
+    Tiling.pattern_666(4, 3).unsafe
 
   "The perimeter of asymmetricalHex" can "have symmetries" in {
     (

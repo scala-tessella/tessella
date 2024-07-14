@@ -17,7 +17,7 @@ import org.scalatest.matchers.*
 class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
 
   "A tiling made of triangles" can "return its coords" in {
-    tri4x4Reticulate.coords.almostEqualsMap(
+    p333333_4by4_reticulate.coords.almostEqualsMap(
       Map(
         1 -> Point(),
         2 -> Point(1, 0),
@@ -40,7 +40,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
   }
 
   "A tiling made of hexagons" can "return its coords" in {
-    hex4x4Reticulate.coords.almostEqualsMap(
+    p666_4by4_reticulate.coords.almostEqualsMap(
       Map(
         1 -> Point(),
         2 -> Point(1, 0),
@@ -96,7 +96,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
   }
 
   it can "be rendered as SVG" in {
-    prettyPrinter.format(hex4x4Reticulate.toSVG()) shouldBe
+    prettyPrinter.format(p666_4by4_reticulate.toSVG()) shouldBe
       """<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-50.0 -25.0 375.0 526.313972" xmlns="http://www.w3.org/2000/svg">
         |  <g>
         |    <title>Tiling</title>
@@ -216,7 +216,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
   }
 
   "A tiling made of squares" can "return its coords" in {
-    sqr4x4Reticulate.coords.almostEqualsMap(
+    p4444_4by4_reticulate.coords.almostEqualsMap(
       Map(
         1 -> Point(),
         2 -> Point(1, 0),
@@ -249,7 +249,7 @@ class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
   }
 
   it can "be rendered as polygons SVG" in {
-    sqr4x4Reticulate.withPolygons shouldBe
+    p4444_4by4_reticulate.withPolygons shouldBe
       """<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="-25.0 -225.0 250.0 250.0" xmlns="http://www.w3.org/2000/svg">
         |  <g>
         |    <title>Tiling</title>

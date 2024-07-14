@@ -7,7 +7,7 @@ describing the vector image.
 ```scala
 import io.github.scala_tessella.tessella.conversion.SVG.*
 
-val uniform3gonal2: Tiling = Tiling.threeUniformTwoOne(4, 4).toOption.get
+val uniform3gonal2: Tiling = Tiling.pattern_2x333333_33336(4, 4).toOption.get
 uniform3gonal2.toSVG(showPerimeter = false, labelledNodes = LabelledNodes.NONE) // returns a SVG as scala.XML.Elem
 ```
 ```raw

@@ -1,7 +1,7 @@
 package io.github.scala_tessella.tessella
 
 import Topology.*
-import Outliers.sqr4x4Reticulate
+import Outliers.p4444_4by4_reticulate
 
 import org.scalatest.*
 import org.scalatest.flatspec.*
@@ -396,7 +396,7 @@ class TopologySpec extends AnyFlatSpec with should.Matchers {
   }
 
   val sqrEdges: List[Edge] =
-    sqr4x4Reticulate.graphEdges
+    p4444_4by4_reticulate.graphEdges
 
 //  it can "be searched with breadth-first" in {
 //    sqrEdges.bfs(Node(1)) shouldEqual

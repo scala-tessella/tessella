@@ -486,7 +486,7 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
     orientedPolygons.map(_.toPolygonPathNodes).groupBy(_.size).mapKeys(Polygon(_))
 
   /** Associations of polygon and count */
-  private def groupHedrals: Map[Polygon, Int] =
+  def groupHedrals: Map[Polygon, Int] =
     sizedPolygons.mapValues2(_.size)
 
   /** Number of different polygons in the tiling */

@@ -39,7 +39,7 @@ class SymmetricSpec extends AnyFlatSpec with SymmetryOps with SymmetricHelper wi
   }
 
   "A 3464 hexoid" can "have sets of perimeter nodes at minimal angle where to apply growth" in {
-    triSqrHexHexoid.rotationalPerimeterNodeSets shouldBe
+    p3464.rotationalPerimeterNodeSets shouldBe
       (
         List(List(19, 35, 27), List(19, 31)),
         List(3, 4, 12)

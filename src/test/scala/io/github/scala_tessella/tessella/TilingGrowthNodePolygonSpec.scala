@@ -213,7 +213,7 @@ class TilingGrowthNodePolygonSpec extends AnyFlatSpec with Helper with should.Ma
   }
 
   val intersectTestbed: Tiling =
-    Tiling.maybe(Tiling.squareNet(3, 3).unsafe.graphEdges.diff(List(2--3, 6--7))).unsafe
+    Tiling.maybe(Tiling.pattern_4444(3, 3).unsafe.graphEdges.diff(List(2--3, 6--7))).unsafe
 
   it can "NOT have a vertex growing node 3 starting from 7 to intersect some perimeter edges" in {
     (

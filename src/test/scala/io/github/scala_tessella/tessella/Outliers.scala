@@ -1,38 +1,38 @@
 package io.github.scala_tessella.tessella
 
 import RegularPolygon.{Polygon, Vertex}
-import Tiling.squareNet
+import Tiling.pattern_4444
 import TilingGrowth.*
 import Topology.*
 
 object Outliers extends Helper:
 
-  lazy val tri4x4Reticulate: Tiling =
-    Tiling.triangleNet(4, 4).unsafe
+  lazy val p333333_4by4_reticulate: Tiling =
+    Tiling.pattern_333333(4, 4).unsafe
 
-  lazy val triHexOfSide3: Tiling =
-    Tiling.triangularHex(3).unsafe
+  lazy val p333333_grown_hexagon: Tiling =
+    Tiling.pattern_333333(3).unsafe
 
-  lazy val sqr4x4Reticulate: Tiling =
-    Tiling.squareNet(4, 4).unsafe
+  lazy val p4444_4by4_reticulate: Tiling =
+    Tiling.pattern_4444(4, 4).unsafe
 
-  lazy val sqr3x3Growth: Tiling =
-    Tiling.squareNet(3).unsafe
+  lazy val p4444_3by3_grown: Tiling =
+    Tiling.pattern_4444(3).unsafe
 
-  lazy val hex4x4Reticulate: Tiling =
-    Tiling.hexagonNet(4, 4).unsafe
+  lazy val p666_4by4_reticulate: Tiling =
+    Tiling.pattern_666(4, 4).unsafe
 
-  lazy val hexHexOfSide3: Tiling =
-    Tiling.hexagonalHexoid(3).unsafe
+  lazy val p666_grown_hexagon: Tiling =
+    Tiling.pattern_666(3).unsafe
 
-  lazy val triangleTriangleOfSide5: Tiling =
-    Tiling.triangleTriangle(5).unsafe
+  lazy val p333333_triangle: Tiling =
+    Tiling.pattern_333333_triangle(5).unsafe
 
-  lazy val hexTrianguloidOfSide4: Tiling =
-    Tiling.hexTrianguloid(4).unsafe
+  lazy val p666_triangle: Tiling =
+    Tiling.pattern_666_trianguloid(4).unsafe
 
   lazy val gonExperiment: Tiling =
-    Tiling.maybe(sqr3x3Growth.graphEdges ++ List(
+    Tiling.maybe(p4444_3by3_grown.graphEdges ++ List(
       8--17, 17--18, 18--19, 19--20, 20--9,
       10--21, 21--11,
       16--22, 22--5, 22--23, 23--5,
@@ -55,41 +55,41 @@ object Outliers extends Helper:
   lazy val pentagonGrown: Tiling =
     TilingGrowth.maybePolygonGrow(Polygon(5), 10).unsafe
 
-  lazy val sqrOctSquaroid: Tiling =
-    Tiling.squareOctogonalSquaroid(2).unsafe
+  lazy val p488: Tiling =
+    Tiling.pattern_488(2).unsafe
 
-  lazy val sqrHexDodHexoid: Tiling =
-    Tiling.squareHexDodecagonalHexoid(2).unsafe
+  lazy val p4612: Tiling =
+    Tiling.pattern_4612(2).unsafe
 
-  lazy val triDodHexoid: Tiling =
-    Tiling.triDodecagonalHexoid(2).unsafe
+  lazy val p31212: Tiling =
+    Tiling.pattern_31212(2).unsafe
 
-  lazy val triHexHex: Tiling =
-    Tiling.triHexagonalHex(2).unsafe
+  lazy val p3636: Tiling =
+    Tiling.pattern_3636(2).unsafe
 
-  lazy val triSqrHexHexoid: Tiling =
-    Tiling.triSquareHexagonalHexoid(2).unsafe
+  lazy val p3464: Tiling =
+    Tiling.pattern_3464(2).unsafe
 
-  lazy val triSqrSquaroid: Tiling =
-    Tiling.triSquareSquaroid(2).unsafe
+  lazy val p33444: Tiling =
+    Tiling.pattern_33344(2).unsafe
 
-  val triSqrSquaroid2: Tiling =
-    Tiling.triSquareSquaroid2(2).unsafe
+  val p33434: Tiling =
+    Tiling.pattern_33434(2).unsafe
 
-  lazy val triHexHexoid: Tiling =
-    Tiling.triHexagonalHexoid(4).unsafe
+  lazy val p33336: Tiling =
+    Tiling.pattern_33336(4).unsafe
 
-  lazy val uniform3gonal2: Tiling =
-    Tiling.threeUniformTwoOne(4, 4).unsafe
+  lazy val p2x333333_33336: Tiling =
+    Tiling.pattern_2x333333_33336(4, 4).unsafe
 
-  lazy val uniform7gonal3: Tiling =
-    Tiling.sevenUniformFourTwoOne(8, 9).unsafe
+  lazy val p333333_2x3366_4x666: Tiling =
+    Tiling.pattern_333333_2x3366_4x666(8, 9).unsafe
 
-  val uniform5gonal3: Tiling =
-    Tiling.fiveUniformTwoTwoOne4(6, 6).unsafe
+  val p2x333333_2x33336_3366: Tiling =
+    Tiling.pattern_2x333333_2x33336_3366(6, 6).unsafe
 
-  val uniform4gonal4: Tiling =
-    Tiling.fourUniformOneOneOneOne(6, 6).unsafe
+  val p333333_33336_3366_666: Tiling =
+    Tiling.pattern_333333_33336_3366_666(6, 6).unsafe
 
   val uniform6: Tiling =
     Tiling.maybe(
@@ -179,10 +179,10 @@ object Outliers extends Helper:
     ).unsafe
 
   val uniform5v1: Tiling =
-    Tiling.fiveUniformIssue1(18, 12).unsafe
+    Tiling.pattern_2x33344_2x3446_3636(18, 12).unsafe
 
   val uniform5v2: Tiling =
-    Tiling.fiveUniformIssue2(18, 12).unsafe
+    Tiling.pattern_2x33344_2x3446_3636_alt(18, 12).unsafe
 
   private val triangleEdges =
     triangle.graphEdges
@@ -443,10 +443,10 @@ object Outliers extends Helper:
     Tiling.fromVertex(Vertex(3, 3, 3, 3, 3))
 
   lazy val minimalSquareInsertion: Tiling =
-    Tiling.maybe(squareNet(3, 2).unsafe.graphEdges.filterNot(_ == 2--3)).unsafe
+    Tiling.maybe(pattern_4444(3, 2).unsafe.graphEdges.filterNot(_ == 2--3)).unsafe
 
   lazy val troubledGrowthByFullVertex: Tiling =
-     Tiling.maybe(Tiling.triangleNet(4, 3).unsafe.graphEdges.diff(List(1--4, 4--7))).unsafe
+     Tiling.maybe(Tiling.pattern_333333(4, 3).unsafe.graphEdges.diff(List(1--4, 4--7))).unsafe
 
   val problematicEdges: List[Edge] =
     List(

@@ -9,7 +9,7 @@ can be created.
 ### Fast reticulate method
 
 ```scala
-Tiling.triangleNet(4, 4)
+Tiling.pattern_333333(4, 4)
 ```
 ```raw
 <div style="width: 420px;">
@@ -22,7 +22,7 @@ Tiling.triangleNet(4, 4)
 ```
 
 ```scala
-Tiling.triangleTriangle(4)
+Tiling.pattern_333333_triangle(4)
 ```
 ```raw
 <div style="width: 420px;">
@@ -37,7 +37,7 @@ Tiling.triangleTriangle(4)
 ### Slow growth method
 
 ```scala
-TilingGrowth.growFullVertex(FullVertex.s("(3₆)"), 60) // same as Tiling.triangularHex(3)
+TilingGrowth.growFullVertex(FullVertex.s("(3₆)"), 60) // same as Tiling.pattern_333333(3)
 ```
 ```raw
 <div style="width: 600px;">
@@ -54,7 +54,7 @@ TilingGrowth.growFullVertex(FullVertex.s("(3₆)"), 60) // same as Tiling.triang
 ### Fast reticulate method
 
 ```scala
-Tiling.squareNet(4, 4)
+Tiling.pattern_4444(4, 4)
 ```
 ```raw
 <div style="width: 440px;">
@@ -69,7 +69,7 @@ Tiling.squareNet(4, 4)
 ### Slow growth method
 
 ```scala
-TilingGrowth.growFullVertex(FullVertex.s("(4₄)"), 9) // same as Tiling.squareNet(3)
+TilingGrowth.growFullVertex(FullVertex.s("(4₄)"), 9) // same as Tiling.pattern_4444(3)
 ```
 ```raw
 <div style="width: 360px;">
@@ -86,7 +86,7 @@ TilingGrowth.growFullVertex(FullVertex.s("(4₄)"), 9) // same as Tiling.squareN
 ### Fast reticulate methods
 
 ```scala
-Tiling.hexagonNet(4, 4)
+Tiling.pattern_666(4, 4)
 ```
 ```raw
 <div style="width: 640px;">
@@ -99,7 +99,7 @@ Tiling.hexagonNet(4, 4)
 ```
 
 ```scala
-Tiling.hexTrianguloid(4)
+Tiling.pattern_666_trianguloid(4)
 ```
 ```raw
 <div style="width: 640px;">
@@ -114,7 +114,7 @@ Tiling.hexTrianguloid(4)
 ### Slow growth method
 
 ```scala
-TilingGrowth.growFullVertex(FullVertex.s("(6₃)"), 19) // same as Tiling.hexagonalHexoid(3)
+TilingGrowth.growFullVertex(FullVertex.s("(6₃)"), 19) // same as Tiling.pattern_666(3)
 ```
 ```raw
 <div style="width: 800px;">

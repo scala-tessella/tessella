@@ -1,7 +1,7 @@
 package io.github.scala_tessella.tessella
 package creation
 
-import Outliers.{hexHexOfSide3, sqr3x3Growth, triHexOfSide3}
+import Outliers.{p666_grown_hexagon, p4444_3by3_grown, p333333_grown_hexagon}
 import TilingSymmetry.{countSymmetries, countRotationalSymmetries}
 
 import org.scalatest.*
@@ -11,62 +11,62 @@ import org.scalatest.matchers.*
 class GrowthRegularSpec extends AnyFlatSpec with should.Matchers {
 
   "A (3₆) pattern grown quadratically" must "have gonality 1" in {
-    triHexOfSide3.gonality shouldBe
+    p333333_grown_hexagon.gonality shouldBe
       1
   }
 
   it must "have hedrality 1" in {
-    triHexOfSide3.hedrality shouldBe
+    p333333_grown_hexagon.hedrality shouldBe
       1
   }
 
   it can "have reflectional symmetry 6" in {
-    triHexOfSide3.countSymmetries shouldBe
+    p333333_grown_hexagon.countSymmetries shouldBe
       6
   }
 
   it can "have rotational symmetry 6" in {
-    triHexOfSide3.countRotationalSymmetries shouldBe
+    p333333_grown_hexagon.countRotationalSymmetries shouldBe
       6
   }
 
   "A (4₄) pattern grown quadratically" must "have gonality 1" in {
-    sqr3x3Growth.gonality shouldBe
+    p4444_3by3_grown.gonality shouldBe
       1
   }
 
   it must "have hedrality 1" in {
-    sqr3x3Growth.hedrality shouldBe
+    p4444_3by3_grown.hedrality shouldBe
       1
   }
 
   it can "have reflectional symmetry 4" in {
-    sqr3x3Growth.countSymmetries shouldBe
+    p4444_3by3_grown.countSymmetries shouldBe
       4
   }
 
   it can "have rotational symmetry 4" in {
-    sqr3x3Growth.countRotationalSymmetries shouldBe
+    p4444_3by3_grown.countRotationalSymmetries shouldBe
       4
   }
 
   "A (6₃) pattern grown quadratically" must "have gonality 1" in {
-    hexHexOfSide3.gonality shouldBe
+    p666_grown_hexagon.gonality shouldBe
       1
   }
 
   it must "have hedrality 1" in {
-    hexHexOfSide3.hedrality shouldBe
+    p666_grown_hexagon.hedrality shouldBe
       1
   }
 
   it can "have reflectional symmetry 6" in {
-    hexHexOfSide3.countSymmetries shouldBe
+    p666_grown_hexagon.countSymmetries shouldBe
       6
   }
 
   it can "have rotational symmetry 6" in {
-    hexHexOfSide3.countRotationalSymmetries shouldBe
+    p666_grown_hexagon.countRotationalSymmetries shouldBe
       6
   }
 

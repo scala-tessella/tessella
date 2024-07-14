@@ -291,3 +291,15 @@ object TilingUniformity:
       tiling.groupUniformsComplete
         .groupBy({ case ((vertex, _), _) => vertex })
         .mapValues2(_.toList.map({ case ((_, treeIndices), nodes) => treeIndices -> nodes }))
+
+    /** Distinct polygons */
+    def distinctPolygons: List[Polygon] =
+      tiling.groupHedrals.keys.toList
+
+    /** Distinct full vertex configurations */
+    def distinctVertices: List[FullVertex] =
+      tiling.groupGonals.keys.toList.map(vertex => FullVertex.maybe(vertex.toPolygons).toOption.get)
+
+    /** All vertex configurations, each a distinct symmetry class */
+    def symmetryClasses: List[FullVertex] =
+      tiling.groupUniforms.keys.toList.map((vertex, _) => FullVertex.maybe(vertex.toPolygons).toOption.get)
