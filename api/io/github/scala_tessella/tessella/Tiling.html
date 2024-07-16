@@ -710,6 +710,92 @@ node6 -> node2;
           </div>
          </div>
         </div>
+        <div class="documentableElement" id="dual-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">def </span></span><a href="Tiling.html#dual-0" t="n" class="documentableName ">dual</a>: <a href="Graph.html" t="t">Graph</a>
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Dual graph obtained by connecting each adjacent polygon</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Dual graph obtained by connecting each adjacent polygon</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement" id="dualTransform-fffff15f">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">def </span></span><a href="Tiling.html#dualTransform-fffff15f" t="n" class="documentableName ">dualTransform</a>[<span t="k"></span><span data-unresolved-link="" t="t">T</span>, <span t="k"></span><span data-unresolved-link="" t="t">U</span>](<span t="k"></span><span t="k"></span><span data-unresolved-link="" t="n">f</span>: (<span data-unresolved-link="" t="t">List</span>[<a href="Tiling.html#PolygonPath-0" t="t">PolygonPath</a>])<span t="k"> =&gt; </span><span data-unresolved-link="" t="t">Map</span>[<span data-unresolved-link="" t="t">List</span>[<a href="Topology$.html#Edge-0" t="t">Edge</a>], <span t="t">U</span>], <span t="k"></span><span data-unresolved-link="" t="n">g</span>: (<span t="t">U</span>, <span t="t">U</span>)<span t="k"> =&gt; </span><span t="t">T</span>): <span data-unresolved-link="" t="t">List</span>[<span data-unresolved-link="" t="t">T</span>]
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Extracts data from the dual of the tiling</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Extracts data from the dual of the tiling</p>
+             </div>
+             <h2 class="h200">Type parameters</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               T
+              </dt>
+              <dd class="body-medium">
+               <p>target</p>
+              </dd>
+              <dt class="body-small">
+               U
+              </dt>
+              <dd class="body-medium">
+               <p>element associated to a polygon</p>
+              </dd>
+             </dl>
+             <h2 class="h200">Value parameters</h2>
+             <dl class="attributes attributes-small">
+              <dt class="body-small">
+               f
+              </dt>
+              <dd class="body-medium">
+               <p>map polygons to an element U</p>
+              </dd>
+              <dt class="body-small">
+               g
+              </dt>
+              <dd class="body-medium">
+               <p>transforms couples of U into target</p>
+              </dd>
+             </dl>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
         <div class="documentableElement" id="equals-4ad" data-f-keywords="override">
          <div class="documentableElement-expander">
           <button class="icon-button ar show-content"></button>
@@ -789,6 +875,34 @@ node6 -> node2;
             <div class="cover">
              <div class="doc">
               <p>Number of different full vertices in the tiling</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement" id="groupHedrals-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">def </span></span><a href="Tiling.html#groupHedrals-0" t="n" class="documentableName ">groupHedrals</a>: <span data-unresolved-link="" t="t">Map</span>[<a href="RegularPolygon$.html#Polygon-0" t="t">Polygon</a>, <span data-unresolved-link="" t="t">Int</span>]
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Associations of polygon and count</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Associations of polygon and count</p>
              </div>
              <h2 class="h200">Attributes</h2>
              <dl class="attributes attributes-small"></dl>
@@ -1362,6 +1476,34 @@ node6 -> node2;
             <div class="cover">
              <div class="doc">
               <p>Nested polygons rings, each a collection of tilings</p>
+             </div>
+             <h2 class="h200">Attributes</h2>
+             <dl class="attributes attributes-small"></dl>
+            </div>
+           </div>
+          </div>
+         </div>
+        </div>
+        <div class="documentableElement" id="nonPerimeterEdges-0">
+         <div class="documentableElement-expander">
+          <button class="icon-button ar show-content"></button>
+          <div class="header monospace mono-medium">
+           <div class="signature">
+            <span class="modifiers"></span><span class="kind"><span t="k">def </span></span><a href="Tiling.html#nonPerimeterEdges-0" t="n" class="documentableName ">nonPerimeterEdges</a>: <span data-unresolved-link="" t="t">List</span>[<a href="Topology$.html#Edge-0" t="t">Edge</a>]
+           </div>
+          </div>
+         </div>
+         <div class="docs">
+          <span class="modifiers"></span>
+          <div>
+           <div class="originInfo"></div>
+           <div class="memberDocumentation">
+            <div class="documentableBrief doc">
+             <p>Edges inside of the perimeter</p>
+            </div>
+            <div class="cover">
+             <div class="doc">
+              <p>Edges inside of the perimeter</p>
              </div>
              <h2 class="h200">Attributes</h2>
              <dl class="attributes attributes-small"></dl>

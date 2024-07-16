@@ -32,7 +32,7 @@
 <span class="home-icon">⌂</span>Tessella
 </a>
 <div class="version-number">
-0.2.2
+0.3.0
 </div>
 </div>
 <div class="nav-toc">
@@ -78,7 +78,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>Tessella
 </a>
 <div class="version-number">
-0.2.2
+0.3.0
 </div>
 </div>
 <div class="nav-toc">
@@ -119,9 +119,9 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="small-12 large-9 column" id="docs">
 <h1><a href="#creation-of-regular-tessellations" name="creation-of-regular-tessellations" class="anchor"><span class="anchor-link"></span></a>Creation of regular tessellations</h1>
 <p>Finite sets of the 3 regular tessellations (see <a href="https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons#Regular_tilings" title="Wikipedia" target="_blank" rel="noopener noreferrer">Wikipedia</a>) can be created.</p>
-<h2><a href="#triangle-only-pattern-" name="triangle-only-pattern-" class="anchor"><span class="anchor-link"></span></a>Triangle only, pattern [(3⁶)]</h2>
+<h2><a href="#triangle-only-pattern-" name="triangle-only-pattern-" class="anchor"><span class="anchor-link"></span></a>Triangle only, pattern [(3₆)]</h2>
 <h3><a href="#fast-reticulate-method" name="fast-reticulate-method" class="anchor"><span class="anchor-link"></span></a>Fast reticulate method</h3>
-<pre class="prettyprint"><code class="language-scala">Tiling.triangleNet(4, 4)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_333333(4, 4)
 </code></pre>
 <div style="width: 420px;">
 
@@ -133,13 +133,13 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>[(3⁶)]</strong> pattern</em> </td>
+      <td><em>Finite set of a <strong>[(3₆)]</strong> pattern</em> </td>
     </tr>
   </tbody>
 </table>
 </div>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.triangleTriangle(4)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_333333_triangle(4)
 </code></pre>
 <div style="width: 420px;">
 
@@ -151,7 +151,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>[(3⁶)]</strong> pattern</em> </td>
+      <td><em>Finite set of a <strong>[(3₆)]</strong> pattern</em> </td>
     </tr>
   </tbody>
 </table>
@@ -159,7 +159,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <h3><a href="#slow-growth-method" name="slow-growth-method" class="anchor"><span class="anchor-link"></span></a>Slow growth method</h3>
 
-<pre class="prettyprint"><code class="language-scala">TilingGrowth.growFullVertex(FullVertex.s(&quot;(3⁶)&quot;), 60) // same as Tiling.triangularHex(3)
+<pre class="prettyprint"><code class="language-scala">TilingGrowth.growFullVertex(FullVertex.s(&quot;(3₆)&quot;), 60) // same as Tiling.pattern_333333(3)
 </code></pre>
 <div style="width: 600px;">
 
@@ -171,17 +171,17 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>[(3⁶)]</strong> pattern</em> </td>
+      <td><em>Finite set of a <strong>[(3₆)]</strong> pattern</em> </td>
     </tr>
   </tbody>
 </table>
 </div>
 
-<h2><a href="#square-only-pattern-" name="square-only-pattern-" class="anchor"><span class="anchor-link"></span></a>Square only, pattern [(4⁴)]</h2>
+<h2><a href="#square-only-pattern-" name="square-only-pattern-" class="anchor"><span class="anchor-link"></span></a>Square only, pattern [(4₄)]</h2>
 
 <h3><a href="#fast-reticulate-method" name="fast-reticulate-method" class="anchor"><span class="anchor-link"></span></a>Fast reticulate method</h3>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.squareNet(4, 4)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_4444(4, 4)
 </code></pre>
 <div style="width: 440px;">
 
@@ -193,7 +193,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>[(4⁴)]</strong> pattern</em> </td>
+      <td><em>Finite set of a <strong>[(4₄)]</strong> pattern</em> </td>
     </tr>
   </tbody>
 </table>
@@ -201,7 +201,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <h3><a href="#slow-growth-method" name="slow-growth-method" class="anchor"><span class="anchor-link"></span></a>Slow growth method</h3>
 
-<pre class="prettyprint"><code class="language-scala">TilingGrowth.growFullVertex(FullVertex.s(&quot;(4⁴)&quot;), 9) // same as Tiling.squareNet(3)
+<pre class="prettyprint"><code class="language-scala">TilingGrowth.growFullVertex(FullVertex.s(&quot;(4₄)&quot;), 9) // same as Tiling.pattern_4444(3)
 </code></pre>
 <div style="width: 360px;">
 
@@ -213,17 +213,17 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>[(4⁴)]</strong> pattern</em> </td>
+      <td><em>Finite set of a <strong>[(4₄)]</strong> pattern</em> </td>
     </tr>
   </tbody>
 </table>
 </div>
 
-<h2><a href="#hexagon-only-pattern-" name="hexagon-only-pattern-" class="anchor"><span class="anchor-link"></span></a>Hexagon only, pattern [(6³)]</h2>
+<h2><a href="#hexagon-only-pattern-" name="hexagon-only-pattern-" class="anchor"><span class="anchor-link"></span></a>Hexagon only, pattern [(6₃)]</h2>
 
 <h3><a href="#fast-reticulate-methods" name="fast-reticulate-methods" class="anchor"><span class="anchor-link"></span></a>Fast reticulate methods</h3>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.hexagonNet(4, 4)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_666(4, 4)
 </code></pre>
 <div style="width: 640px;">
 
@@ -235,13 +235,13 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>[(6³)]</strong> pattern</em> </td>
+      <td><em>Finite set of a <strong>[(6₃)]</strong> pattern</em> </td>
     </tr>
   </tbody>
 </table>
 </div>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.hexTrianguloid(4)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_666_trianguloid(4)
 </code></pre>
 <div style="width: 640px;">
 
@@ -253,7 +253,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>[(6³)]</strong> pattern</em> </td>
+      <td><em>Finite set of a <strong>[(6₃)]</strong> pattern</em> </td>
     </tr>
   </tbody>
 </table>
@@ -261,7 +261,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <h3><a href="#slow-growth-method" name="slow-growth-method" class="anchor"><span class="anchor-link"></span></a>Slow growth method</h3>
 
-<pre class="prettyprint"><code class="language-scala">TilingGrowth.growFullVertex(FullVertex.s(&quot;(6³)&quot;), 19) // same as Tiling.hexagonalHexoid(3)
+<pre class="prettyprint"><code class="language-scala">TilingGrowth.growFullVertex(FullVertex.s(&quot;(6₃)&quot;), 19) // same as Tiling.pattern_666(3)
 </code></pre>
 <div style="width: 800px;">
 
@@ -273,14 +273,14 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>[(6³)]</strong> pattern</em> </td>
+      <td><em>Finite set of a <strong>[(6₃)]</strong> pattern</em> </td>
     </tr>
   </tbody>
 </table>
 </div>
 
 <div class="source-github">
-The source code for this page can be found <a href="https://github.com/scala-tessella/tessella/tree/v0.2.2/src/main/paradox/regular.md">here</a>.
+The source code for this page can be found <a href="https://github.com/scala-tessella/tessella/tree/v0.3.0/src/main/paradox/regular.md">here</a>.
 </div>
 
 <div class="nav-next">
@@ -295,9 +295,9 @@ The source code for this page can be found <a href="https://github.com/scala-tes
 <ul>
   <li><a href="regular.html#creation-of-regular-tessellations" class="header">Creation of regular tessellations</a>
   <ul>
-    <li><a href="regular.html#triangle-only-pattern-" class="header">Triangle only, pattern [(3⁶)]</a></li>
-    <li><a href="regular.html#square-only-pattern-" class="header">Square only, pattern [(4⁴)]</a></li>
-    <li><a href="regular.html#hexagon-only-pattern-" class="header">Hexagon only, pattern [(6³)]</a></li>
+    <li><a href="regular.html#triangle-only-pattern-" class="header">Triangle only, pattern [(3₆)]</a></li>
+    <li><a href="regular.html#square-only-pattern-" class="header">Square only, pattern [(4₄)]</a></li>
+    <li><a href="regular.html#hexagon-only-pattern-" class="header">Hexagon only, pattern [(6₃)]</a></li>
   </ul></li>
 </ul>
 </div>
@@ -365,7 +365,7 @@ The source code for this page can be found <a href="https://github.com/scala-tes
 <script type="text/javascript" src="lib/prettify/prettify.js"></script>
 <script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
 <script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
-<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '0.2.2', 'https://github.com/scala-tessella/tessella')});</script>
+<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '0.3.0', 'https://github.com/scala-tessella/tessella')});</script>
 
 
 </html>

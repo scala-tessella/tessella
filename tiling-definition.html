@@ -32,7 +32,7 @@
 <span class="home-icon">⌂</span>Tessella
 </a>
 <div class="version-number">
-0.2.2
+0.3.0
 </div>
 </div>
 <div class="nav-toc">
@@ -78,7 +78,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>Tessella
 </a>
 <div class="version-number">
-0.2.2
+0.3.0
 </div>
 </div>
 <div class="nav-toc">
@@ -118,14 +118,14 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="page-content row">
 <div class="small-12 large-9 column" id="docs">
 <h1><a href="#mathematical-definition-of-tiling" name="mathematical-definition-of-tiling" class="anchor"><span class="anchor-link"></span></a>Mathematical definition of tiling</h1>
-<p>Mathematically, a plane tiling <em><code>T</code></em> is a <strong>countable</strong> family of <strong>closed</strong> sets which covers the plane <strong>without gaps</strong> or <strong>overlaps</strong>,</p>
-<p><em><code>T</code></em> = { T<sub><i>1</i></sub> , T<sub><i>2</i></sub> , … }</p>
-<p>where T<sub><i>1</i></sub> , T<sub><i>2</i></sub> , … are known as tiles of <em><code>T</code></em>.</p>
+<p>Mathematically, a tessellation 𝑻 of the Euclidean plane 𝔼² is a <strong>countable</strong> family of <strong>closed</strong> sets which covers the plane <strong>without gaps</strong> or <strong>overlaps</strong>,</p>
+<p>𝑻 = { T<sub><i>1</i></sub> , T<sub><i>2</i></sub> , … }</p>
+<p>where T<sub><i>1</i></sub> , T<sub><i>2</i></sub> , … are known as tiles of 𝑻.</p>
 <h2><a href="#conditions-required" name="conditions-required" class="anchor"><span class="anchor-link"></span></a>Conditions required</h2>
 <p>※1 <strong>Countable</strong>: The number of tiles in the tiling can be counted. However, there can be infinitely many tiles. </p>
 <p>※2 <strong>Closed</strong>: Each tile is enclosed by its boundary. </p>
-<p>※3 <strong>Without gaps</strong>: The union of all the sets T<sub>1</sub> , T<sub>2</sub> , … is to be the whole plane, <em>i.e.</em> { T<sub><i>1</i></sub> ∪ T<sub><i>2</i></sub> … ∪ T<sub><i>n</i></sub> } = whole plane. </p>
-<p>※4 <strong>Without overlaps</strong>: The interior of the sets are to be pairwise disjoint, <em>i.e.</em> { interior of T<sub><i>i</i></sub> ∩ interior of T<sub><i>j</i></sub> } = ∅, where <em>i</em> ≠ <em>j</em> ∀ any <em>i</em> and <em>j</em>.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>※3 <strong>Without gaps</strong>: The union of all the sets T<sub>1</sub> , T<sub>2</sub> , … is to be the whole plane, <em>i.e.</em> { T<sub><i>1</i></sub> ∪ T<sub><i>2</i></sub> ∪ … ∪ T<sub><i>n</i></sub> } = 𝔼². </p>
+<p>※4 <strong>Without overlaps</strong>: The interior of the sets are to be pairwise disjoint, <em>i.e.</em> { int T<sub><i>i</i></sub> ∩ int T<sub><i>j</i></sub> } = ∅, ∀ (<i>i</i>, <i>j</i>) where <i>i</i> ≠ <i>j</i>.</p><div class="callout note "><div class="callout-title">Note</div>
 <p>The countability condition ※1 excludes families in which every tile has zero area (such as points or line segments). This is because tiles with zero area are uncountable when they are arranged without gaps between them (when condition ※3 is satisfied).</p></div>
 <h2><a href="#additional-conditions" name="additional-conditions" class="anchor"><span class="anchor-link"></span></a>Additional conditions</h2>
 <p>In this project, we only consider tiles which are closed topological disks, that is, its boundary is a single simple closed curve.</p><div class="callout note "><div class="callout-title">Note</div>
@@ -134,11 +134,13 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <p>※5 <strong>Topological disks</strong>: each tile T<sub><i>i</i></sub> in the tiling is a closed topological disk.</p>
 <p>Plus:</p>
 <p>※6 <strong>Polygons</strong>: each tile T<sub><i>i</i></sub> in the tiling is a polygon.</p>
-<p>※7 <strong>Edge-to-edge</strong>: each pair of tiles T<sub><i>i</i></sub> and T<sub><i>j</i></sub> in the tiling, where <em>i</em> ≠ <em>j</em> ∀ any <em>i</em> and <em>j</em>, intersects along a common edge, at a vertex, or none at all.</p>
-<p>※8 <strong>Regular polygons</strong>: each tile T<sub><i>i</i></sub> in the tiling is a regular polygon.</p>
-<p>※9 <strong>Unit size</strong>: each tile T<sub><i>i</i></sub> in the tiling is a regular polygon with edges of length 1.</p>
+<p>※7 <strong>Edge-to-edge</strong>: each pair of boundaries δT<sub><i>i</i></sub> and δT<sub><i>j</i></sub> in the tiling, ∀ (<i>i</i>, <i>j</i>) where <i>i</i> ≠ <i>j</i>, intersects along a common edge, at a vertex, or none at all.</p>
+<p>※8 <strong>Regular polygons</strong>: each tile T<sub><i>i</i></sub> in the tiling is a regular polygon.</p><div class="callout note "><div class="callout-title">Note</div>
+<p>The combination of ※7 and ※8 means that all edges have identical (unit) length.</p></div>
+<h2><a href="#finite-tessellations" name="finite-tessellations" class="anchor"><span class="anchor-link"></span></a>Finite tessellations</h2>
+<p>A finite tessellation 𝐹 is a proper subset of 𝑻, i.e. 𝐹 ⊂ 𝑻.</p>
 <div class="source-github">
-The source code for this page can be found <a href="https://github.com/scala-tessella/tessella/tree/v0.2.2/src/main/paradox/tiling-definition.md">here</a>.
+The source code for this page can be found <a href="https://github.com/scala-tessella/tessella/tree/v0.3.0/src/main/paradox/tiling-definition.md">here</a>.
 </div>
 
 <div class="nav-next">
@@ -155,6 +157,7 @@ The source code for this page can be found <a href="https://github.com/scala-tes
   <ul>
     <li><a href="tiling-definition.html#conditions-required" class="header">Conditions required</a></li>
     <li><a href="tiling-definition.html#additional-conditions" class="header">Additional conditions</a></li>
+    <li><a href="tiling-definition.html#finite-tessellations" class="header">Finite tessellations</a></li>
   </ul></li>
 </ul>
 </div>
@@ -222,7 +225,7 @@ The source code for this page can be found <a href="https://github.com/scala-tes
 <script type="text/javascript" src="lib/prettify/prettify.js"></script>
 <script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
 <script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
-<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '0.2.2', 'https://github.com/scala-tessella/tessella')});</script>
+<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '0.3.0', 'https://github.com/scala-tessella/tessella')});</script>
 
 
 </html>

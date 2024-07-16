@@ -32,7 +32,7 @@
 <span class="home-icon">⌂</span>Tessella
 </a>
 <div class="version-number">
-0.2.2
+0.3.0
 </div>
 </div>
 <div class="nav-toc">
@@ -78,7 +78,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <span class="home-icon">⌂</span>Tessella
 </a>
 <div class="version-number">
-0.2.2
+0.3.0
 </div>
 </div>
 <div class="nav-toc">
@@ -119,8 +119,8 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 <div class="small-12 large-9 column" id="docs">
 <h1><a href="#creation-of-semi-regular-tessellations" name="creation-of-semi-regular-tessellations" class="anchor"><span class="anchor-link"></span></a>Creation of semi regular tessellations</h1>
 <p>Finite sets of the 8 semi regular tessellations (see <a href="https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons#Archimedean,_uniform_or_semiregular_tilings" title="Wikipedia" target="_blank" rel="noopener noreferrer">Wikipedia</a>) can be created.</p>
-<h2><a href="#1-pattern-" name="1-pattern-" class="anchor"><span class="anchor-link"></span></a>1, pattern [(3⁴.6)]</h2>
-<pre class="prettyprint"><code class="language-scala">Tiling.triHexagonalHexoid(5)
+<h2><a href="#1-pattern-" name="1-pattern-" class="anchor"><span class="anchor-link"></span></a>1, pattern [(3₄.6)]</h2>
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_33336(5)
 </code></pre>
 <div style="width: 540px;">
 
@@ -132,17 +132,17 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>(3⁴.6)</strong> tiling</em> </td>
+      <td><em>Finite set of a <strong>(3₄.6)</strong> tiling</em> </td>
     </tr>
   </tbody>
 </table>
 </div>
 
-<h2><a href="#2-pattern-" name="2-pattern-" class="anchor"><span class="anchor-link"></span></a>2, pattern [(3³.4²)]</h2>
+<h2><a href="#2-pattern-" name="2-pattern-" class="anchor"><span class="anchor-link"></span></a>2, pattern [(3₃.4₂)]</h2>
 
 <h3><a href="#fast-method" name="fast-method" class="anchor"><span class="anchor-link"></span></a>Fast method</h3>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.elongatedTriangular(6, 6)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_33344(6, 6)
 </code></pre>
 <div style="width: 400px;">
 
@@ -154,7 +154,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>(3³.4²)</strong> tiling</em> </td>
+      <td><em>Finite set of a <strong>(3₃.4₂)</strong> tiling</em> </td>
     </tr>
   </tbody>
 </table>
@@ -162,7 +162,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <h3><a href="#slow-method" name="slow-method" class="anchor"><span class="anchor-link"></span></a>Slow method</h3>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.triSquareSquaroid(2)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_33344(2)
 </code></pre>
 <div style="width: 360px;">
 
@@ -174,15 +174,37 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>(3³.4²)</strong> tiling</em> </td>
+      <td><em>Finite set of a <strong>(3₃.4₂)</strong> tiling</em> </td>
     </tr>
   </tbody>
 </table>
 </div>
 
-<h2><a href="#3-pattern-" name="3-pattern-" class="anchor"><span class="anchor-link"></span></a>3, pattern [(3².4.3.4)]</h2>
+<h2><a href="#3-pattern-" name="3-pattern-" class="anchor"><span class="anchor-link"></span></a>3, pattern [(3₂.4.3.4)]</h2>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.triSquareSquaroid2(3)
+<h3><a href="#fast-method" name="fast-method" class="anchor"><span class="anchor-link"></span></a>Fast method</h3>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_33434(7, 7)
+</code></pre>
+<div style="width: 480px;">
+
+<table>
+  <thead>
+    <tr>
+      <th><img src="svg/pattern_33434.svg" alt="labels" /> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><em>Finite set of a <strong>(3₂.4.3.4)</strong> tiling</em> </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3><a href="#slow-method" name="slow-method" class="anchor"><span class="anchor-link"></span></a>Slow method</h3>
+
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_33434(3)
 </code></pre>
 <div style="width: 480px;">
 
@@ -194,7 +216,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>(3².4.3.4)</strong> tiling</em> </td>
+      <td><em>Finite set of a <strong>(3₂.4.3.4)</strong> tiling</em> </td>
     </tr>
   </tbody>
 </table>
@@ -202,7 +224,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <h2><a href="#4-pattern-" name="4-pattern-" class="anchor"><span class="anchor-link"></span></a>4, pattern [(3.4.6.4)]</h2>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.triSquareHexagonalHexoid(3)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_3464(3)
 </code></pre>
 <div style="width: 660px;">
 
@@ -224,7 +246,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <h3><a href="#fast-method" name="fast-method" class="anchor"><span class="anchor-link"></span></a>Fast method</h3>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.triHexagonal(6, 6)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_3636(6, 6)
 </code></pre>
 <div style="width: 400px;">
 
@@ -244,7 +266,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <h3><a href="#slow-method" name="slow-method" class="anchor"><span class="anchor-link"></span></a>Slow method</h3>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.triHexagonalHex(3)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_3636(3)
 </code></pre>
 <div style="width: 540px;">
 
@@ -262,9 +284,9 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </table>
 </div>
 
-<h2><a href="#6-pattern-" name="6-pattern-" class="anchor"><span class="anchor-link"></span></a>6, pattern [(3.12²)]</h2>
+<h2><a href="#6-pattern-" name="6-pattern-" class="anchor"><span class="anchor-link"></span></a>6, pattern [(3.12₂)]</h2>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.triDodecagonalHexoid(2)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_31212(2)
 </code></pre>
 <div style="width: 600px;">
 
@@ -276,7 +298,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>[(3.12²)]</strong> pattern</em> </td>
+      <td><em>Finite set of a <strong>[(3.12₂)]</strong> pattern</em> </td>
     </tr>
   </tbody>
 </table>
@@ -284,7 +306,7 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 
 <h2><a href="#7-pattern-" name="7-pattern-" class="anchor"><span class="anchor-link"></span></a>7, pattern [(4.6.12)]</h2>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.squareHexDodecagonalHexoid(2)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_4612(2)
 </code></pre>
 <div style="width: 800px;">
 
@@ -302,9 +324,9 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
 </table>
 </div>
 
-<h2><a href="#8-pattern-" name="8-pattern-" class="anchor"><span class="anchor-link"></span></a>8, pattern [(4.8²)]</h2>
+<h2><a href="#8-pattern-" name="8-pattern-" class="anchor"><span class="anchor-link"></span></a>8, pattern [(4.8₂)]</h2>
 
-<pre class="prettyprint"><code class="language-scala">Tiling.squareOctogonalSquaroid(4)
+<pre class="prettyprint"><code class="language-scala">Tiling.pattern_488(4)
 </code></pre>
 <div style="width: 660px;">
 
@@ -316,14 +338,14 @@ C16.952,7,17,6.553,17,6c0-0.553-0.048-1-0.6-1H3.6C3.048,5,3,5.447,3,6C3,6.553,3.
   </thead>
   <tbody>
     <tr>
-      <td><em>Finite set of a <strong>[((4.8²)]</strong> pattern</em> </td>
+      <td><em>Finite set of a <strong>[((4.8₂)]</strong> pattern</em> </td>
     </tr>
   </tbody>
 </table>
 </div>
 
 <div class="source-github">
-The source code for this page can be found <a href="https://github.com/scala-tessella/tessella/tree/v0.2.2/src/main/paradox/semiregular.md">here</a>.
+The source code for this page can be found <a href="https://github.com/scala-tessella/tessella/tree/v0.3.0/src/main/paradox/semiregular.md">here</a>.
 </div>
 
 <div class="nav-next">
@@ -338,14 +360,14 @@ The source code for this page can be found <a href="https://github.com/scala-tes
 <ul>
   <li><a href="semiregular.html#creation-of-semi-regular-tessellations" class="header">Creation of semi regular tessellations</a>
   <ul>
-    <li><a href="semiregular.html#1-pattern-" class="header">1, pattern [(3⁴.6)]</a></li>
-    <li><a href="semiregular.html#2-pattern-" class="header">2, pattern [(3³.4²)]</a></li>
-    <li><a href="semiregular.html#3-pattern-" class="header">3, pattern [(3².4.3.4)]</a></li>
+    <li><a href="semiregular.html#1-pattern-" class="header">1, pattern [(3₄.6)]</a></li>
+    <li><a href="semiregular.html#2-pattern-" class="header">2, pattern [(3₃.4₂)]</a></li>
+    <li><a href="semiregular.html#3-pattern-" class="header">3, pattern [(3₂.4.3.4)]</a></li>
     <li><a href="semiregular.html#4-pattern-" class="header">4, pattern [(3.4.6.4)]</a></li>
     <li><a href="semiregular.html#5-pattern-" class="header">5, pattern [(3.6.3.6)]</a></li>
-    <li><a href="semiregular.html#6-pattern-" class="header">6, pattern [(3.12²)]</a></li>
+    <li><a href="semiregular.html#6-pattern-" class="header">6, pattern [(3.12₂)]</a></li>
     <li><a href="semiregular.html#7-pattern-" class="header">7, pattern [(4.6.12)]</a></li>
-    <li><a href="semiregular.html#8-pattern-" class="header">8, pattern [(4.8²)]</a></li>
+    <li><a href="semiregular.html#8-pattern-" class="header">8, pattern [(4.8₂)]</a></li>
   </ul></li>
 </ul>
 </div>
@@ -413,7 +435,7 @@ The source code for this page can be found <a href="https://github.com/scala-tes
 <script type="text/javascript" src="lib/prettify/prettify.js"></script>
 <script type="text/javascript" src="lib/prettify/lang-scala.js"></script>
 <script type="text/javascript">jQuery(function(){window.prettyPrint && prettyPrint()});</script>
-<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '0.2.2', 'https://github.com/scala-tessella/tessella')});</script>
+<script type="text/javascript">jQuery(function(jq){initOldVersionWarnings(jq, '0.3.0', 'https://github.com/scala-tessella/tessella')});</script>
 
 
 </html>
