@@ -2,9 +2,11 @@ package io.github.scala_tessella.tessella
 package creation
 
 import Topology.{Edge, Node, compact, withOnlyNodes}
+import utility.Utils.toCouple
 
 import io.github.iltotore.iron.*
 import io.github.iltotore.iron.constraint.all.*
+import io.github.scala_tessella.ring_seq.RingSeq.slidingO
 
 type EvenAndGreater[A] = Greater[A] & Multiple[2]
 
@@ -69,6 +71,19 @@ trait Reticulate:
         yield Node(h)
       ).tail
     hexagonNetEdges(sides, sides).withOnlyNodes(goodHalf.toList).compact
+
+  private def octagonNetEdges(x: Int, y: Int): List[Edge] =
+    val couples: IndexedSeq[(Node, Node)] =
+      (for
+        i <- 0 to x
+        j <- 0 to y
+        h = (i + (x + 1) * j) * 4 + 1
+        square = (h to h + 3).toList.slidingO(2).toList.map(_.map(Node(_))).map(_.toCouple)
+        connectorX = if i == x then Nil else List((Node(h + 2), Node(h + 4)))
+        connectorY = if j == y then Nil else List((Node(h + 3), Node(h + 1 + (x + 1) * 4)))
+      yield square ++ connectorX ++ connectorY)
+        .flatten
+    couples.toList.map(Edge(_))
 
   private type IntRef = Int => Either[String, Int]
 
@@ -136,6 +151,14 @@ trait Reticulate:
   /** Creates a trianguloid of hexagons of given side */
   def pattern_666_trianguloid(side: Int): Either[String, Tiling] =
     triangular(side, side_gt_zero, hexTrianguloidEdges)
+
+  /** Creates an octagonal reticulate of width by height octagons
+   *
+   * @param width size must be greater then 0
+   * @param height size must be greater then 0
+   */
+  def pattern_488(width: Int, height: Int): Either[String, Tiling] =
+    rectangular(width, height, width_gt_zero, height_gt_zero, octagonNetEdges)
 
   /** Builds variants of triangle grid by emptying hex according to function
    *

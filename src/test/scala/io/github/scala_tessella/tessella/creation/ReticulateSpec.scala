@@ -142,4 +142,10 @@ class ReticulateSpec extends AnyFlatSpec with Helper with should.Matchers {
       true
   }
 
+  "A tiling with a [(4.8₂)] pattern" can "be created" in {
+    Pattern.s("[(4.8₂)]")
+      .hasSameSymmetryClassesOf(Tiling.pattern_488(4, 4).unsafe) shouldBe
+      true
+  }
+
 }

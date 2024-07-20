@@ -12,9 +12,9 @@ Tiling.pattern_33336(5)
 ```raw
 <div style="width: 540px;">
 ```
-| ![hexHexOfSide3](svg/triHexHexoid.svg)  |
-|-----------------------------------------|
-| _Finite set of a **(3₄.6)** tiling_     |
+| ![hexHexOfSide3](svg/triHexHexoid.svg) |
+|----------------------------------------|
+| _Finite set of a **[(3₄.6)]** tiling_  |
 ```raw
 </div>
 ```
@@ -29,9 +29,9 @@ Tiling.pattern_33344(6, 6)
 ```raw
 <div style="width: 400px;">
 ```
-| ![perimeter](svg/triHexLayered.svg)  |
-|--------------------------------------|
-| _Finite set of a **(3₃.4₂)** tiling_ |
+| ![perimeter](svg/triHexLayered.svg)    |
+|----------------------------------------|
+| _Finite set of a **[(3₃.4₂)]** tiling_ |
 ```raw
 </div>
 ```
@@ -44,9 +44,9 @@ Tiling.pattern_33344(2)
 ```raw
 <div style="width: 360px;">
 ```
-| ![perimeter](svg/triSqrSquaroid.svg)  |
-|---------------------------------------|
-| _Finite set of a **(3₃.4₂)** tiling_  |
+| ![perimeter](svg/triSqrSquaroid.svg)   |
+|----------------------------------------|
+| _Finite set of a **[(3₃.4₂)]** tiling_ |
 ```raw
 </div>
 ```
@@ -61,9 +61,9 @@ Tiling.pattern_33434(7, 7)
 ```raw
 <div style="width: 480px;">
 ```
-| ![labels](svg/pattern_33434.svg)        |
-|-----------------------------------------|
-| _Finite set of a **(3₂.4.3.4)** tiling_ |
+| ![labels](svg/pattern_33434.svg)          |
+|-------------------------------------------|
+| _Finite set of a **[(3₂.4.3.4)]** tiling_ |
 ```raw
 </div>
 ```
@@ -76,9 +76,9 @@ Tiling.pattern_33434(3)
 ```raw
 <div style="width: 480px;">
 ```
-| ![labels](svg/triSqrSquaroid2.svg)      |
-|-----------------------------------------|
-| _Finite set of a **(3₂.4.3.4)** tiling_ |
+| ![labels](svg/triSqrSquaroid2.svg)        |
+|-------------------------------------------|
+| _Finite set of a **[(3₂.4.3.4)]** tiling_ |
 ```raw
 </div>
 ```
@@ -162,15 +162,32 @@ Tiling.pattern_4612(2)
 
 ## 8, pattern [(4.8₂)]
 
+### Fast method
+
+```scala
+Tiling.pattern_488(4, 4)
+```
+```raw
+<div style="width: 600px;">
+```
+| ![488_fast](svg/pattern_488_fast.svg) |
+|---------------------------------------|
+| _Finite set of a **[(4.8₂)]** tiling_  |
+```raw
+</div>
+```
+
+### Slow method
+
 ```scala
 Tiling.pattern_488(4)
 ```
 ```raw
 <div style="width: 660px;">
 ```
-| ![labels](svg/sqrOctSquaroid.svg)       |
-|-----------------------------------------|
-| _Finite set of a **[((4.8₂)]** pattern_ |
+| ![labels](svg/sqrOctSquaroid.svg)      |
+|----------------------------------------|
+| _Finite set of a **[(4.8₂)]** pattern_ |
 ```raw
 </div>
 ```
