@@ -6,7 +6,7 @@ import utility.Utils.toCouple
 
 import io.github.iltotore.iron.*
 import io.github.iltotore.iron.constraint.all.*
-import io.github.scala_tessella.ring_seq.RingSeq.slidingO
+import io.github.scala_tessella.ring_seq.RingSeq.{slidingO, rotateLeft}
 
 type EvenAndGreater[A] = Greater[A] & Multiple[2]
 
@@ -159,6 +159,35 @@ trait Reticulate:
    */
   def pattern_488(width: Int, height: Int): Either[String, Tiling] =
     rectangular(width, height, width_gt_zero, height_gt_zero, octagonNetEdges)
+
+  private def pattern_33344_33434_altEdges(x: Int, y: Int): List[Edge] =
+    val startingNode: Int =
+      (x + 1) * (y + 1) * 4 + 1
+    val couples: IndexedSeq[(Node, Node)] =
+      (for
+        i <- 0 until x
+        j <- 0 until y
+        h = (i + (x + 1) * j) * 4 + 1
+        g = (i + x * j) * 2
+        additional1 = Node(startingNode + g)
+        additional2 = Node(startingNode + g + 1)
+        nextRow = (x + 1) * 4
+        octagonsNodes =
+          List(3, 2, 4, 7, 5 + nextRow, 4 + nextRow, 2 + nextRow, 1 + nextRow)
+            .map(n => Node(h + n))
+            .rotateLeft(if i % 2 == 0 ^ j % 2 == 0 then 0 else 2)
+        connectors = octagonsNodes.take(4).map((additional1, _)) ++ octagonsNodes.drop(4).map((additional2, _))
+      yield (additional1, additional2) :: connectors)
+        .flatten
+    octagonNetEdges(x, y) ++ couples.toList.map(Edge(_))
+
+  /** Creates a [(3₃.4₂);(3₂.4.3.4)] pattern of width by height octagons by filling an octagonal reticulate 
+   *
+   * @param width size must be greater then 0
+   * @param height size must be greater then 0
+   */
+  def pattern_33344_33434_alt(width: Int, height: Int): Either[String, Tiling] =
+    rectangular(width, height, width_gt_zero, height_gt_zero, pattern_33344_33434_altEdges)
 
   /** Builds variants of triangle grid by emptying hex according to function
    *
