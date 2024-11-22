@@ -10,7 +10,6 @@ import conversion.DOT
 import conversion.DOT.toDOT
 import conversion.SVGInvalid.*
 import utility.Utils.*
-import utility.UtilsOption.getDefined
 
 import scala.xml.Elem
 
@@ -134,11 +133,10 @@ object TilingErrorMessages:
         sideCouples.map((s1, s2) => (edgeFromSide(s1), edgeFromSide(s2)))
       val crossings: List[Point] =
         edgeCouples
-          .map({
+          .flatMap({
             case (edge1, edge2) => List(edge1, edge2).toSegments(tiling.perimeterCoords).toCouple match
               case (f, s) => f.intersection(s)
           })
-          .getDefined
       val svg: String =
         addInvalidPerimeterSVG(
           Description("Invalid intersecting edges"),

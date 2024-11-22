@@ -10,7 +10,6 @@ import RegularPolygon.Vertex
 import Topology.{Edge, Node, NodeOrdering}
 import TilingUniformity.groupUniformsNestedComplete
 import utility.Utils.toCouple
-import utility.UtilsOption.getDefined
 import io.github.scala_tessella.ring_seq.RingSeq.Index
 
 import scala.xml.Elem
@@ -203,7 +202,7 @@ object SVG extends ConverterSVG:
     )
       .withStyle(Style(
         (
-          if isMono then attributes 
+          if isMono then attributes
           else fill(fillUniform(index)) :: attributes
          ) *
       ))
@@ -366,7 +365,7 @@ object SVG extends ConverterSVG:
           growthSVG(showGrowth),
           marksSVG(markStyle),
           labelsSVG(labelledNodes)
-        ).getDefined *
+        ).flatten *
       )
 
     /** `svg` element with metadata and `viewBox` fitting the tiling */

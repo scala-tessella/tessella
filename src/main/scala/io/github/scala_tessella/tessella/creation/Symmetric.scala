@@ -6,7 +6,6 @@ import TilingGrowth.OtherNodeStrategy.BEFORE_PERIMETER
 import RegularPolygon.{Polygon, Vertex}
 import TilingSymmetry.perimeterRotationalSymmetry
 import Topology.{Edge, Node}
-import utility.UtilsOption.getDefined
 
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, applyO}
 
@@ -86,7 +85,7 @@ object Symmetric:
               yield
                 grown
          )
-      tilings.getDefined.distinct
+      tilings.flatten.distinct
 
     /** Expands by symmetric axes
      *

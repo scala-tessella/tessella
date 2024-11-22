@@ -17,12 +17,8 @@ object UtilsOption:
       yield
         c
 
-    /** Filters and gets defined options only */
-    def getDefined: CC[A] =
-      options.filter(_.isDefined).map(_.get)
-
     private def emptied: CC[A] =
-      getDefined.take(0)
+      options.flatten.take(0)
 
     /** Option of a sequence */
     def sequence: Option[CC[A]] =
