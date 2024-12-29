@@ -11,11 +11,11 @@ import TopologyDual.NodeDual
 class TilingDual(nodes: List[NodeDual], edges: List[Edge]):
 
   override def toString: String =
-    val nodeStr: Option[String] =
+    val nodesString: Option[String] =
       Option(s"(${nodes.map(node => s"${node._1} p${node._2}").mkString(", ")})")
-    val edgeStr: Option[String] =
+    val edgesMaybeString: Option[String] =
       if edges.isEmpty then None else Option(edges.stringify)
-    s"TilingDual(${List(nodeStr, edgeStr).flatten.mkString(", ")})"
+    s"TilingDual(${List(nodesString, edgesMaybeString).flatten.mkString(", ")})"
 
   /** Tries to convert a [[TilingDual]] into a [[Tiling]] */
   def toMaybeTiling: Either[String, Tiling] =
