@@ -12,7 +12,7 @@ import scala.xml.{Elem, XML}
 
 trait Helper extends Accuracy:
 
-  val S6: Double =
+  implicit val S6: Double =
     Math.sin(TAU_6.toDouble)
 
   val commonEdges: List[Edge] =
