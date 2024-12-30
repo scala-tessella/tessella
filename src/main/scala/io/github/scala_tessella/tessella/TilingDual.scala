@@ -5,7 +5,7 @@ import TopologyDual.NodeDual
 
 /** Undirected connected graph representing the dual of a finite tessellation of unit regular polygons
  *
- * @param nodes the dual graph nodes
+ * @param nodes the dual graph nodes, they can be polygons or none (degree one at the boundary)
  * @param edges the dual graph edges
  */
 class TilingDual(nodes: List[NodeDual], edges: List[Edge]):

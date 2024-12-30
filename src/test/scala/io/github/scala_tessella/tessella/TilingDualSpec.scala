@@ -12,12 +12,12 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
 
   "A triangle" can "be converted" in {
     triangle.toTilingDual.toString shouldBe
-      "TilingDual((1 p3))"
+      "TilingDual((1 *, 2 *, 3 *, 4 p3), 1--4, 2--4, 3--4)"
   }
 
   "An hexagon made of triangles" can "be converted" in {
     hexagonTriangles.toTilingDual.toString shouldBe
-      "TilingDual((6 p3, 4 p3, 3 p3, 1 p3, 5 p3, 2 p3), 1--2, 1--5, 2--3, 3--4, 4--6, 5--6)"
+      "TilingDual((1 *, 2 *, 3 *, 4 *, 5 *, 6 *, 12 p3, 10 p3, 9 p3, 7 p3, 11 p3, 8 p3), 1--9, 2--10, 3--12, 4--11, 5--7, 6--8, 7--8, 7--11, 8--9, 9--10, 10--12, 11--12)"
   }
 
 }
