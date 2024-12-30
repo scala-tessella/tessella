@@ -1,24 +1,24 @@
 package io.github.scala_tessella.tessella
 
-import Topology.Edge
-import TopologyDual.NodeDual
+import RegularPolygon.Polygon
+import Topology.{Edge, Node}
 
 /** Undirected connected graph representing the dual of a finite tessellation of unit regular polygons
  *
- * @param nodes the dual graph nodes, they can be polygons or none (degree one at the boundary)
  * @param edges the dual graph edges
+ * @param boundary the order of the 1-degree nodes
  */
-class TilingDual(nodes: List[NodeDual], edges: List[Edge]):
+class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges):
 
   override def toString: String =
-    val nodesString: Option[String] =
-      Option(s"(${nodes.map((ordinal, polygon) =>
-        s"$ordinal ${polygon.map(sides => s"p$sides").getOrElse("*")}").mkString(", ")})"
-      )
-    val edgesMaybeString: Option[String] =
-      if edges.isEmpty then None else Option(edges.stringify)
-    s"TilingDual(${List(nodesString, edgesMaybeString).flatten.mkString(", ")})"
+    s"TilingDual($boundary ${edges.stringify})"
+
+  def polygonBoundary: Vector[Polygon] =
+    boundary
+      .map(edges.adjacentTo(_).head)
+      .map(edges.degree)
+      .map(degree => Polygon(degree.toInt))
 
   /** Tries to convert a [[TilingDual]] into a [[Tiling]] */
-  def toMaybeTiling: Either[String, Tiling] =
+  override def toMaybeTiling: Either[String, Tiling] =
     ???
