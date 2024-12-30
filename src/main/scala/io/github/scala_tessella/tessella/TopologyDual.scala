@@ -38,3 +38,27 @@ object TopologyDual:
         perimeterDual.map(_._1) ++ nodesMap.values.toList,
         perimeterDual.map(_._2) ++ internalDualEdges
       )
+
+    /** Converts a [[Tiling]] into a [[TilingDual2]] */
+    def toTilingDual2: TilingDual2 =
+      val perimeterEdges: List[Edge] =
+        tiling.perimeter.toRingEdges.toList
+      val perimeterSize: Int =
+        perimeterEdges.size
+      val nodesMap: Map[List[Edge], Node] =
+        tiling.orientedPolygons.zipWithIndex.map(
+          (polygonPath, ordinal) =>
+            polygonPath.toPolygonEdges -> Node(ordinal + perimeterSize + 1)
+        ).toMap
+      val polygonEdges: List[List[Edge]] =
+        nodesMap.keys.toList
+      val internalDualEdges: List[Edge] =
+        tiling.nonPerimeterEdges.map(edge =>
+          Edge(polygonEdges.filter(_.contains(edge)).map(nodesMap(_)))
+        )
+      val perimeterDualEdges: List[Edge] =
+        perimeterEdges.indices.map(index =>
+          Edge(Node(index + 1), nodesMap(polygonEdges.find(_.contains(perimeterEdges(index))).get))
+        ).toList
+      new TilingDual2(perimeterDualEdges ++ internalDualEdges)
+  
