@@ -12,7 +12,9 @@ class TilingDual(nodes: List[NodeDual], edges: List[Edge]):
 
   override def toString: String =
     val nodesString: Option[String] =
-      Option(s"(${nodes.map((ordinal, polygon) => s"$ordinal p$polygon").mkString(", ")})")
+      Option(s"(${nodes.map((ordinal, polygon) =>
+        s"$ordinal ${polygon.map(sides => s"p$sides").getOrElse("*")}").mkString(", ")})"
+      )
     val edgesMaybeString: Option[String] =
       if edges.isEmpty then None else Option(edges.stringify)
     s"TilingDual(${List(nodesString, edgesMaybeString).flatten.mkString(", ")})"

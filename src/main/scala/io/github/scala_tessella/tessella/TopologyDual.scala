@@ -7,7 +7,7 @@ import Topology.{Edge, Node}
 object TopologyDual:
 
   /** Graph node of the dual */
-  type NodeDual = (Node, Polygon)
+  type NodeDual = (Node, Option[Polygon])
 
   extension (tiling: Tiling)
 
@@ -15,7 +15,7 @@ object TopologyDual:
     def toTilingDual: TilingDual =
       val nodesMap: Map[List[Edge], NodeDual] =
         tiling.orientedPolygons.zipWithIndex.map(
-          (polygonPath, ordinal) => polygonPath.toPolygonEdges -> (Node(ordinal + 1), polygonPath.toPolygon)
+          (polygonPath, ordinal) => polygonPath.toPolygonEdges -> (Node(ordinal + 1), Option(polygonPath.toPolygon))
         ).toMap
       val polygonEdges: List[List[Edge]] =
         nodesMap.keys.toList
