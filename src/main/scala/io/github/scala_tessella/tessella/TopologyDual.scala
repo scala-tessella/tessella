@@ -60,5 +60,5 @@ object TopologyDual:
         perimeterEdges.indices.map(index =>
           Edge(Node(index + 1), nodesMap(polygonEdges.find(_.contains(perimeterEdges(index))).get))
         ).toList
-      new TilingDual2(perimeterDualEdges ++ internalDualEdges)
-  
+      new TilingDual2(perimeterDualEdges ++ internalDualEdges, perimeterDualEdges.map(_.lesserNode).toVector)
+

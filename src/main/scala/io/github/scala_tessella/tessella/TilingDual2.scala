@@ -7,21 +7,16 @@ import Topology.{Edge, Node}
  *
  * @param edges the dual graph edges
  */
-class TilingDual2(edges: List[Edge]) extends Graph(edges):
+class TilingDual2(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges):
 
   override def toString: String =
-    s"TilingDual(${edges.stringify})"
+    s"TilingDual($boundary ${edges.stringify})"
 
-  def boundarySize: Int =
-    edges.pendantNodes.size
-
-  def boundary: Vector[Polygon] =
-    (1 to boundarySize)
-      .map(Node(_))
+  def polygonBoundary: Vector[Polygon] =
+    boundary
       .map(edges.adjacentTo(_).head)
       .map(edges.degree)
       .map(degree => Polygon(degree.toInt))
-      .toVector
 
   /** Tries to convert a [[TilingDual2]] into a [[Tiling]] */
   override def toMaybeTiling: Either[String, Tiling] =

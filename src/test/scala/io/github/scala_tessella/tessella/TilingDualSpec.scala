@@ -14,8 +14,8 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
     triangle.toTilingDual.toString shouldBe
       "TilingDual((1 *, 2 *, 3 *, 4 p3), 1--4, 2--4, 3--4)"
     triangle.toTilingDual2.toString shouldBe
-      "TilingDual(1--4, 2--4, 3--4)"
-    triangle.toTilingDual2.boundary shouldBe
+      "TilingDual(Vector(1, 2, 3) 1--4, 2--4, 3--4)"
+    triangle.toTilingDual2.polygonBoundary shouldBe
       Vector(3, 3, 3)
   }
 
@@ -23,8 +23,8 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
     hexagonTriangles.toTilingDual.toString shouldBe
       "TilingDual((1 *, 2 *, 3 *, 4 *, 5 *, 6 *, 12 p3, 10 p3, 9 p3, 7 p3, 11 p3, 8 p3), 1--9, 2--10, 3--12, 4--11, 5--7, 6--8, 7--8, 7--11, 8--9, 9--10, 10--12, 11--12)"
     hexagonTriangles.toTilingDual2.toString shouldBe
-      "TilingDual(1--9, 2--10, 3--12, 4--11, 5--7, 6--8, 7--8, 7--11, 8--9, 9--10, 10--12, 11--12)"
-    hexagonTriangles.toTilingDual2.boundary shouldBe
+      "TilingDual(Vector(1, 2, 3, 4, 5, 6) 1--9, 2--10, 3--12, 4--11, 5--7, 6--8, 7--8, 7--11, 8--9, 9--10, 10--12, 11--12)"
+    hexagonTriangles.toTilingDual2.polygonBoundary shouldBe
       Vector(3, 3, 3, 3, 3, 3)
   }
 
