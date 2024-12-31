@@ -269,7 +269,7 @@ class Graph(edges: List[Edge]):
     mappedDegrees
       .view
       .filter((_, degree) => isFork(degree))
-      .map((node, _) => node -> edges.adjacentTo(node).combinations(2).toList.map(Edge(_)))
+      .map((node, _) => node -> edges.nodesAdjacentTo(node).combinations(2).toList.map(Edge(_)))
 
   /** Finds and extracts two perimeter triangles
    *
@@ -360,7 +360,7 @@ class Graph(edges: List[Edge]):
   private def extractPerimeterStuckTriangle2: Option[RemainingPartition] =
     mappedDegrees.filter((_, degree) => isFork(degree)).keys.toList
       .combinations(2)
-      .map(nodes => (nodes, nodes.map(edges.adjacentTo)))
+      .map(nodes => (nodes, nodes.map(edges.nodesAdjacentTo)))
       .filter((nodes, adjacentNodes) => (nodes ++ adjacentNodes.flatten).distinct.size == 5)
       .map((nodes, adjacentNodes) => (Edge(nodes), adjacentNodes.head.intersect(adjacentNodes(1))))
       .find((edge, third) => edges.filterNot(_ == edge).shortestPath(edge.lesserNode, edge.greaterNode, third).nonEmpty)

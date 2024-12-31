@@ -15,7 +15,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
 
   def polygonBoundary: Vector[Polygon] =
     boundary
-      .map(edges.adjacentTo(_).head)
+      .map(edges.nodesAdjacentTo(_).head)
       .map(edges.degree)
       .map(degree => Polygon(degree.toInt))
 

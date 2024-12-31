@@ -339,7 +339,7 @@ class TopologySpec extends AnyFlatSpec with should.Matchers {
   }
 
   it can "return every node adjacent to a given node" in {
-    List(second, third, anEdge).adjacentTo(Node(1)) shouldBe
+    List(second, third, anEdge).nodesAdjacentTo(Node(1)) shouldBe
       List(3, 2)
   }
 

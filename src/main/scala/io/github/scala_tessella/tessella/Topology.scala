@@ -270,8 +270,8 @@ object Topology:
     def threadNodes: List[Node] =
       nodesWithDegree(isThread)
 
-    /** Nodes adjacent to given nodes */
-    def adjacentTo(node: Node): List[Node] =
+    /** Nodes adjacent to given node */
+    def nodesAdjacentTo(node: Node): List[Node] =
       edges.filter(_.containsNode(node)).nodes.filterNot(_ == node)
 
     /** Filters edges where both their nodes are listed */
@@ -371,7 +371,7 @@ object Topology:
           val parent: Node =
             queue.dequeue()
           for
-            adjacent <- adjacentTo(parent)
+            adjacent <- nodesAdjacentTo(parent)
             position = positions(adjacent)
             if !visited(position)
           do
