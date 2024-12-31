@@ -4,6 +4,8 @@ import RegularPolygon.Polygon
 import Topology.{--, Edge, Node, isPendant}
 import utility.Utils.mapValues2
 
+import scala.annotation.tailrec
+
 /** Undirected connected graph representing the dual of a finite tessellation of unit regular polygons
  *
  * @param edges the dual graph edges
@@ -23,7 +25,9 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
   /** Tries to convert a [[TilingDual]] into a [[Tiling]] */
   override def toMaybeTiling: Either[String, Tiling] =
 
-    val nodeToEmptyEdges: Map[Node, List[Option[Edge]]] =
+    type MaybeEdges = List[Option[Edge]]
+
+    val nodeToEmptyEdges: Map[Node, MaybeEdges] =
       edges.allDegrees
         .filterNot((_, degree) => isPendant(degree))
         .mapValues2(degree => List.fill(degree.toInt)(None))
@@ -31,7 +35,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
     val size: Int =
       boundary.size
     // assign perimeter edges from boundary
-    val nodeToPerimeterEdges: Map[Node, List[Option[Edge]]] =
+    val nodeToPerimeterEdges: Map[Node, MaybeEdges] =
       boundary.foldLeft((nodeToEmptyEdges, 1))({ case ((map, index), boundNode) =>
         val node: Node =
           edges.nodesAdjacentTo(boundNode).head
@@ -41,6 +45,26 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
       })._1
 
     // tail recursive loop
+    @tailrec
+    def loop(map: Map[Node, MaybeEdges], dualEdges: List[Edge]): Map[Node, MaybeEdges] =
+      map.find((_, nodeEdges) => nodeEdges.count(_.isEmpty) == 1) match
+        case Some((node, nodeEdges)) =>
+          val newEdge: Option[Edge] =
+            Option(Edge(nodeEdges.flatten.allDegrees.filter((_, degree) => isPendant(degree)).keys.toList))
+          val adjacent: Node =
+            dualEdges.nodesAdjacentTo(node).head
+          val addedEdges: Map[Node, MaybeEdges] =
+            map
+              .updatedWith(node)(_.map(_ => newEdge :: nodeEdges.filter(_.isDefined)))
+              .updatedWith(adjacent)(_.map(options =>
+                val (defined, empty): (MaybeEdges, MaybeEdges) =
+                  options.partition(_.isDefined)
+                newEdge :: defined ++ empty.tail
+              ))
+          loop(addedEdges, dualEdges.withoutNodes(List(node)))
+        case None => map.find((_, edges) => edges.count(_.isEmpty) == 2) match
+          case Some(value) => ???
+          case None => map
 
     // find a node where only one edge is missing
       // add it and assign it also to the adjacent node
@@ -53,6 +77,6 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
     // if none, exit loop
 
     val tilingEdges: List[Edge] =
-      nodeToPerimeterEdges.values.flatten.flatten.toList
+      loop(nodeToPerimeterEdges, edges.withoutNodes(boundary.toList)).values.flatten.flatten.toList
 //    println(tilingEdges)
     Tiling.maybe(tilingEdges)

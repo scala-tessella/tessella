@@ -85,6 +85,11 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
       "TilingDual(Vector(1, 2, 3, 4, 5, 6) 1--9, 2--8, 3--7, 4--7, 5--8, 6--9, 7--8, 8--9)"
   }
 
+  it can "be converted to a Tiling" in {
+    dualSquareWithTwoOppositeTriangles.toMaybeTiling shouldEqual
+      Right(squareWithTwoOppositeTriangles)
+  }
+  
   "A tiling made of a square with two adjacent triangles" can "be printed" in {
     dualSquareWithTwoAdjacentTriangles.toString shouldBe
       "TilingDual(Vector(1, 2, 3, 4, 5, 6) 1--9, 2--7, 3--7, 4--8, 5--8, 6--9, 7--8, 8--9)"
