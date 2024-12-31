@@ -1,7 +1,7 @@
 package io.github.scala_tessella.tessella
 
 import RegularPolygon.Polygon
-import Topology.{Edge, Node, isPendant}
+import Topology.{--, Edge, Node, isPendant}
 import utility.Utils.mapValues2
 
 /** Undirected connected graph representing the dual of a finite tessellation of unit regular polygons
@@ -23,12 +23,22 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
   /** Tries to convert a [[TilingDual]] into a [[Tiling]] */
   override def toMaybeTiling: Either[String, Tiling] =
 
-    val map: Map[Node, List[Option[Edge]]] =
+    val nodeToEmptyEdges: Map[Node, List[Option[Edge]]] =
       edges.allDegrees
         .filterNot((_, degree) => isPendant(degree))
         .mapValues2(degree => List.fill(degree.toInt)(None))
 
+    val size: Int =
+      boundary.size
     // assign perimeter edges from boundary
+    val nodeToPerimeterEdges: Map[Node, List[Option[Edge]]] =
+      boundary.foldLeft((nodeToEmptyEdges, 1))({ case ((map, index), boundNode) =>
+        val node: Node =
+          edges.nodesAdjacentTo(boundNode).head
+        val newEdge: Option[Edge] =
+          Option(index--(index % size + 1))
+        (map.updatedWith(node)(_.map(options => newEdge :: options.init)), index + 1)
+      })._1
 
     // tail recursive loop
 
@@ -43,5 +53,6 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
     // if none, exit loop
 
     val tilingEdges: List[Edge] =
-      map.values.flatten.flatten.toList
+      nodeToPerimeterEdges.values.flatten.flatten.toList
+//    println(tilingEdges)
     Tiling.maybe(tilingEdges)
