@@ -12,14 +12,14 @@ import org.scalatest.matchers.*
 
 class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
 
-  "A triangle" can "be converted" in {
+  "A triangle" can "be converted to its dual" in {
     triangle.toTilingDual.toString shouldBe
       "TilingDual(Vector(1, 2, 3) 1--4, 2--4, 3--4)"
     triangle.toTilingDual.polygonBoundary shouldBe
       Vector(3, 3, 3)
   }
 
-  "An hexagon made of triangles" can "be converted" in {
+  "An hexagon made of triangles" can "be converted to its dual" in {
     hexagonTriangles.toTilingDual.toString shouldBe
       "TilingDual(Vector(1, 2, 3, 4, 5, 6) 1--9, 2--10, 3--12, 4--11, 5--7, 6--8, 7--8, 7--11, 8--9, 9--10, 10--12, 11--12)"
     hexagonTriangles.toTilingDual.polygonBoundary shouldBe
@@ -85,19 +85,37 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
       "TilingDual(Vector(1, 2, 3, 4, 5, 6) 1--9, 2--8, 3--7, 4--7, 5--8, 6--9, 7--8, 8--9)"
   }
 
-  it can "be converted to a Tiling" in {
+  it can "be converted back to a Tiling" in {
     dualSquareWithTwoOppositeTriangles.toMaybeTiling shouldEqual
       Right(squareWithTwoOppositeTriangles)
   }
-  
+
   "A tiling made of a square with two adjacent triangles" can "be printed" in {
     dualSquareWithTwoAdjacentTriangles.toString shouldBe
       "TilingDual(Vector(1, 2, 3, 4, 5, 6) 1--9, 2--7, 3--7, 4--8, 5--8, 6--9, 7--8, 8--9)"
   }
-  
-  it can "be converted to a Tiling" in {
+
+  it can "be converted back to a Tiling" in {
     dualSquareWithTwoAdjacentTriangles.toMaybeTiling shouldEqual
       Right(squareWithTwoAdjacentTriangles)
+  }
+
+  val fourSquares: Tiling =
+    Tiling.pattern_4444(2, 2).unsafe
+    
+  val dualFourSquares: TilingDual =
+    fourSquares.toTilingDual  
+
+  "A tiling made of four squares" can "be converted to its dual" in {
+    dualFourSquares.toString shouldBe
+      "TilingDual(Vector(1, 2, 3, 4, 5, 6, 7, 8) 1--12, 2--9, 3--9, 4--10, 5--10, 6--11, 7--11, 8--12, 9--10, 9--12, 10--11, 11--12)"
+    dualFourSquares.polygonBoundary shouldBe
+      Vector(4, 4, 4, 4, 4, 4, 4, 4)
+  }
+
+  it can "be converted back to a Tiling" in {
+    dualFourSquares.toMaybeTiling shouldEqual
+      Right(fourSquares)
   }
 
 }
