@@ -1,9 +1,11 @@
 package io.github.scala_tessella.tessella
 
+import Outliers.*
 import RegularPolygon.Polygon
 import Topology.{--, Degree, Edge, Node}
 import TopologyDual.*
-import utility.Utils.mapKeys
+import conversion.DOT.toDOT
+import utility.Utils.*
 
 import io.github.scala_tessella.ring_seq.RingSeq.isRotationOrReflectionOf
 import org.scalatest.*
@@ -118,4 +120,118 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
       Right(fourSquares)
   }
 
+  val dualp31212: TilingDual =
+    p31212.toTilingDual
+
+  "A 31212 pattern" can "be converted to dual" in {
+    dualp31212.toString shouldBe
+      "TilingDual(Vector(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36) 1--40, 2--40, 3--40, 4--40, 5--40, 6--42, 7--43, 8--43, 9--43, 10--43, 11--43, 12--44, 13--46, 14--46, 15--46, 16--46, 17--46, 18--47, 19--49, 20--49, 21--49, 22--49, 23--49, 24--50, 25--52, 26--52, 27--52, 28--52, 29--52, 30--53, 31--55, 32--55, 33--55, 34--55, 35--55, 36--54, 37--38, 37--39, 37--40, 37--41, 37--43, 37--45, 37--46, 37--48, 37--49, 37--51, 37--52, 37--55, 38--40, 38--43, 39--40, 39--55, 40--42, 40--43, 40--54, 40--55, 41--43, 41--46, 42--43, 43--44, 43--46, 44--46, 45--46, 45--49, 46--47, 46--49, 47--49, 48--49, 48--52, 49--50, 49--52, 50--52, 51--52, 51--55, 52--53, 52--55, 53--55, 54--55)"
+    dualp31212.graphEdges.allDegrees.groupByValues shouldBe
+      Map(
+        1 -> List(5, 10, 1, 6, 2, 8, 4, 24, 25, 14, 20, 29, 21, 33, 28, 9, 13, 17, 32, 34, 22, 27, 12, 7, 3, 35, 18, 16, 31, 11, 26, 23, 36, 30, 19, 15),
+        3 -> List(42, 38, 53, 41, 45, 44, 54, 39, 48, 50, 51, 47),
+        12 -> List(37, 52, 46, 49, 43, 40, 55)
+      ).mapValues2(_.map(Node(_)))
+    dualp31212.toDOT() shouldBe
+      """graph{
+        |1 -- 40
+        |2 -- 40
+        |3 -- 40
+        |4 -- 40
+        |5 -- 40
+        |6 -- 42
+        |7 -- 43
+        |8 -- 43
+        |9 -- 43
+        |10 -- 43
+        |11 -- 43
+        |12 -- 44
+        |13 -- 46
+        |14 -- 46
+        |15 -- 46
+        |16 -- 46
+        |17 -- 46
+        |18 -- 47
+        |19 -- 49
+        |20 -- 49
+        |21 -- 49
+        |22 -- 49
+        |23 -- 49
+        |24 -- 50
+        |25 -- 52
+        |26 -- 52
+        |27 -- 52
+        |28 -- 52
+        |29 -- 52
+        |30 -- 53
+        |31 -- 55
+        |32 -- 55
+        |33 -- 55
+        |34 -- 55
+        |35 -- 55
+        |36 -- 54
+        |37 -- 38
+        |37 -- 43
+        |37 -- 41
+        |37 -- 46
+        |37 -- 45
+        |37 -- 49
+        |37 -- 48
+        |37 -- 52
+        |37 -- 51
+        |37 -- 55
+        |37 -- 39
+        |37 -- 40
+        |39 -- 40
+        |40 -- 55
+        |40 -- 54
+        |40 -- 42
+        |40 -- 43
+        |38 -- 40
+        |38 -- 43
+        |39 -- 55
+        |42 -- 43
+        |43 -- 44
+        |43 -- 46
+        |41 -- 43
+        |41 -- 46
+        |44 -- 46
+        |46 -- 47
+        |46 -- 49
+        |45 -- 46
+        |45 -- 49
+        |47 -- 49
+        |49 -- 50
+        |49 -- 52
+        |48 -- 49
+        |48 -- 52
+        |50 -- 52
+        |52 -- 53
+        |52 -- 55
+        |51 -- 52
+        |51 -- 55
+        |53 -- 55
+        |54 -- 55
+        |}""".stripMargin
+  }
+
+  it can "be converted back" in {
+    dualp31212.toMaybeTiling shouldEqual
+      Right(p31212)
+  }
+
+//  val tilings: List[Tiling] =
+//    List(
+////      p31212,
+////      p3464, p33336,
+////      p33434, p2x333333_2x33336_3366,
+////      p2x333333_33336, p488,
+////      p666_4by4_reticulate, p666_grown_hexagon,
+////      p666_triangle, p3636, p4612
+//    )
+//
+//  "Tilings" can "be converted back and forth" in {
+//    tilings.forall(t => Right(t) == t.toTilingDual.toMaybeTiling) shouldBe
+//      true
+//  }
 }
