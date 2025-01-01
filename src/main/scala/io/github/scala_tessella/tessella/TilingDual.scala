@@ -31,52 +31,53 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
       edges.allDegrees
         .filterNot((_, degree) => isPendant(degree))
         .mapValues2(degree => List.fill(degree.toInt)(None))
-
     val size: Int =
       boundary.size
     // assign perimeter edges from boundary
     val nodeToPerimeterEdges: Map[Node, MaybeEdges] =
-      boundary.foldLeft((nodeToEmptyEdges, 1))({ case ((map, index), boundNode) =>
-        val node: Node =
-          edges.nodesAdjacentTo(boundNode).head
-        val newEdge: Option[Edge] =
-          Option(index--(index % size + 1))
-        (map.updatedWith(node)(_.map(options => newEdge :: options.init)), index + 1)
+      boundary.foldLeft((nodeToEmptyEdges, 1))({ case ((map, index), dualNode) =>
+        val adjacent: Node =
+          edges.nodesAdjacentTo(dualNode).head
+        val newEdge: Edge =
+          index--(index % size + 1)
+        (map.updatedWith(adjacent)(_.map(options => Option(newEdge) :: options.init)), index + 1)
       })._1
 
-    // tail recursive loop
+    def replaceNoneWith(edge: Edge): Option[MaybeEdges] => Option[MaybeEdges] =
+      _.map(options =>
+        val (defined, empty): (MaybeEdges, MaybeEdges) =
+          options.partition(_.isDefined)
+        Option(edge) :: defined ++ empty.tail
+      )
+
     @tailrec
-    def loop(map: Map[Node, MaybeEdges], dualEdges: List[Edge]): Map[Node, MaybeEdges] =
-      map.find((_, nodeEdges) => nodeEdges.count(_.isEmpty) == 1) match
-        case Some((node, nodeEdges)) =>
-          val newEdge: Option[Edge] =
-            Option(Edge(nodeEdges.flatten.allDegrees.filter((_, degree) => isPendant(degree)).keys.toList))
+    def loop(map: Map[Node, MaybeEdges], dualEdges: List[Edge], counter: Int): Map[Node, MaybeEdges] =
+      map.find((_, maybeEdges) => maybeEdges.count(_.isEmpty) == 1) match
+        case Some((dualNode, maybeEdges)) =>
+          val newEdge: Edge =
+            Edge(maybeEdges.flatten.allDegrees.filter((_, degree) => isPendant(degree)).keys.toList)
           val adjacent: Node =
-            dualEdges.nodesAdjacentTo(node).head
+            dualEdges.nodesAdjacentTo(dualNode).head
           val addedEdges: Map[Node, MaybeEdges] =
             map
-              .updatedWith(node)(_.map(_ => newEdge :: nodeEdges.filter(_.isDefined)))
-              .updatedWith(adjacent)(_.map(options =>
-                val (defined, empty): (MaybeEdges, MaybeEdges) =
-                  options.partition(_.isDefined)
-                newEdge :: defined ++ empty.tail
-              ))
-          loop(addedEdges, dualEdges.withoutNodes(List(node)))
-        case None => map.find((_, edges) => edges.count(_.isEmpty) == 2) match
-          case Some(value) => ???
+              .updatedWith(dualNode)(_.map(_ => Option(newEdge) :: maybeEdges.filter(_.isDefined)))
+              .updatedWith(adjacent)(replaceNoneWith(newEdge))
+          loop(addedEdges, dualEdges.withoutNodes(List(dualNode)), counter)
+        case None => map.find((_, maybeEdges) => maybeEdges.count(_.isEmpty) == 2) match
+          case Some((dualNode, maybeEdges)) =>
+            val pendant: Node =
+              maybeEdges.flatten.allDegrees.find((_, degree) => isPendant(degree)).get._1
+            val newEdge: Edge =
+              Edge(pendant, Node(counter))
+            val adjacent: Node =
+              dualEdges.nodesAdjacentTo(dualNode).find(map(_).flatten.nodes.contains(pendant)).get
+            val addedEdges: Map[Node, MaybeEdges] =
+              map
+                .updatedWith(dualNode)(replaceNoneWith(newEdge))
+                .updatedWith(adjacent)(replaceNoneWith(newEdge))
+            loop(addedEdges, dualEdges.diff(List(Edge(dualNode, adjacent))), counter + 1)
           case None => map
 
-    // find a node where only one edge is missing
-      // add it and assign it also to the adjacent node
-      // loop
-
-    // if none, find a node where two edges are missing
-      // add them with a new ordinal and assign them also to the adjacent nodes
-      // loop
-
-    // if none, exit loop
-
-    val tilingEdges: List[Edge] =
-      loop(nodeToPerimeterEdges, edges.withoutNodes(boundary.toList)).values.flatten.flatten.toList
-//    println(tilingEdges)
-    Tiling.maybe(tilingEdges)
+    val nodeToAllEdges: Map[Node, MaybeEdges] =
+      loop(nodeToPerimeterEdges, edges.withoutNodes(boundary.toList), size + 1)
+    Tiling.maybe(nodeToAllEdges.values.flatten.flatten.toList)

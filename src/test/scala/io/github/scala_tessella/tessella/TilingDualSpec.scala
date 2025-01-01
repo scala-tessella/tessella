@@ -102,9 +102,9 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
 
   val fourSquares: Tiling =
     Tiling.pattern_4444(2, 2).unsafe
-    
+
   val dualFourSquares: TilingDual =
-    fourSquares.toTilingDual  
+    fourSquares.toTilingDual
 
   "A tiling made of four squares" can "be converted to its dual" in {
     dualFourSquares.toString shouldBe
