@@ -51,18 +51,21 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
       )
 
     @tailrec
-    def loop(map: Map[Node, MaybeEdges], dualEdges: List[Edge], counter: Int): Map[Node, MaybeEdges] =
-      map.find((_, maybeEdges) => maybeEdges.count(_.isEmpty) == 1) match
+    def loop(map: Map[Node, MaybeEdges], acc: Set[Edge], dualEdges: List[Edge], counter: Int): Set[Edge] =
+      if map.isEmpty then
+        acc
+      else map.find((_, maybeEdges) => maybeEdges.count(_.isEmpty) == 1) match
         case Some((dualNode, maybeEdges)) =>
           val newEdge: Edge =
             Edge(maybeEdges.flatten.allDegrees.filter((_, degree) => isPendant(degree)).keys.toList)
           val adjacent: Node =
             dualEdges.nodesAdjacentTo(dualNode).head
-          val addedEdges: Map[Node, MaybeEdges] =
-            map
-              .updatedWith(dualNode)(_.map(_ => Option(newEdge) :: maybeEdges.filter(_.isDefined)))
-              .updatedWith(adjacent)(replaceNoneWith(newEdge))
-          loop(addedEdges, dualEdges.withoutNodes(List(dualNode)), counter)
+          val set: Set[Edge] =
+            Set(newEdge) ++ map(dualNode).flatten
+          if map(adjacent).count(_.isEmpty) == 1 then
+            loop(map.filter((node, _) => node != dualNode && node != adjacent), acc ++ set ++ map(adjacent).flatten, dualEdges.withoutNodes(List(dualNode)), counter)
+          else
+            loop(map.filter((node, _) => node != dualNode).updatedWith(adjacent)(replaceNoneWith(newEdge)), acc ++ set, dualEdges.withoutNodes(List(dualNode)), counter)
         case None => map.find((_, maybeEdges) => maybeEdges.count(_.isEmpty) == 2) match
           case Some((dualNode, maybeEdges)) =>
             val pendant: Node =
@@ -72,12 +75,14 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
             val adjacent: Node =
               dualEdges.nodesAdjacentTo(dualNode).find(map(_).flatten.nodes.contains(pendant)).get
             val addedEdges: Map[Node, MaybeEdges] =
-              map
-                .updatedWith(dualNode)(replaceNoneWith(newEdge))
-                .updatedWith(adjacent)(replaceNoneWith(newEdge))
-            loop(addedEdges, dualEdges.diff(List(Edge(dualNode, adjacent))), counter + 1)
-          case None => map
+              map.updatedWith(dualNode)(replaceNoneWith(newEdge))
+            if map(adjacent).count(_.isEmpty) == 1 then
+              loop(addedEdges.filter((node, _) => node != adjacent), acc ++ map(adjacent).flatten, dualEdges.diff(List(Edge(dualNode, adjacent))), counter + 1)
+            else
+              loop(addedEdges.updatedWith(adjacent)(replaceNoneWith(newEdge)), acc, dualEdges.diff(List(Edge(dualNode, adjacent))), counter + 1)
+          case None => ???
 
-    val nodeToAllEdges: Map[Node, MaybeEdges] =
-      loop(nodeToPerimeterEdges, edges.withoutNodes(boundary.toList), size + 1)
-    Tiling.maybe(nodeToAllEdges.values.flatten.flatten.toList)
+    val allEdges: Set[Edge] =
+      loop(nodeToPerimeterEdges, Set.empty[Edge], edges.withoutNodes(boundary.toList), size + 1)
+
+    Tiling.maybe(allEdges.toList)
