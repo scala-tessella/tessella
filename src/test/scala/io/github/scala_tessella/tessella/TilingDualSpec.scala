@@ -87,20 +87,20 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
       "TilingDual(Vector(1, 2, 3, 4, 5, 6) 1--9, 2--8, 3--7, 4--7, 5--8, 6--9, 7--8, 8--9)"
   }
 
-//  it can "be converted back to a Tiling" in {
-//    dualSquareWithTwoOppositeTriangles.toMaybeTiling shouldEqual
-//      Right(squareWithTwoOppositeTriangles)
-//  }
+  it can "be converted back to a Tiling" in {
+    dualSquareWithTwoOppositeTriangles.toMaybeTiling shouldEqual
+      Right(squareWithTwoOppositeTriangles)
+  }
 
   "A tiling made of a square with two adjacent triangles" can "be printed" in {
     dualSquareWithTwoAdjacentTriangles.toString shouldBe
       "TilingDual(Vector(1, 2, 3, 4, 5, 6) 1--9, 2--7, 3--7, 4--8, 5--8, 6--9, 7--8, 8--9)"
   }
 
-//  it can "be converted back to a Tiling" in {
-//    dualSquareWithTwoAdjacentTriangles.toMaybeTiling shouldEqual
-//      Right(squareWithTwoAdjacentTriangles)
-//  }
+  it can "be converted back to a Tiling" in {
+    dualSquareWithTwoAdjacentTriangles.toMaybeTiling shouldEqual
+      Right(squareWithTwoAdjacentTriangles)
+  }
 
   val p31212reduced: Tiling =
     Tiling.maybe(p31212.graphEdges.filter(_.greaterNode.toInt <= 30)).unsafe
@@ -158,10 +158,10 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
         |}""".stripMargin
   }
 
-//  it can "be converted back" in {
-//    dualp31212reduced.toMaybeTiling shouldEqual
-//      Right(p31212reduced)
-//  }
+  it can "be converted back" in {
+    dualp31212reduced.toMaybeTiling shouldEqual
+      Right(p31212reduced)
+  }
 
   val dualp31212: TilingDual =
     p31212.toTilingDual
@@ -258,10 +258,10 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
         |}""".stripMargin
   }
 
-//  it can "be converted back" in {
-//    dualp31212.toMaybeTiling shouldEqual
-//      Right(p31212)
-//  }
+  it can "be converted back" in {
+    dualp31212.toMaybeTiling shouldEqual
+      Right(p31212)
+  }
 
   val dualp33336: TilingDual =
     p33336.toTilingDual
@@ -394,18 +394,18 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
         |}""".stripMargin
   }
 
-//  it can "be converted back" in {
-//    dualp33336.toMaybeTiling shouldEqual
-//      Right(p33336)
-//  }
+  it can "be converted back" in {
+    dualp33336.toMaybeTiling shouldEqual
+      Right(p33336)
+  }
 
   val dualp33434: TilingDual =
     p33434.toTilingDual
 
-//  "A 33434 pattern" can "be converted back from dual" in {
-//    dualp33434.toMaybeTiling shouldEqual
-//      Right(p33434)
-//  }
+  "A 33434 pattern" can "be converted back from dual" in {
+    dualp33434.toMaybeTiling shouldEqual
+      Right(p33434)
+  }
 
   val p33434reduced: Tiling =
     Tiling.pattern_33434(1).unsafe
