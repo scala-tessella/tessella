@@ -24,9 +24,10 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
 
   /** Tries to convert a [[TilingDual]] into a [[Tiling]] */
   override def toMaybeTiling: Either[String, Tiling] =
-
-    type MaybeEdges = List[Option[Edge]]
-
+    // just aliases to visually distinguish nodes and edges of the tiling
+    type TNode = Node
+    type TEdge = Edge
+    type MaybeEdges = List[Option[TEdge]]
     val nodeToEmptyEdges: Map[Node, MaybeEdges] =
       edges.allDegrees
         .filterNot((_, degree) => isPendant(degree))
@@ -38,12 +39,12 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
       boundary.foldLeft((nodeToEmptyEdges, 1))({ case ((map, index), dualNode) =>
         val adjacent: Node =
           edges.nodesAdjacentTo(dualNode).head
-        val newEdge: Edge =
+        val newEdge: TEdge =
           index--(index % size + 1)
         (map.updatedWith(adjacent)(_.map(options => Option(newEdge) :: options.init)), index + 1)
       })._1
 
-    def replaceNoneWith(edge: Edge): Option[MaybeEdges] => Option[MaybeEdges] =
+    def replaceNoneWith(edge: TEdge): Option[MaybeEdges] => Option[MaybeEdges] =
       _.map(options =>
         val (defined, empty): (MaybeEdges, MaybeEdges) =
           options.partition(_.isDefined)
@@ -51,7 +52,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
       )
 
     @tailrec
-    def loop(nodeToMaybeEdges: Map[Node, MaybeEdges], dualEdges: List[Edge], acc: Set[Edge], counter: Int, exclude: List[Node] = Nil): Set[Edge] =
+    def loop(nodeToMaybeEdges: Map[Node, MaybeEdges], dualEdges: List[Edge], acc: Set[TEdge], counter: Int, exclude: List[Node] = Nil): Set[TEdge] =
       println(
         s"""
            |NEW CYCLE
@@ -70,7 +71,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
           nodeToMaybeEdges.find((_, maybeEdges) => maybeEdges.count(_.isEmpty) == 1)
         polygonWithJustOneEdgeUndefined match
           case Some((dualNode, maybeEdges)) =>
-            val newEdge: Edge =
+            val newEdge: TEdge =
               Edge(maybeEdges.flatten.allDegrees.filter((_, degree) => isPendant(degree)).keys.toList)
             val adjacent: Node =
               dualEdges.nodesAdjacentTo(dualNode).head
@@ -82,7 +83,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                  |newEdge $newEdge
                  |adjacent $adjacent
                  |""".stripMargin)
-            val set: Set[Edge] =
+            val set: Set[TEdge] =
               Set(newEdge) ++ nodeToMaybeEdges(dualNode).flatten
             if nodeToMaybeEdges(adjacent).count(_.isEmpty) == 1 then
               println(s"#1 polygons $dualNode and $adjacent completed: both removed from map; edges from both extracted")
@@ -110,7 +111,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
               case Some((dualNode, maybeEdges)) =>
                 val adjacentDualNodes: List[Node] =
                   dualEdges.nodesAdjacentTo(dualNode)
-                val pendants: List[Node] =
+                val pendants: List[TNode] =
                   maybeEdges.flatten.allDegrees.filter((_, degree) => isPendant(degree)).keys.toList
                 println(
                   s"""
@@ -142,9 +143,9 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                 ) match
                   case None => loop(nodeToMaybeEdges, dualEdges, acc, counter, dualNode :: exclude)
                   case Some(value) =>
-                    val (pendant, adjacent): (Node, Node) =
+                    val (pendant, adjacent): (TNode, Node) =
                       (value, adjacentDualNodes.find(nodeToMaybeEdges(_).flatten.nodes.contains(value)).get)
-                    val newEdge: Edge =
+                    val newEdge: TEdge =
                        Edge(pendant, Node(counter))
                     println(
                         s"""
@@ -171,7 +172,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                       )
               case None => ???
 
-    val allEdges: Set[Edge] =
-      loop(nodeToPerimeterEdges, edges.withoutNodes(boundary.toList), Set.empty[Edge], size + 1)
+    val allEdges: Set[TEdge] =
+      loop(nodeToPerimeterEdges, edges.withoutNodes(boundary.toList), Set.empty[TEdge], size + 1)
 
     Tiling.maybe(allEdges.toList)
