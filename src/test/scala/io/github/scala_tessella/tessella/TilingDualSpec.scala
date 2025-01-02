@@ -289,17 +289,17 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
 
   val tilings: List[Tiling] =
     List(
-//      p31212, // issue
-//      p3636, // issue
-//      p666_4by4_reticulate, p666_grown_hexagon,
-//      p3464,
-//      p33336,
-//      p33434,
-//      p2x333333_2x33336_3366,
-//      p2x333333_33336,
-//      p488,
-//      p666_triangle,
-//      p4612
+      p31212, // issue
+      p3636, // issue
+      p666_4by4_reticulate, p666_grown_hexagon,
+      p3464,
+      p33336,
+      p33434,
+      p2x333333_2x33336_3366,
+      p2x333333_33336,
+      p488,
+      p666_triangle,
+      p4612
     )
 
   "Tilings" can "be converted back and forth" in {

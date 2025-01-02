@@ -170,7 +170,53 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                         acc,
                         counter + 1
                       )
-              case None => ???
+              case None =>
+                // special cases
+                val dualNode: Node =
+                  exclude.head
+                val maybeEdges: MaybeEdges =
+                  nodeToMaybeEdges(exclude.head)
+                val adjacentDualNodes: List[Node] =
+                  dualEdges.nodesAdjacentTo(dualNode)
+                val pendants: List[TNode] =
+                  maybeEdges.flatten.allDegrees.filter((_, degree) => isPendant(degree)).keys.toList
+                println(
+                  s"""
+                     |SPECIAL
+                     |dualNode: $dualNode
+                     |adjacentDualNodes: $adjacentDualNodes
+                     |maybeEdges: $maybeEdges
+                     |pendants: $pendants
+                     |containing: ${dualEdges.nodesAdjacentTo(dualNode).map(nodeToMaybeEdges(_))}
+                     |""".stripMargin)
+
+//                val pendant: TNode =
+//                  maybeEdges.flatten.allDegrees.find((_, degree) => isPendant(degree)).get._1
+                adjacentDualNodes.filter(nodeToMaybeEdges(_) == List(None, None, None)) match
+                  case Nil => throw new RuntimeException("no empty triangles found")
+                  case _ :: Nil => throw new RuntimeException("one triangle found")
+                  case many =>
+                    val anchor: Node =
+                      dualEdges.nodes.filterNot(_ == dualNode).find(nodeToMaybeEdges(_).flatten.nodes.contains(pendants.head)).get
+                    val chosenAdjacent: Node =
+                      many.minBy(edges.distance(_, anchor))
+                    println(
+                      s"""
+                         |pendant: ${pendants.head}
+                         |anchor: $anchor
+                         |edge to be removed: $dualNode--$chosenAdjacent
+                         |""".stripMargin)
+                    val newEdge: TEdge =
+                      Edge(pendants.head, Node(counter))
+                    val addedEdges: Map[Node, MaybeEdges] =
+                      nodeToMaybeEdges.updatedWith(dualNode)(replaceNoneWith(newEdge))
+                    println(s"#5 polygons $dualNode and $chosenAdjacent both updated in map with shared edge $newEdge")
+                    loop(
+                      addedEdges.updatedWith(chosenAdjacent)(replaceNoneWith(newEdge)),
+                      dualEdges.diff(List(Edge(dualNode, chosenAdjacent))),
+                      acc,
+                      counter + 1
+                    )
 
     val allEdges: Set[TEdge] =
       loop(nodeToPerimeterEdges, edges.withoutNodes(boundary.toList), Set.empty[TEdge], size + 1)
