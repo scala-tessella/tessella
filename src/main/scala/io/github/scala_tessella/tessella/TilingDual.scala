@@ -185,6 +185,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                       dualEdges.nodes.filterNot(_ == dualNode).find(nodeToMaybeEdges(_).flatten.nodes.contains(pendant)).get
                     val adjacent: Node =
                       many.minBy(edges.distance(_, anchor))
+                    println(s"""distances: ${many.map(node => node -> edges.distance(node, anchor)).sortBy((_, distance) => distance)}""")
 //                    println(
 //                      s"""
 //                         |pendant: $pendant
@@ -195,7 +196,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                       Edge(pendant, Node(counter))
                     val addedEdges: Map[Node, MaybeEdges] =
                       nodeToMaybeEdges.updatedWith(dualNode)(replaceNoneWith(newEdge))
-//                    println(s"#5 polygons $dualNode and $adjacent both updated in map with shared edge $newEdge")
+                    println(s"#5 [many:${many.size}] polygons $dualNode and $adjacent both updated in map with shared edge $newEdge")
                     loop(
                       addedEdges.updatedWith(adjacent)(replaceNoneWith(newEdge)),
                       dualEdges.diff(List(Edge(dualNode, adjacent))),
