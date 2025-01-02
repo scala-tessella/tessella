@@ -86,7 +86,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
             val set: Set[TEdge] =
               Set(newEdge) ++ nodeToMaybeEdges(dualNode).flatten
             if nodeToMaybeEdges(adjacent).count(_.isEmpty) == 1 then
-//              println(s"#1 polygons $dualNode and $adjacent completed: both removed from map; edges from both extracted")
+              println(s"#1 polygons $dualNode and $adjacent completed: both removed from map; edges from both extracted")
               loop(
                 nodeToMaybeEdges.filter((node, _) => node != dualNode && node != adjacent),
                 dualEdges.diff(List(Edge(dualNode, adjacent))),
@@ -94,7 +94,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                 counter
               )
             else
-//              println(s"#2 polygon $dualNode completed: removed from map; $adjacent updated in map with shared edge $newEdge; edges from $dualNode extracted")
+              println(s"#2 polygon $dualNode completed: removed from map; $adjacent updated in map with shared edge $newEdge; edges from $dualNode extracted")
               loop(
                 nodeToMaybeEdges.filter((node, _) => node != dualNode).updatedWith(adjacent)(replaceNoneWith(newEdge)),
                 dualEdges.diff(List(Edge(dualNode, adjacent))),
@@ -139,7 +139,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                     val addedEdges: Map[Node, MaybeEdges] =
                       nodeToMaybeEdges.updatedWith(dualNode)(replaceNoneWith(newEdge))
                     if nodeToMaybeEdges(adjacent).count(_.isEmpty) == 1 then
-//                      println(s"#3 polygon $adjacent completed: removed from map; $dualNode updated in map; shared edge $newEdge plus edges from $adjacent extracted")
+                      println(s"#3 polygon $adjacent completed: removed from map; $dualNode updated in map; shared edge $newEdge plus edges from $adjacent extracted")
                       loop(
                         addedEdges.filter((node, _) => node != adjacent),
                         dualEdges.diff(List(dualNode, adjacent)),
@@ -147,7 +147,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                         counter + 1
                       )
                     else
-//                      println(s"#4 polygons $dualNode and $adjacent both updated in map with shared edge $newEdge")
+                      println(s"#4 polygons $dualNode and $adjacent both updated in map with shared edge $newEdge")
                       loop(
                         addedEdges.updatedWith(adjacent)(replaceNoneWith(newEdge)),
                         dualEdges.diff(List(Edge(dualNode, adjacent))),
@@ -179,7 +179,6 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                   List(None, None, None)
                 adjacentDualNodes.filter(nodeToMaybeEdges(_) == emptyTriangle) match
                   case Nil => ???
-                  case _ :: Nil => ???
                   case many =>
                     val anchor: Node =
                       dualEdges.nodes.filterNot(_ == dualNode).find(nodeToMaybeEdges(_).flatten.nodes.contains(pendant)).get
