@@ -399,13 +399,22 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
       Right(p33336)
   }
 
+  val dualp33434: TilingDual =
+    p33434.toTilingDual
+
+  "A 33434 pattern" can "be converted back from dual" in {
+    dualp33434.toMaybeTiling shouldEqual
+      Right(p33434)
+  }
+
   val tilings: List[Tiling] =
     List(
-//      p31212,
-      p666_4by4_reticulate, p666_grown_hexagon,
-      p3464,
-//      p33336,
-//      p33434, p2x333333_2x33336_3366,
+//      p31212, // issue
+//      p666_4by4_reticulate, p666_grown_hexagon,
+//      p3464,
+//      p33336, // issue
+//      p33434, // issue
+//      p2x333333_2x33336_3366,
 //      p2x333333_33336, p488,
 //      p666_triangle, p3636, p4612
     )

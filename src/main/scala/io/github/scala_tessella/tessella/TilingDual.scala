@@ -125,7 +125,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                   ) match
                     case Some(value) => (value, adjacentDualNodes.find(nodeToMaybeEdges(_).flatten.nodes.contains(value)).get)
                     case None => ???
-                      // special case for 3.12.12 and 3.3.3.3.6
+                      // special case for 3.12.12 and 3.3.3.3.6 and 3.3.4.3.4
                       adjacentDualNodes.filter(nodeToMaybeEdges(_) == List(None, None, None)) match
                         case Nil => ???
                         case one :: Nil => (pendants.last, one)
