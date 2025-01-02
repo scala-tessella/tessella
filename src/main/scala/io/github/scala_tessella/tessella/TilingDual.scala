@@ -52,6 +52,30 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
 
     @tailrec
     def loop(nodeToMaybeEdges: Map[Node, MaybeEdges], dualEdges: List[Edge], acc: Set[Edge], counter: Int, exclude: List[Node] = Nil): Set[Edge] =
+
+      def addOneNode(dualNode: Node, pendant: Node, adjacent: Node, counter: Int): (Map[Node, MaybeEdges], Set[Edge]) =
+        val newEdge: Edge =
+          Edge(pendant, Node(counter))
+        println(
+          s"""
+             |pendant $pendant
+             |newEdge $newEdge
+             |""".stripMargin)
+        val addedEdges: Map[Node, MaybeEdges] =
+          nodeToMaybeEdges.updatedWith(dualNode)(replaceNoneWith(newEdge))
+        if nodeToMaybeEdges(adjacent).count(_.isEmpty) == 1 then
+          println(s"#3 polygon $adjacent completed: removed from map; $dualNode updated in map; shared edge $newEdge plus edges from $adjacent extracted")
+          (
+            addedEdges.filter((node, _) => node != adjacent),
+            Set(newEdge) ++ acc ++ nodeToMaybeEdges(adjacent).flatten
+          )
+        else
+          println(s"#4 polygons $dualNode and $adjacent both updated in map with shared edge $newEdge")
+          (
+            addedEdges.updatedWith(adjacent)(replaceNoneWith(newEdge)),
+            acc
+          )
+
       println(
         s"""
            |NEW CYCLE
@@ -144,32 +168,29 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                   case Some(value) =>
                     val (pendant, adjacent): (Node, Node) =
                       (value, adjacentDualNodes.find(nodeToMaybeEdges(_).flatten.nodes.contains(value)).get)
-                    val newEdge: Edge =
-                       Edge(pendant, Node(counter))
-                    println(
-                        s"""
-                           |pendant $pendant
-                           |newEdge $newEdge
-                           |""".stripMargin)
-                    val addedEdges: Map[Node, MaybeEdges] =
-                      nodeToMaybeEdges.updatedWith(dualNode)(replaceNoneWith(newEdge))
-                    if nodeToMaybeEdges(adjacent).count(_.isEmpty) == 1 then
-                      println(s"#3 polygon $adjacent completed: removed from map; $dualNode updated in map; shared edge $newEdge plus edges from $adjacent extracted")
-                      loop(
-                        addedEdges.filter((node, _) => node != adjacent),
-                        dualEdges.diff(List(dualNode, adjacent)),
-                        Set(newEdge) ++ acc ++ nodeToMaybeEdges(adjacent).flatten,
-                        counter + 1
-                      )
-                    else
-                      println(s"#4 polygons $dualNode and $adjacent both updated in map with shared edge $newEdge")
-                      loop(
-                        addedEdges.updatedWith(adjacent)(replaceNoneWith(newEdge)),
-                        dualEdges.diff(List(Edge(dualNode, adjacent))),
-                        acc,
-                        counter + 1
-                      )
-              case None => ???
+                    val (newMap, newAcc): (Map[Node, MaybeEdges], Set[Edge]) =
+                      addOneNode(dualNode, pendant, adjacent, counter)
+                    loop(newMap, dualEdges.diff(List(dualNode, adjacent)), newAcc, counter + 1)
+              case None =>
+//                // special symmetric blocked cases
+//                val (dualNode, maybeEdges): (Node, MaybeEdges) =
+//                  nodeToMaybeEdges.head
+//                val adjacentDualNodes: List[Node] =
+//                  dualEdges.nodesAdjacentTo(dualNode)
+//                val pendants: List[Node] =
+//                  maybeEdges.flatten.allDegrees.filter((_, degree) => isPendant(degree)).keys.toList
+//                // special case for 3.12.12 and 3.6.3.6
+//                adjacentDualNodes.filter(nodeToMaybeEdges(_) == List(None, None, None)) match
+//                  case Nil => ???
+//                  case one :: Nil => (pendants.last, one)
+//                  case many =>
+//                    val pippo: Node =
+//                      dualEdges.nodes.find(nodeToMaybeEdges(_).flatten.nodes.contains(pendants.head)).get
+//                    val adj: Node =
+//                      many.minBy(start => edges.distance(start, pippo))
+//                                          (pendants.head, adj)
+
+                ???
 
     val allEdges: Set[Edge] =
       loop(nodeToPerimeterEdges, edges.withoutNodes(boundary.toList), Set.empty[Edge], size + 1)
