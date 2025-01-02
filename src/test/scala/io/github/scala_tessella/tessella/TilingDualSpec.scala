@@ -2,12 +2,11 @@ package io.github.scala_tessella.tessella
 
 import Outliers.*
 import RegularPolygon.Polygon
-import Topology.{--, Degree, Edge, Node}
+import Topology.{--, Degree, Edge, Node, isPendant}
 import TopologyDual.*
 import conversion.DOT.toDOT
 import conversion.SVG.toSVG
 import utility.Utils.*
-
 import io.github.scala_tessella.ring_seq.RingSeq.isRotationOrReflectionOf
 import org.scalatest.*
 import org.scalatest.flatspec.*
@@ -312,7 +311,17 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
 //      p4612,
 //      minimalSquareInsertion,
 //      troubledGrowthByFullVertex,
-//      uniformityProblem // issue
+//      uniformityProblem, // issue
+//      uniformityIssue,
+//      uniformityIssue5,
+//      uniformTricky,
+//      uniform5v1,
+//      uniform5v2,
+//      uniform6,
+//      uniform6Other,
+//      p333333_4by4_reticulate,
+//      p4444_4by4_reticulate,
+//      p333333_2x3366_4x666
     )
 
   "Tilings" can "be converted back and forth" in {
