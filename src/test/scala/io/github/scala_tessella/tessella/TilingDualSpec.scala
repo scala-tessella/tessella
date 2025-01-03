@@ -306,6 +306,17 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
       Right(reducedProblem)
   }
 
+  val reducedIssue: Tiling =
+    Tiling.maybe(uniformityIssue.graphEdges.filter(_.greaterNode.toInt <= 70)).unsafe
+
+  val reducedDualIssue: TilingDual =
+    reducedIssue.toTilingDual
+
+  "A reduced issued tiling" can "be converted back from dual" in {
+    reducedDualIssue.toMaybeTiling shouldEqual
+      Right(reducedIssue)
+  }
+
   val tilings: List[Tiling] =
     List(
       p31212,
