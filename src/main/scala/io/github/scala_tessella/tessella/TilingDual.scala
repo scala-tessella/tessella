@@ -155,96 +155,98 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                         counter + 1
                       )
               case None =>
-                // special cases found in 3.6.3.6 and 3.12.12
-                val dualNode: Node =
-                  exclude.head
-                val maybeEdges: MaybeEdges =
-                  nodeToMaybeEdges(exclude.head)
-                val adjacentDualNodes: List[Node] =
-                  dualEdges.nodesAdjacentTo(dualNode)
-                val pendants: List[TNode] =
-                  maybeEdges.flatten.allDegrees.filter((_, degree) => isPendant(degree)).keys.toList
-//                println(
-//                  s"""
-//                     |SPECIAL
-//                     |dualNode: $dualNode
-//                     |adjacentDualNodes: $adjacentDualNodes
-//                     |maybeEdges: $maybeEdges
-//                     |pendants: $pendants
-//                     |containing: ${dualEdges.nodesAdjacentTo(dualNode).map(nodeToMaybeEdges(_))}
-//                     |""".stripMargin)
-                val pendant: TNode =
-                  pendants.head
-                val pendantAlt: TNode =
-                  pendants.last
-                val emptyTriangle: MaybeEdges =
-                  List(None, None, None)
-                adjacentDualNodes.filter(nodeToMaybeEdges(_) == emptyTriangle) match
-                  case Nil =>
-                    println(
-                      s"""
-                         |SPECIAL
-                         |dualNode: $dualNode
-                         |adjacentDualNodes: $adjacentDualNodes
-                         |maybeEdges: $maybeEdges
-                         |pendants: $pendants
-                         |containing: ${dualEdges.nodesAdjacentTo(dualNode).map(nodeToMaybeEdges(_))}
-                         |""".stripMargin)
-
-                    ???
-//                  case one :: Nil => ???
-                  case many =>
-                    val maybeAnchors: List[Option[Node]] =
-                      pendants.map(pendant => dualEdges.nodes.filterNot(_ == dualNode).find(nodeToMaybeEdges(_).flatten.nodes.contains(pendant)))
-                    val anchor: Node =
-                      maybeAnchors.head.getOrElse(maybeAnchors.last.get)
-//                      dualEdges.nodes.filterNot(_ == dualNode).find(nodeToMaybeEdges(_).flatten.nodes.contains(pendant)).get
-                    val anchorAlt: Node =
-                      maybeAnchors.last.getOrElse(maybeAnchors.head.get)
-//                      dualEdges.nodes.filterNot(_ == dualNode).find(nodeToMaybeEdges(_).flatten.nodes.contains(pendantAlt)).getOrElse(anchor)
-                    val adjacent: Node =
-                      many.minBy(edges.distance(_, anchor))
-                    val adjacentAlt: Node =
-                      many.minBy(edges.distance(_, anchorAlt))
-                    val distances: List[(Node, Int)] =
-                      many.map(node => node -> edges.distance(node, anchor)).sortBy((_, distance) => distance)
-                    val distancesAlt: List[(Node, Int)] =
-                      many.map(node => node -> edges.distance(node, anchorAlt)).sortBy((_, distance) => distance)
-                    println(s"""distances: $distances""")
-                    println(s"""alt distances: $distancesAlt""")
-                    val isAlt: Boolean =
-//                      false
-                      distancesAlt.map(_._2).sum < distances.map(_._2).sum
+                exclude.headOption match
+                  // only one polygon
+                  case None => nodeToMaybeEdges.values.flatten.flatten.toSet
+                  // special cases found in 3.6.3.6 and 3.12.12
+                  case Some(dualNode) =>
+                    val maybeEdges: MaybeEdges =
+                      nodeToMaybeEdges(exclude.head)
+                    val adjacentDualNodes: List[Node] =
+                      dualEdges.nodesAdjacentTo(dualNode)
+                    val pendants: List[TNode] =
+                      maybeEdges.flatten.allDegrees.filter((_, degree) => isPendant(degree)).keys.toList
 //                    println(
 //                      s"""
-//                         |pendant: $pendant
-//                         |anchor: $anchor
-//                         |edge to be removed: $dualNode--$adjacent
+//                         |SPECIAL
+//                         |dualNode: $dualNode
+//                         |adjacentDualNodes: $adjacentDualNodes
+//                         |maybeEdges: $maybeEdges
+//                         |pendants: $pendants
+//                         |containing: ${dualEdges.nodesAdjacentTo(dualNode).map(nodeToMaybeEdges(_))}
 //                         |""".stripMargin)
+                    val pendant: TNode =
+                      pendants.head
+                    val pendantAlt: TNode =
+                      pendants.last
+                    val emptyTriangle: MaybeEdges =
+                      List(None, None, None)
+                    adjacentDualNodes.filter(nodeToMaybeEdges(_) == emptyTriangle) match
+                      case Nil =>
+                        println(
+                          s"""
+                             |SPECIAL
+                             |dualNode: $dualNode
+                             |adjacentDualNodes: $adjacentDualNodes
+                             |maybeEdges: $maybeEdges
+                             |pendants: $pendants
+                             |containing: ${dualEdges.nodesAdjacentTo(dualNode).map(nodeToMaybeEdges(_))}
+                             |""".stripMargin)
 
-                    val newEdge: TEdge =
-                      Edge(pendant, Node(counter))
-                    val newEdgeAlt: TEdge =
-                      Edge(pendantAlt, Node(counter))
-                    val newEdgeFinal: TEdge =
-                      if isAlt then newEdgeAlt else newEdge
-                    val adjacentFinal: Node =
-                      if isAlt then adjacentAlt else adjacent
-                    val pendantFinal: TNode =
-                      if isAlt then pendantAlt else pendant
-                    val addedEdges: Map[Node, MaybeEdges] =
-                      nodeToMaybeEdges.updatedWith(dualNode)(replaceNoneWith(newEdge))
-                    val addedEdgesAlt: Map[Node, MaybeEdges] =
-                      nodeToMaybeEdges.updatedWith(dualNode)(replaceNoneWith(newEdgeAlt))
-                    val addedEdgesFinal: Map[Node, MaybeEdges] =
-                      nodeToMaybeEdges.updatedWith(dualNode)(replaceNoneWith(newEdgeFinal))
-                    println(s"#5 [many:${many.size}] polygons $dualNode and $adjacentFinal both updated in map with shared edge $newEdgeFinal")
-                    loop(
-                      addedEdgesFinal.updatedWith(adjacentFinal)(replaceNoneWith(newEdgeFinal)),
-                      dualEdges.diff(List(Edge(dualNode, adjacentFinal))),
-                      acc,
-                      counter + 1
-                    )
+                        ???
+//                      case one :: Nil => ???
+                      case many =>
+                        val maybeAnchors: List[Option[Node]] =
+                          pendants.map(pendant => dualEdges.nodes.filterNot(_ == dualNode).find(nodeToMaybeEdges(_).flatten.nodes.contains(pendant)))
+                        val anchor: Node =
+                          maybeAnchors.head.getOrElse(maybeAnchors.last.get)
+//                          dualEdges.nodes.filterNot(_ == dualNode).find(nodeToMaybeEdges(_).flatten.nodes.contains(pendant)).get
+                        val anchorAlt: Node =
+                          maybeAnchors.last.getOrElse(maybeAnchors.head.get)
+//                          dualEdges.nodes.filterNot(_ == dualNode).find(nodeToMaybeEdges(_).flatten.nodes.contains(pendantAlt)).getOrElse(anchor)
+                        val adjacent: Node =
+                          many.minBy(edges.distance(_, anchor))
+                        val adjacentAlt: Node =
+                          many.minBy(edges.distance(_, anchorAlt))
+                        val distances: List[(Node, Int)] =
+                          many.map(node => node -> edges.distance(node, anchor)).sortBy((_, distance) => distance)
+                        val distancesAlt: List[(Node, Int)] =
+                          many.map(node => node -> edges.distance(node, anchorAlt)).sortBy((_, distance) => distance)
+                        println(s"""distances: $distances""")
+                        println(s"""alt distances: $distancesAlt""")
+                        val isAlt: Boolean =
+//                          false
+                          distancesAlt.map(_._2).sum < distances.map(_._2).sum
+//                        println(
+//                          s"""
+//                             |pendant: $pendant
+//                             |anchor: $anchor
+//                             |edge to be removed: $dualNode--$adjacent
+//                             |""".stripMargin)
+
+                        val newEdge: TEdge =
+                          Edge(pendant, Node(counter))
+                        val newEdgeAlt: TEdge =
+                          Edge(pendantAlt, Node(counter))
+                        val newEdgeFinal: TEdge =
+                          if isAlt then newEdgeAlt else newEdge
+                        val adjacentFinal: Node =
+                          if isAlt then adjacentAlt else adjacent
+                        val pendantFinal: TNode =
+                          if isAlt then pendantAlt else pendant
+                        val addedEdges: Map[Node, MaybeEdges] =
+                          nodeToMaybeEdges.updatedWith(dualNode)(replaceNoneWith(newEdge))
+                        val addedEdgesAlt: Map[Node, MaybeEdges] =
+                          nodeToMaybeEdges.updatedWith(dualNode)(replaceNoneWith(newEdgeAlt))
+                        val addedEdgesFinal: Map[Node, MaybeEdges] =
+                          nodeToMaybeEdges.updatedWith(dualNode)(replaceNoneWith(newEdgeFinal))
+                        println(s"#5 [many:${many.size}] polygons $dualNode and $adjacentFinal both updated in map with shared edge $newEdgeFinal")
+                        loop(
+                          addedEdgesFinal.updatedWith(adjacentFinal)(replaceNoneWith(newEdgeFinal)),
+                          dualEdges.diff(List(Edge(dualNode, adjacentFinal))),
+                          acc,
+                          counter + 1
+                        )
 
     val allEdges: Set[TEdge] =
       loop(nodeToPerimeterEdges, edges.withoutNodes(boundary.toList), Set.empty[TEdge], size + 1)
