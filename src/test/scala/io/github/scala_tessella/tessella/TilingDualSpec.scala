@@ -306,6 +306,14 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
       Right(reducedProblem)
   }
 
+  val dualIssue: TilingDual =
+    uniformityIssue.toTilingDual
+
+  "An issued tiling" can "be converted back from dual" in {
+    dualIssue.toMaybeTiling shouldEqual
+      Right(uniformityIssue)
+  }
+
   val reducedIssue: Tiling =
     Tiling.maybe(uniformityIssue.graphEdges.filter(_.greaterNode.toInt <= 70)).unsafe
 
@@ -333,8 +341,8 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
       p4612,
       minimalSquareInsertion,
       troubledGrowthByFullVertex,
-//      uniformityProblem, // issue
-      uniformityIssue, // issue
+      uniformityProblem,
+//      uniformityIssue, // issue
       uniformityIssue5,
       uniformTricky,
       uniform5v1,

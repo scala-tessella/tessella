@@ -192,7 +192,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                          |""".stripMargin)
 
                     ???
-                  case one :: Nil => ???
+//                  case one :: Nil => ???
                   case many =>
                     val maybeAnchors: List[Option[Node]] =
                       pendants.map(pendant => dualEdges.nodes.filterNot(_ == dualNode).find(nodeToMaybeEdges(_).flatten.nodes.contains(pendant)))
