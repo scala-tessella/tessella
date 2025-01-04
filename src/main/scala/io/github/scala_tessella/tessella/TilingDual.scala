@@ -22,6 +22,13 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
       .map(edges.degree)
       .map(degree => Polygon(degree.toInt))
 
+  def minDistanceToBoundary(node: Node): Int =
+    if boundary.contains(node) then 0
+    else boundary.map(boundaryNode => edges.distance(node, boundaryNode)).min
+
+  lazy val distances: Map[Node, Int] =
+    edges.nodes.diff(boundary).map(node => node -> minDistanceToBoundary(node)).toMap
+
   /** Tries to convert a [[TilingDual]] into a [[Tiling]] */
   override def toMaybeTiling: Either[String, Tiling] =
     // just aliases to visually distinguish nodes and edges of the tiling
@@ -53,17 +60,17 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
 
     @tailrec
     def loop(nodeToMaybeEdges: Map[Node, MaybeEdges], dualEdges: List[Edge], acc: Set[TEdge], counter: Int, exclude: List[Node] = Nil): Set[TEdge] =
-      println(
-        s"""
-           |NEW CYCLE
-           |exclude: $exclude
-           |polygons (dual nodes) with tiling edges to be completed: $nodeToMaybeEdges
-           |dual nodes [nodes ${nodeToMaybeEdges.size}]: ${nodeToMaybeEdges.keys.toList.sorted(NodeOrdering)}
-           |extracted tiling edges from completed polygons [${acc.size}]: ${acc.toList.sorted(EdgeOrdering)}
-           |dual edges [${dualEdges.size}]: ${dualEdges.sorted(EdgeOrdering)}
-           |dual edges nodes [${dualEdges.nodes.size}]: ${dualEdges.nodes.sorted(NodeOrdering)}
-           |counter for next tiling node: $counter
-           |""".stripMargin)
+//      println(
+//        s"""
+//           |NEW CYCLE
+//           |exclude: $exclude
+//           |polygons (dual nodes) with tiling edges to be completed: $nodeToMaybeEdges
+//           |dual nodes [nodes ${nodeToMaybeEdges.size}]: ${nodeToMaybeEdges.keys.toList.sorted(NodeOrdering)}
+//           |extracted tiling edges from completed polygons [${acc.size}]: ${acc.toList.sorted(EdgeOrdering)}
+//           |dual edges [${dualEdges.size}]: ${dualEdges.sorted(EdgeOrdering)}
+//           |dual edges nodes [${dualEdges.nodes.size}]: ${dualEdges.nodes.sorted(NodeOrdering)}
+//           |counter for next tiling node: $counter
+//           |""".stripMargin)
       if nodeToMaybeEdges.isEmpty then
         acc
       else
@@ -94,7 +101,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                 counter
               )
             else
-              println(s"#2 polygon $dualNode completed: removed from map; $adjacent updated in map with shared edge $newEdge; edges from $dualNode extracted")
+              println(s"#2 polygon $dualNode [p${nodeToMaybeEdges(dualNode).size}] completed: removed from map; $adjacent [p${nodeToMaybeEdges(adjacent).size}] updated in map with shared edge $newEdge; edges from $dualNode extracted")
               loop(
                 nodeToMaybeEdges.filter((node, _) => node != dualNode).updatedWith(adjacent)(replaceNoneWith(newEdge)),
                 dualEdges.diff(List(Edge(dualNode, adjacent))),
@@ -113,15 +120,15 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                   dualEdges.nodesAdjacentTo(dualNode)
                 val pendants: List[TNode] =
                   maybeEdges.flatten.allDegrees.filter((_, degree) => isPendant(degree)).keys.toList
-                println(
-                  s"""
-                     |MORE THAN 1 EMPTY
-                     |dualNode: $dualNode
-                     |adjacentDualNodes: $adjacentDualNodes
-                     |maybeEdges: $maybeEdges
-                     |pendants: $pendants
-                     |containing: ${dualEdges.nodesAdjacentTo(dualNode).map(nodeToMaybeEdges(_))}
-                     |""".stripMargin)
+//                println(
+//                  s"""
+//                     |MORE THAN 1 EMPTY
+//                     |dualNode: $dualNode
+//                     |adjacentDualNodes: $adjacentDualNodes
+//                     |maybeEdges: $maybeEdges
+//                     |pendants: $pendants
+//                     |containing: ${dualEdges.nodesAdjacentTo(dualNode).map(nodeToMaybeEdges(_))}
+//                     |""".stripMargin)
                 pendants.find(tilingNode =>
                   adjacentDualNodes.exists(nodeToMaybeEdges(_).flatten.nodes.contains(tilingNode))
                 ) match
@@ -147,7 +154,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                         counter + 1
                       )
                     else
-                      println(s"#4 polygons $dualNode and $adjacent both updated in map with shared edge $newEdge")
+                      println(s"#4 polygons $dualNode [p${nodeToMaybeEdges(dualNode).size}] and $adjacent [p${nodeToMaybeEdges(adjacent).size}] both updated in map with shared edge $newEdge")
                       loop(
                         addedEdges.updatedWith(adjacent)(replaceNoneWith(newEdge)),
                         dualEdges.diff(List(Edge(dualNode, adjacent))),
@@ -155,6 +162,15 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                         counter + 1
                       )
               case None =>
+//                println(
+//                  s"""
+//                     |exclude: $exclude
+//                     |adjacents: ${exclude.map(node => dualEdges.nodesAdjacentTo(node).map(nodeToMaybeEdges)).mkString("\n")}
+//                     |pendants: ${exclude.map(dualNode => nodeToMaybeEdges(dualNode).flatten.allDegrees.filter((_, degree) => isPendant(degree)).keys.toList)}
+//                     |""".stripMargin)
+//                exclude.sortBy(distances).headOption match
+//                exclude.maxByOption(dualNode => dualEdges.nodesAdjacentTo(dualNode).size) match
+//                exclude.find(dualNode => dualEdges.nodesAdjacentTo(dualNode).map(nodeToMaybeEdges(_)).contains(List(None, None, None))) match
                 exclude.headOption match
                   case None => ???
                   // special cases found in 3.6.3.6 and 3.12.12
