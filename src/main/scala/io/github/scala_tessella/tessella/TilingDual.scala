@@ -156,8 +156,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                       )
               case None =>
                 exclude.headOption match
-                  // only one polygon
-                  case None => nodeToMaybeEdges.values.flatten.flatten.toSet
+                  case None => ???
                   // special cases found in 3.6.3.6 and 3.12.12
                   case Some(dualNode) =>
                     val maybeEdges: MaybeEdges =
@@ -249,5 +248,9 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
                         )
 
     val allEdges: Set[TEdge] =
-      loop(nodeToPerimeterEdges, edges.withoutNodes(boundary.toList), Set.empty[TEdge], size + 1)
+      if nodeToPerimeterEdges.sizeIs == 1 then
+        // one polygon tiling
+        nodeToPerimeterEdges.values.flatten.flatten.toSet
+      else
+        loop(nodeToPerimeterEdges, edges.withoutNodes(boundary.toList), Set.empty[TEdge], size + 1)
     Tiling.maybe(allEdges.toList)
