@@ -4,6 +4,8 @@ import RegularPolygon.Polygon
 import Topology.{--, Edge, EdgeOrdering, Node, NodeOrdering, isPendant}
 import utility.Utils.mapValues2
 
+import io.github.scala_tessella.ring_seq.RingSeq.slidingO
+
 import scala.annotation.tailrec
 
 /** Undirected connected graph representing the dual of a finite tessellation of unit regular polygons
@@ -28,6 +30,33 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
 
   lazy val distances: Map[Node, Int] =
     edges.nodes.diff(boundary).map(node => node -> minDistanceToBoundary(node)).toMap
+
+  /** Tries to convert a [[TilingDual]] into a [[Tiling]] */
+  def toMaybeTiling2: Either[String, Tiling] =
+    type TNode = Node
+    type TEdge = Edge
+
+    val boundaryEdges: List[Edge] =
+      boundary.slidingO(2).toList.map(Edge(_))
+    val inflatedGraph: List[Edge] =
+      boundaryEdges ++ edges
+
+    def extractPolygonsFromGraph(graph: List[Edge]): List[List[Edge]] =
+      ???
+
+    val dualPolygons: List[List[Edge]] =
+      extractPolygonsFromGraph(inflatedGraph)
+
+    val tNodeToEdges: Map[TNode, List[Edge]] =
+      dualPolygons.zipWithIndex.map((edges, index) => Node(index + 1) -> edges).toMap
+
+    val nodeToTNodes: Map[Node, List[TNode]] =
+      edges.nodes.map(node => node -> tNodeToEdges.filter((_, edgez) => edgez.nodes.contains(node)).keys.toList).toMap
+
+    def assembleTEdges(map: Map[Node, List[TNode]]): List[TEdge] =
+      ???
+
+    Tiling.maybe(assembleTEdges(nodeToTNodes))
 
   /** Tries to convert a [[TilingDual]] into a [[Tiling]] */
   override def toMaybeTiling: Either[String, Tiling] =
