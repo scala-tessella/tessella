@@ -4,8 +4,6 @@ import RegularPolygon.Polygon
 import Topology.{--, Edge, EdgeOrdering, Node, NodeOrdering, isPendant}
 import utility.Utils.mapValues2
 
-import io.github.scala_tessella.ring_seq.RingSeq.slidingO
-
 import scala.annotation.tailrec
 
 /** Undirected connected graph representing the dual of a finite tessellation of unit regular polygons
@@ -36,10 +34,8 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
     type TNode = Node
     type TEdge = Edge
 
-    val boundaryEdges: List[Edge] =
-      boundary.slidingO(2).toList.map(Edge(_))
     val inflatedGraph: List[Edge] =
-      boundaryEdges ++ edges
+      boundary.toEdges.toList ++ edges
 
     def extractPolygonsFromGraph(graph: List[Edge]): List[List[Edge]] =
       ???
