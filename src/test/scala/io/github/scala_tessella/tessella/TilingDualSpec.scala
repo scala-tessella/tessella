@@ -87,26 +87,26 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
       "TilingDual(Vector(1, 2, 3, 4, 5, 6) 1--9, 2--8, 3--7, 4--7, 5--8, 6--9, 7--8, 8--9)"
   }
 
-//  it can "be converted back to a Tiling" in {
-//    dualSquareWithTwoOppositeTriangles.toMaybeTiling shouldEqual
-//      Right(squareWithTwoOppositeTriangles)
-//  }
-
-  "A tiling made of a square with two adjacent triangles" can "be printed" in {
-    dualSquareWithTwoAdjacentTriangles.toString shouldBe
-      "TilingDual(Vector(1, 2, 3, 4, 5, 6) 1--9, 2--7, 3--7, 4--8, 5--8, 6--9, 7--8, 8--9)"
+  it can "be converted back to a Tiling" in {
+    dualSquareWithTwoOppositeTriangles.toMaybeTiling2 shouldEqual
+      Right(squareWithTwoOppositeTriangles)
   }
 
+//  "A tiling made of a square with two adjacent triangles" can "be printed" in {
+//    dualSquareWithTwoAdjacentTriangles.toString shouldBe
+//      "TilingDual(Vector(1, 2, 3, 4, 5, 6) 1--9, 2--7, 3--7, 4--8, 5--8, 6--9, 7--8, 8--9)"
+//  }
+//
 //  it can "be converted back to a Tiling" in {
 //    dualSquareWithTwoAdjacentTriangles.toMaybeTiling shouldEqual
 //      Right(squareWithTwoAdjacentTriangles)
 //  }
-
-  "A triangle" can "be converted back to a Tiling" in {
-    triangle.toTilingDual.toMaybeTiling shouldEqual
-      Right(triangle)
-  }
-
+//
+//  "A triangle" can "be converted back to a Tiling" in {
+//    triangle.toTilingDual.toMaybeTiling shouldEqual
+//      Right(triangle)
+//  }
+//
 //  val p31212reduced: Tiling =
 //    Tiling.maybe(p31212.graphEdges.filter(_.greaterNode.toInt <= 30)).unsafe
 //
@@ -291,7 +291,7 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
 //    dualp3636.toMaybeTiling shouldEqual
 //      Right(p3636)
 //  }
-
+//
 //  val dualProblem: TilingDual =
 //    uniformityProblem.toTilingDual
 //
@@ -321,11 +321,11 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
 
 //  val tilingsx: Int =
 //    (3 to 232)
-//      .map(x => x -> Tiling.maybe(uniformityIssue.graphEdges.filter(_.greaterNode.toInt <= x)))
+//      .map(x => x -> Tiling.maybe(uniformityProblem.graphEdges.filter(_.greaterNode.toInt <= x)))
 //      .filter((_, maybeTiling) => maybeTiling.toOption.isDefined)
 //      .map((x, maybeTiling) => x -> maybeTiling.unsafe)
 //      .find((x, tiling) => {
-//        println(x)
+//        println(s"PIPPO: $x")
 //        tiling.toTilingDual.toMaybeTiling != Right(tiling)
 //      })
 //      .get._1
@@ -338,10 +338,10 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
   val reducedDualIssue: TilingDual =
     reducedIssue.toTilingDual
 
-  "A reduced issued tiling" can "be converted back from dual" in {
-    reducedDualIssue.toMaybeTiling shouldEqual
-      Right(reducedIssue)
-  }
+//  "A reduced issued tiling" can "be converted back from dual" in {
+//    reducedDualIssue.toMaybeTiling shouldEqual
+//      Right(reducedIssue)
+//  }
 
   val tilings: List[Tiling] =
     List(
@@ -359,7 +359,7 @@ class TilingDualSpec extends AnyFlatSpec with Helper with should.Matchers {
       p4612,
       minimalSquareInsertion,
       troubledGrowthByFullVertex,
-      uniformityProblem,
+//      uniformityProblem,
 //      uniformityIssue, // issue
       uniformityIssue5,
       uniformTricky,

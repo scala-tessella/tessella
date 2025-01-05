@@ -38,16 +38,19 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
       boundary.toEdges.toList ++ edges
 
     def extractPolygonsFromGraph(graph: List[Edge]): List[List[Edge]] =
-      ???
+      Graph(graph).t2.get.map(_.toEdges.toList)
 
     val dualPolygons: List[List[Edge]] =
       extractPolygonsFromGraph(inflatedGraph)
+    println(s"dualPolygons: $dualPolygons")
 
     val tNodeToEdges: Map[TNode, List[Edge]] =
       dualPolygons.zipWithIndex.map((edges, index) => Node(index + 1) -> edges).toMap
+    println(s"tNodeToEdges: $tNodeToEdges")
 
     val nodeToTNodes: Map[Node, List[TNode]] =
       edges.nodes.map(node => node -> tNodeToEdges.filter((_, edgez) => edgez.nodes.contains(node)).keys.toList).toMap
+    println(s"nodeToTNodes: $nodeToTNodes")
 
     def assembleTEdges(map: Map[Node, List[TNode]]): List[TEdge] =
       ???
