@@ -4,6 +4,8 @@ import RegularPolygon.Polygon
 import Topology.{--, Edge, EdgeOrdering, Node, NodeOrdering, isPendant}
 import utility.Utils.mapValues2
 
+import io.github.scala_tessella.ring_seq.RingSeq.slidingO
+
 import scala.annotation.tailrec
 
 /** Undirected connected graph representing the dual of a finite tessellation of unit regular polygons
@@ -29,6 +31,16 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
   lazy val distances: Map[Node, Int] =
     edges.nodes.diff(boundary).map(node => node -> minDistanceToBoundary(node)).toMap
 
+  def extractOuterPolygons: List[List[Edge]] =
+    val inflatedGraph: List[Edge] =
+      boundary.toEdges.toList ++ edges
+    val coupledNodes: List[List[Node]] =
+      boundary.slidingO(2).toList.map(_.toList)
+    coupledNodes.map((_: @unchecked) match {
+      case f :: s :: Nil =>
+        inflatedGraph.diff(List(Edge(f, s))).shortestPath(f, s).toEdgesO.toList
+    })
+
   /** Tries to convert a [[TilingDual]] into a [[Tiling]] */
   def toMaybeTiling2: Either[String, Tiling] =
     type TNode = Node
@@ -37,11 +49,21 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
     val inflatedGraph: List[Edge] =
       boundary.toEdges.toList ++ edges
 
+    val deflatedGraphs: List[List[Edge]] =
+      edges.withoutNodes(boundary.toList).disconnected
+
+
+    println(toString)
+
+    println(extractOuterPolygons)
+
+    println(deflatedGraphs)
+
     def extractPolygonsFromGraph(graph: List[Edge]): List[List[Edge]] =
-      Graph(graph).t2.get.map(_.toEdges.toList)
+      Graph(graph).t2.get
 
     val dualPolygons: List[List[Edge]] =
-      extractPolygonsFromGraph(inflatedGraph)
+      extractOuterPolygons ++ Nil.flatMap(extractPolygonsFromGraph)
     println(s"dualPolygons: $dualPolygons")
 
     val tNodeToEdges: Map[TNode, List[Edge]] =
@@ -49,7 +71,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
     println(s"tNodeToEdges: $tNodeToEdges")
 
     val nodeToTNodes: Map[Node, List[TNode]] =
-      edges.nodes.map(node => node -> tNodeToEdges.filter((_, edgez) => edgez.nodes.contains(node)).keys.toList).toMap
+      edges.nodes.diff(boundary).map(node => node -> tNodeToEdges.filter((_, edgez) => edgez.nodes.contains(node)).keys.toList).toMap
     println(s"nodeToTNodes: $nodeToTNodes")
 
     def assembleTEdges(map: Map[Node, List[TNode]]): List[TEdge] =

@@ -389,8 +389,8 @@ class Graph(edges: List[Edge]):
 
     loop(edges, Nil)
 
-  def t2: Option[List[Vector[Node]]] =
-    tilingUnorientedPolygons.map(_.map(_.toVector))
+  def t2: Option[List[List[Edge]]] =
+    tilingUnorientedPolygons.map(_.map(ring => ring.toRingEdges.toList))
     
   /** Finds all the oriented polygons composing the graph, it should always be defined if the graph is a [[Tiling]]
    *
