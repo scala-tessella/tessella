@@ -278,7 +278,7 @@ object Topology:
     def withOnlyNodes(nodes: List[Node]): List[Edge] =
       edges.filter(_.hasBothNodesContainedIn(nodes))
 
-    /** Filters edges where no more than one of their nodes are listed */
+    /** Filters out edges where both of their nodes are listed */
     def withoutOnlyNodes(nodes: List[Node]): List[Edge] =
       edges.filterNot(_.hasBothNodesContainedIn(nodes))
 
@@ -286,9 +286,19 @@ object Topology:
     def withNodes(nodes: List[Node]): List[Edge] =
       edges.filter(_.hasAtLeastOneNodeContainedIn(nodes))
 
-    /** Filters edges where none of their nodes are listed */
+    /** Filters out edges where at least one their nodes are listed */
     def withoutNodes(nodes: List[Node]): List[Edge] =
       edges.filterNot(_.hasAtLeastOneNodeContainedIn(nodes))
+
+    def withoutPendants: List[Edge] =
+
+      @tailrec
+      def loop(reduced: List[Edge]): List[Edge] =
+        reduced.pendantNodes match
+          case Nil      => reduced
+          case pendants => loop(reduced.withoutNodes(pendants)) 
+
+      loop(edges)
 
     /** Renumbers all nodes of the edges in a continuous sequence of ordinals starting at a given node.
      *

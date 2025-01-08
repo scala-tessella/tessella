@@ -50,8 +50,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
       boundary.toEdges.toList ++ edges
 
     val deflatedGraphs: List[List[Edge]] =
-      edges.withoutNodes(boundary.toList).disconnected
-
+      edges.withoutNodes(boundary.toList).withoutPendants.disconnected
 
     println(toString)
 
@@ -63,7 +62,7 @@ class TilingDual(edges: List[Edge], boundary: Vector[Node]) extends Graph(edges)
       Graph(graph).t2.get
 
     val dualPolygons: List[List[Edge]] =
-      extractOuterPolygons ++ Nil.flatMap(extractPolygonsFromGraph)
+      extractOuterPolygons ++ deflatedGraphs.flatMap(extractPolygonsFromGraph)
     println(s"dualPolygons: $dualPolygons")
 
     val tNodeToEdges: Map[TNode, List[Edge]] =
