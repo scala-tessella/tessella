@@ -5,7 +5,7 @@ enablePlugins(SiteScaladocPlugin)
 enablePlugins(GhpagesPlugin)
 
 ThisBuild / organization := "io.github.scala-tessella"
-ThisBuild / scalaVersion := "3.3.4"
+ThisBuild / scalaVersion := "3.3.5"
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 ThisBuild / versionScheme := Some("early-semver")
