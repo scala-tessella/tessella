@@ -1,3 +1,4 @@
+import sbtcrossproject.CrossProject
 import xerial.sbt.Sonatype.*
 
 enablePlugins(SitePreviewPlugin, ParadoxSitePlugin)
@@ -38,7 +39,7 @@ lazy val root: Project =
       scalacOptions += "-deprecation"
     )
 
-lazy val tessella =
+lazy val tessella: CrossProject =
   crossProject(JSPlatform, JVMPlatform)
     .crossType(CrossType.Pure)
     .in(file("."))
@@ -49,9 +50,9 @@ lazy val tessella =
         "io.github.scala-tessella" %%% "ring-seq" % "0.6.2",
         "io.github.iltotore" %%% "iron" % "2.6.0",
         "org.scala-lang.modules" %%% "scala-xml" % "2.3.0",
-        "org.scalatest" %%% "scalatest" % "3.2.19" % "test",
-        "org.scalacheck" %%% "scalacheck" % "1.18.1" % "test",
-        "org.scalatestplus" %% "scalacheck-1-18" % "3.2.19.0" % Test
+        "org.scalatest" %%% "scalatest" % "3.2.19" % Test,
+        "org.scalacheck" %%% "scalacheck" % "1.18.1" % Test,
+        "org.scalatestplus" %% "scalacheck-1-18" % "3.2.19.0" % Test,
       )
     )
     .jvmSettings(
@@ -59,4 +60,17 @@ lazy val tessella =
     )
     .jsSettings(
       // Add JS-specific settings here
+    )
+
+lazy val bench: Project =
+  project
+    .dependsOn(tessella.jvm % "test->test")
+    .enablePlugins(JmhPlugin)
+    .settings(
+      Jmh / sourceDirectory := (Test / sourceDirectory).value,
+      Jmh / classDirectory := (Test / classDirectory).value,
+      Jmh / dependencyClasspath := (Test / dependencyClasspath).value,
+      // rewire tasks, so that 'bench/Jmh/run' automatically invokes 'bench/Jmh/compile' (otherwise a clean 'bench/Jmh/run' would fail)
+      Jmh / compile := (Jmh / compile).dependsOn(Test / compile).value,
+      Jmh / run := (Jmh / run).dependsOn(Jmh / compile).evaluated
     )
