@@ -29,14 +29,14 @@ object TilingGrowth:
     case WIDER_ANGLE       extends OtherNodeStrategy
     case NARROWER_ANGLE    extends OtherNodeStrategy
 
-    def toOrdering(angleOrdering: Ordering[Node]): Ordering[Node] =
+    def toOrdering(angleOrdering: Ordering[Node]): Node => Ordering[Node] =
       (this: @unchecked) match
-        case AFTER_PERIMETER  => BeforeAfterOrdering.reverse
-        case BEFORE_PERIMETER => BeforeAfterOrdering
-        case HIGHER_ORDINAL   => NodeOrdering.reverse
-        case LOWER_ORDINAL    => NodeOrdering
-        case WIDER_ANGLE      => angleOrdering.reverse
-        case NARROWER_ANGLE   => angleOrdering
+        case AFTER_PERIMETER  => BeforeAfterOrdering(_).reverse
+        case BEFORE_PERIMETER => BeforeAfterOrdering(_)
+        case HIGHER_ORDINAL   => _ => NodeOrdering.reverse
+        case LOWER_ORDINAL    => _ => NodeOrdering
+        case WIDER_ANGLE      => _ => angleOrdering.reverse
+        case NARROWER_ANGLE   => _ => angleOrdering
 
   /** Enumerates the possible strategies to find a perimeter node */
   enum PerimeterStrategy:
@@ -139,9 +139,8 @@ object TilingGrowth:
 
     private def sortedPerimeterNodesPair(pair: (Node, Node), otherNodeStrategies: OtherNodeStrategy *): (Node, Node) =
       val (before, after): (Node, Node) = pair
-      BeforeAfterOrdering.before = before
       val combinedStrategy: Ordering[Node] =
-        combinedOrdering(otherNodeStrategies.toList.map(_.toOrdering(tiling.MinAngleNodeOrdering)))
+        combinedOrdering(otherNodeStrategies.toList.map(_.toOrdering(tiling.MinAngleNodeOrdering)(before)))
       List(before, after).sorted(combinedStrategy).toCouple
 
     // find the two diverging perimeter paths, originating from node (end) and start

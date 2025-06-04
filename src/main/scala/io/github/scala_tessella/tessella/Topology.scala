@@ -33,15 +33,11 @@ object Topology:
       node1 compare node2
 
   /** Nodes ordered according being before or after the set [[BeforeAfterOrdering.before]] node */
-  object BeforeAfterOrdering extends Ordering[Node]:
-
-    /** Reference node */
-    var before: Node =
-      zeroNode
+  class BeforeAfterOrdering(beforeNode: Node) extends Ordering[Node]:
 
     def compare(a: Node, b: Node): Int =
-      if a.equals(before) then -1
-      else if b.equals(before) then 1
+      if a.equals(beforeNode) then -1
+      else if b.equals(beforeNode) then 1
       else 0
 
   extension (node: Node)
