@@ -68,11 +68,6 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
       false
   }
 
-  it can "be rounded to couple of Long" in {
-    point.rounded shouldBe
-      (1000000L, -1000000L)
-  }
-
   it can "return a new point moved by polar coords" in {
     point.plusPolar(2.0)(TAU_4).almostEquals(Point(1.0, 1.0), ACCURACY) shouldBe
       true

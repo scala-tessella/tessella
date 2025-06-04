@@ -1,8 +1,9 @@
 package io.github.scala_tessella.tessella
 
 import utility.Utils.{compareElems, toCouple}
-
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO}
+
+import scala.math.Ordered.orderingToOrdered
 //import math.geom2d.Point2D
 //import math.geom2d.line.LineSegment2D
 
@@ -60,10 +61,6 @@ object Geometry extends Accuracy:
 //    def toPoint2D: Point2D =
 //      Point2D(x, y)
 
-    /** Converts to rounded `Long`s */
-    def rounded: (Long, Long) =
-      (x.rounded(), y.rounded())
-
     /** Sum of two points */
     def plus(that: Point): Point =
       Point(this.x + that.x, this.y + that.y)
@@ -107,6 +104,14 @@ object Geometry extends Accuracy:
     def flipVertically: Point =
       Point(x, -y)
 
+  private class ApproximatePointOrdering(precision: Double = ROUND_ACCURACY) extends Ordering[Point] with Accuracy:
+
+    private def rounded(point: Point): (Long, Long) =
+      (point.x.rounded(precision), point.y.rounded(precision))
+
+    def compare(x: Point, y: Point): Int =
+      rounded(x) compare rounded(y)
+
   object Point:
 
     /** Creates a point at origin */
@@ -148,7 +153,7 @@ object Geometry extends Accuracy:
   extension (points: Vector[Point])
 
     private def sortedCouples: Iterator[(Point, Point)] =
-      points.sortBy(_.rounded).sliding(2).map(_.toCouple)
+      points.sorted(ApproximatePointOrdering()).sliding(2).map(_.toCouple)
 
     private def almostEqualCouple: ((Point, Point)) => Boolean =
       _.almostEquals(_, ACCURACY)
