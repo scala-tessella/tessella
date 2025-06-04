@@ -71,12 +71,12 @@ object Geometry extends Accuracy:
 
     private def rotate(theta: Radian): Point =
       val cot: Double =
-        Math.cos(theta.toDouble)
+        Math.cos(theta)
       val sit: Double =
-        Math.sin(theta.toDouble)
+        Math.sin(theta)
       Point(x * cot - y * sit, x * sit + y * cot)
 
-    /** Tests whether this `Point` is approximately equal to another, within a given accuracy. */
+    /** Tests whether this `Point` is approximately equal to another, within given accuracy. */
     def almostEquals(that: Point, accuracy: Double = ACCURACY): Boolean =
       this.x.~=(that.x, accuracy) && this.y.~=(that.y, accuracy)
 
@@ -120,7 +120,7 @@ object Geometry extends Accuracy:
 
     /** Creates a point from polar coordinates */
     def createPolar(rho: Double, theta: Radian): Point =
-      Point(rho * Math.cos(theta.toDouble), rho * Math.sin(theta.toDouble))
+      Point(rho * Math.cos(theta), rho * Math.sin(theta))
 
     /** Computes the orientation of the 3 points:
      *  returns +1 is the path P0->P1->P2 turns Counter-Clockwise,
@@ -188,9 +188,9 @@ object Geometry extends Accuracy:
 
     /** Computes the horizontal angle of the line segment */
     def horizontalAngle: Radian =
-      Radian((Math.atan2(dy, dx) + Radian.TAU.toDouble) % Radian.TAU.toDouble)
+      Radian((Math.atan2(dy, dx) + Radian.TAU) % Radian.TAU)
 
-    /** Tests whether this `LineSegment` is approximately equal to another, within a given accuracy. */
+    /** Tests whether this `LineSegment` is approximately equal to another, within given accuracy. */
     def almostEquals(that: LineSegment, accuracy: Double = ACCURACY): Boolean =
       this.point1.almostEquals(that.point1) && this.point2.almostEquals(that.point2)
 
@@ -270,7 +270,7 @@ object Geometry extends Accuracy:
   /** Represents a polygonal domain whose boundary is a single closed polyline. */
   class SimplePolygon(vertices: List[Point]):
 
-    /** Gets ordered sequence of vertices */
+    /** Gets an ordered sequence of vertices */
     val getVertices: List[Point] =
       vertices
 
@@ -287,7 +287,7 @@ object Geometry extends Accuracy:
         if i1 > i2 + 1 && i1 != (if i2 == 0 then length else i2) - 1
       yield (i1, i2)
 
-    /** Checks if the polygon is self intersecting */
+    /** Checks if the polygon is self-intersecting */
     def isSelfIntersecting: Boolean =
       edgesCombinations.exists((i1, i2) => edges(i1).intersects(edges(i2)))
 

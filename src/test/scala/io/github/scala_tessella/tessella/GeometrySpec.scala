@@ -9,7 +9,7 @@ import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
 
-class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
+class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers:
 
   "A radian" can "be created as an opaque type" in {
     Radian(0).toDouble shouldBe
@@ -284,4 +284,3 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers {
 //      Box2D(-0.3660254037849453, 0.49999999999960043, -1.3660254037838226, 4.9E-324)
 //  }
 
-}
