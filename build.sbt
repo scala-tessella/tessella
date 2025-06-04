@@ -51,6 +51,7 @@ lazy val tessella =
         "org.scala-lang.modules" %%% "scala-xml" % "2.3.0",
         "org.scalatest" %%% "scalatest" % "3.2.19" % "test",
         "org.scalacheck" %%% "scalacheck" % "1.18.1" % "test",
+        "org.scalatestplus" %% "scalacheck-1-18" % "3.2.19.0" % Test
       )
     )
     .jvmSettings(
