@@ -6,7 +6,6 @@ import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO}
 
 import scala.annotation.{tailrec, targetName}
 import scala.collection.mutable
-import scala.collection.mutable.Queue
 import scala.util.Try
 
 /** Methods for graph nodes and edges */
@@ -378,6 +377,84 @@ object Topology:
           case Some(stop) if !found.contains(stop) => Nil
           case Some(stop)                          => loop(List(stop))
           case None                                => found
+
+    /** Breadth-first search.
+     * It seems a faster option in the JHM benchamrks
+     * @see bench/src/test/scala/io/github/scala_tessella/tessella/TopologyBenchmarkWithBFS.scala
+     * when searching whole tilings.
+     * It remains to be seen the real usage in Tessella, where maybe it is more often used on smaller portions.
+     */
+    private def bfsFast(root: Node, target: Option[Node] = None): List[Node] =
+      // Compute distinct nodes and their positions once.
+      val distinctNodes: Vector[Node] = 
+        edges.flatMap(_.nodes).distinct.toVector
+
+      // Initial check: if there are no nodes or root is not in the graph.
+      if distinctNodes.isEmpty || !distinctNodes.contains(root) then
+        Nil
+      else
+        val positions: Map[Node, Index] = distinctNodes.zipWithIndex.toMap
+
+        // Build an adjacency list for efficient neighbor lookup.
+        val adj = mutable.Map[Node, mutable.ListBuffer[Node]]()
+        for edge <- edges do
+          val (n1, n2) = edge // Edge is an opaque type (Node, Node)
+          adj.getOrElseUpdate(n1, mutable.ListBuffer.empty) += n2
+          adj.getOrElseUpdate(n2, mutable.ListBuffer.empty) += n1
+
+        val parents = 
+          new Array[Node](distinctNodes.length)
+
+        /** Builds the path through parents from target to root */
+        @tailrec
+        def loop(path: List[Node]): List[Node] =
+          path.head match
+            case node if node == root => path
+            case node => loop(parents(positions(node)) :: path)
+
+        val queue: mutable.Queue[Node] = mutable.Queue.empty
+        val visited = new Array[Boolean](distinctNodes.length)
+
+        /** Marks position as visited and enqueue node */
+        def markAndEnqueue(node: Node, position: Index, parentNode: Node): Unit =
+          visited(position) = true
+          if target.isDefined then
+            parents(position) = parentNode
+          target match
+            // Early exit: If target is found, clear the queue to stop BFS.
+            case Some(stop) if node == stop => queue.clear()
+            case _                          => queue.enqueue(node)
+
+        // Start BFS from the root node.
+        val rootPosition = 
+          positions(root) // root is confirmed to be in distinctNodes, so in positions
+        markAndEnqueue(root, rootPosition, zeroNode)
+
+        while queue.nonEmpty do
+          val currentParentNode: Node = queue.dequeue()
+          // Iterate over neighbors using the adjacency list.
+          adj.get(currentParentNode).foreach { neighbors =>
+            for
+              adjacent <- neighbors
+              // Ensure adjacent node is in positions map (should be true if graph is consistent)
+              // and retrieve its position.
+              localPosition <- positions.get(adjacent)
+              if !visited(localPosition)
+            do
+              markAndEnqueue(adjacent, localPosition, currentParentNode)
+          }
+
+        // Optimized result construction.
+        target match
+          case Some(stopNode) =>
+            // Check if the target node was visited.
+            positions.get(stopNode).filter(visited(_)) match
+              case Some(_) => loop(List(stopNode)) // Target reached, reconstruct path.
+              case None    => Nil                  // Target not reachable.
+          case None =>
+            // No target, return all visited nodes.
+            // Use the pre-computed distinctNodes Vector for mapping indices to Nodes.
+            visited.indices.filter(visited(_)).map(distinctNodes(_)).toList
 
     /** The shortest path from a node to another one */
     def shortestPath(from: Node, to: Node): Vector[Node] =
