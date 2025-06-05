@@ -192,7 +192,7 @@ object Geometry extends Accuracy:
 
     /** Tests whether this `LineSegment` is approximately equal to another, within given accuracy. */
     def almostEquals(that: LineSegment, accuracy: Double = ACCURACY): Boolean =
-      this.point1.almostEquals(that.point1) && this.point2.almostEquals(that.point2)
+      this.point1.almostEquals(that.point1, accuracy) && this.point2.almostEquals(that.point2, accuracy)
 
     def intersects(that: LineSegment): Boolean =
       val e1p1: Point =
@@ -215,24 +215,40 @@ object Geometry extends Accuracy:
 
     /** Finds the intersection point with another line segment */
     def intersection(that: LineSegment): Option[Point] =
-      val dx2: Double =
-        that.point2.x - that.point1.x
-      val dy2: Double =
-        that.point2.y - that.point1.y
-      val p1: Double =
-        this.dx * dy2
-      val p2: Double =
-        this.dy * dx2
-      if p1.~=(p2, ACCURACY) then
+      val p1x = this.point1.x
+      val p1y = this.point1.y
+      val p3x = that.point1.x
+      val p3y = that.point1.y
+
+      val thatDx = that.point2.x - that.point1.x
+      val thatDy = that.point2.y - that.point1.y
+
+      val commonDenominator = this.dx * thatDy - this.dy * thatDx
+
+      if commonDenominator.~=(0.0, ACCURACY) then
+        // Lines are parallel or collinear.
+        // A more advanced implementation could check for overlapping collinear segments here.
         None
       else
-        val t: Double =
-          ((this.point1.y - that.point1.y) * dx2 - (this.point1.x - that.point1.x) * dy2) / (p1 - p2)
-        val point: Point =
-          Point(this.point1.x + t * this.dx, this.point1.y + t * this.dy)
-        Option(point)
-//        if this.toLineSegment2D.contains(point.toPoint2D) && that.toLineSegment2D.contains(point.toPoint2D) then Option(point)
-//        else None
+        // Parameter t for this segment: P_intersect = this.point1 + t * (this.dx, this.dy)
+        val tNominator = (p1y - p3y) * thatDx - (p1x - p3x) * thatDy
+        val t = tNominator / commonDenominator
+
+        // Parameter u for that segment: P_intersect = that.point1 + u * (thatDx, thatDy)
+        // uNominator derived from standard line intersection formulas:
+        // u_num = this.dx * (p1y - p3y) - this.dy * (p1x - p3x)
+        val uNominator = this.dx * (p1y - p3y) - this.dy * (p1x - p3x)
+        val u = uNominator / commonDenominator
+
+        // Check if parameters t and u are within [0, 1] range (with accuracy tolerance)
+        if t >= (0.0 - ACCURACY) && t <= (1.0 + ACCURACY) &&
+          u >= (0.0 - ACCURACY) && u <= (1.0 + ACCURACY) then
+          val intersectX = p1x + t * this.dx
+          val intersectY = p1y + t * this.dy
+          Some(Point(intersectX, intersectY))
+        else
+          // Lines intersect, but not on both segments
+          None
 
     /** Checks if at least one endpoint is contained in the given box */
     def hasEndpointIn(box: Box): Boolean =
