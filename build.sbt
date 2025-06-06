@@ -32,7 +32,7 @@ lazy val root: Project =
       libraryDependencies ++= Seq(
         "io.github.scala-tessella" %% "ring-seq" % "0.6.2",
         "io.github.iltotore" %% "iron" % "2.6.0",
-        "org.scala-lang.modules" %% "scala-xml" % "2.3.0",
+        "org.scala-lang.modules" %% "scala-xml" % "2.4.0",
       ),
       git.remoteRepo := sonatypeProjectHosting.value.get.scmUrl,
       ghpagesNoJekyll := true,
@@ -49,7 +49,7 @@ lazy val tessella: CrossProject =
       libraryDependencies ++= Seq(
         "io.github.scala-tessella" %%% "ring-seq" % "0.6.2",
         "io.github.iltotore" %%% "iron" % "2.6.0",
-        "org.scala-lang.modules" %%% "scala-xml" % "2.3.0",
+        "org.scala-lang.modules" %%% "scala-xml" % "2.4.0",
         "org.scalatest" %%% "scalatest" % "3.2.19" % Test,
         "org.scalacheck" %%% "scalacheck" % "1.18.1" % Test,
         "org.scalatestplus" %% "scalacheck-1-18" % "3.2.19.0" % Test,
