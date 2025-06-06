@@ -6,7 +6,7 @@ import spire.implicits.partialOrderOps
 
 import scala.collection.mutable
 //import spire.implicits.orderOps
-import spire.math.{Rational, Real}
+import spire.math.{Rational, Real, max => spireMax, min => spireMin, signum}
 
 import scala.math.Ordered.orderingToOrdered
 import scala.util.boundary
@@ -42,7 +42,11 @@ object Geometry extends Accuracy:
 
     @targetName("plusDegree")
     def +(that: AngleDegree): AngleDegree =
-        d + that
+      d + that
+
+    @targetName("minusDegree")
+    def -(that: AngleDegree): AngleDegree =
+      d - that
 
   /** Standard unit of angular measure */
   opaque type Radian = Double
@@ -99,10 +103,42 @@ object Geometry extends Accuracy:
     def almostEquals(that: PointReal): Boolean =
       (this.x - that.x).abs < epsilonReal && (this.y - that.y).abs < epsilonReal
 
+    def flipVertically: PointReal =
+      PointReal(x, -y)
+
+    def angleTo(that: PointReal): AngleDegree =
+      val dx: Real =
+        that.x - this.x
+      val dy: Real =
+        that.y - this.y
+      val angleDegreesReal: Real =
+        Real.atan2(dy, dx) * Real(180) / Real.pi
+      AngleDegree(angleDegreesReal.toRational)
+
   object PointReal:
 
     def createPolar(rho: Real, theta: AngleDegree): PointReal =
       PointReal(rho * Real.cos(theta.toRadians), rho * Real.sin(theta.toRadians))
+
+    /** Computes the orientation of the 3 ordered points for Real coordinates.
+     *
+     * @param p0 the first point
+     * @param p1 the second point
+     * @param p2 the third point
+     * @return A Real value:
+     *         > 0 if p0->p1->p2 turns Counter-Clockwise (left),
+     *         < 0 if p0->p1->p2 turns Clockwise (right),
+     *         `=` 0 if p0, p1, p2 are collinear.
+     */
+    def ccw(p0: PointReal, p1: PointReal, p2: PointReal): Real =
+      (p1.y - p0.y) * (p2.x - p1.x) - (p1.x - p0.x) * (p2.y - p1.y)
+
+    /** Given three collinear points p, q, r, checks if point q lies on the line segment 'pr'.
+     * This method assumes p, q, and r are already known to be collinear.
+     */
+    def onSegment(p: PointReal, q: PointReal, r: PointReal): Boolean =
+      q.x <= spireMax(p.x, r.x) && q.x >= spireMin(p.x, r.x) &&
+        q.y <= spireMax(p.y, r.y) && q.y >= spireMin(p.y, r.y)
 
   /** A point in the plane defined by its 2 Cartesian coordinates x and y */
   case class Point(x: Double, y: Double):
@@ -269,6 +305,62 @@ object Geometry extends Accuracy:
     def almostEqualsReal(others: Seq[PointReal]): Boolean =
       points.compareElems(others)(almostEqualRealCouple)
 
+  case class LineSegmentReal(point1: PointReal, point2: PointReal):
+
+    private val dx: Real =
+      point2.x - point1.x
+
+    private val dy: Real =
+      point2.y - point1.y
+
+    def horizontalAngle: AngleDegree =
+      val angleDegreesReal: Real =
+        Real.atan2(dy, dx) * Real(180) / Real.pi
+      AngleDegree(angleDegreesReal.toRational)
+
+    /**
+     * Checks if this line segment intersects with another line segment.
+     * Intersection includes endpoints touching.
+     */
+    def intersects(that: LineSegmentReal): Boolean =
+      val p1 = this.point1
+      val q1 = this.point2
+      val p2 = that.point1
+      val q2 = that.point2
+
+      // Calculate orientations
+      val o1_real = PointReal.ccw(p1, q1, p2)
+      val o2_real = PointReal.ccw(p1, q1, q2)
+      val o3_real = PointReal.ccw(p2, q2, p1)
+      val o4_real = PointReal.ccw(p2, q2, q1)
+
+      // Using signum to get -1, 0, or 1
+      val o1 = signum(o1_real)
+      val o2 = signum(o2_real)
+      val o3 = signum(o3_real)
+      val o4 = signum(o4_real)
+
+      // General case: Segments cross each other (orientations are different)
+      if o1 != 0 && o2 != 0 && o3 != 0 && o4 != 0 then
+        if (o1 != o2) && (o3 != o4) then return true
+
+      // Special Cases: Collinear points
+      // Check if a point of one segment lies on the other segment, given they are collinear.
+
+      // p1, q1, p2 are collinear and p2 lies on segment p1q1
+      if o1 == 0 && PointReal.onSegment(p1, p2, q1) then return true
+
+      // p1, q1, q2 are collinear and q2 lies on segment p1q1
+      if o2 == 0 && PointReal.onSegment(p1, q2, q1) then return true
+
+      // p2, q2, p1 are collinear and p1 lies on segment p2q2
+      if o3 == 0 && PointReal.onSegment(p2, p1, q2) then return true
+
+      // p2, q2, q1 are collinear and q1 lies on segment p2q2
+      if o4 == 0 && PointReal.onSegment(p2, q1, q2) then return true
+
+      false // Segments do not intersect
+
   /** Line segment, defined as the set of points located between the two end points. */
   case class LineSegment(point1: Point, point2: Point):
 
@@ -381,6 +473,68 @@ object Geometry extends Accuracy:
 
     def height: Double =
       y1 - y0
+
+  class SimplePolygonReal(vertices: List[PointReal]):
+
+//    private def edges: Vector[LineSegmentReal] =
+//      vertices.slidingO(2).map(_.toCouple).toVector.map(LineSegmentReal(_, _))
+//
+//    private def edgesCombinations: Iterator[(Index, Index)] =
+//      val length: Int =
+//        vertices.size
+//      for
+//        i1 <- (0 until length).iterator
+//        i2 <- (0 until length).iterator
+//        // avoid checking with self, already checked and adjacent edges
+//        if i1 > i2 + 1 && i1 != (if i2 == 0 then length else i2) - 1
+//      yield (i1, i2)
+
+    /** The edges of the polygon, connecting consecutive vertices.
+     * The last edge connects the last vertex back to the first.
+     */
+    private def edges: Vector[LineSegmentReal] =
+      if (vertices.length < 2)
+        Vector.empty
+      else
+        vertices.slidingO(2).map(pair => LineSegmentReal(pair.head, pair.last)).toVector // Assumes .slidingO creates (v_n-1, v_0) as last
+
+    /**
+     * Checks if the polygon is self-intersecting.
+     * A polygon is self-intersecting if any two non-adjacent segments intersect (touch or cross).
+     *
+     * @return true if the polygon self-intersects, false otherwise.
+     */
+    def isSelfIntersecting: Boolean = {
+      val n_vertices = vertices.length
+      // A polygon with fewer than 4 vertices (e.g., a triangle) cannot self-intersect by this definition.
+      if (n_vertices < 4) return false
+
+      val polygonEdges = this.edges // Calculate edges once
+
+      boundary[Boolean] { // Allows early exit using break
+        // Iterate over all unique pairs of edges (i, j) where j > i
+        for (i <- 0 until n_vertices) {
+          for (j <- i + 1 until n_vertices) {
+            // Determine if edges i and j are adjacent
+            // Edge i connects vertices(i) and vertices((i+1)%n_vertices)
+            // Edge j connects vertices(j) and vertices((j+1)%n_vertices)
+            // They are adjacent if j = i+1 (e.g., edge_i and edge_{i+1})
+            // OR if i=0 and j=n_vertices-1 (the wrap-around case, e.g. edge_0 and edge_{n-1})
+            val areAdjacent = (j == i + 1) || (i == 0 && j == n_vertices - 1)
+
+            if (!areAdjacent) {
+              val edge1 = polygonEdges(i)
+              val edge2 = polygonEdges(j)
+              if (edge1.intersects(edge2)) {
+                // If two non-adjacent segments intersect, the polygon is self-intersecting.
+                break(true)
+              }
+            }
+          }
+        }
+        false // No self-intersections found after checking all relevant pairs
+      }
+    }
 
   /** Represents a polygonal domain whose boundary is a single closed polyline. */
   class SimplePolygon(vertices: List[Point]):

@@ -366,9 +366,15 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
   lazy val perimeterSimplePolygon: SimplePolygon =
     SimplePolygon(perimeterPoints.toList)
 
+  lazy val perimeterSimplePolygonReal: SimplePolygonReal =
+    SimplePolygonReal(perimeterPointsReal.toList)
+
   /** Checks there are no intersecting perimeter edges */
-  def hasPerimeterNotSelfIntersecting: Boolean =
+  def hasPerimeterNotSelfIntersectingOld: Boolean =
     edges.isEmpty || perimeter.toRingNodes.sizeIs < 13 || !perimeterSimplePolygon.isSelfIntersecting
+
+  def hasPerimeterNotSelfIntersecting: Boolean =
+    edges.isEmpty || perimeter.toRingNodes.sizeIs < 13 || !perimeterSimplePolygonReal.isSelfIntersecting
 
   /** Filters the invalid perimeter vertices */
   def invalidPerimeterVertices: Vector[Node] =
