@@ -336,6 +336,9 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
   lazy val perimeterAngles: Map[Node, Radian] =
     perimeterOrderedPolygons.mapValues2(_.alphaSum)
 
+  lazy val perimeterAnglesDegree: Map[Node, AngleDegree] =
+    perimeterOrderedPolygons.mapValues2(_.alphaDegreesSum)
+
   /** Spatial coordinates of the perimeter only
    *
    * @note they differ from the points found as a whole tiling in [[Tiling.coords]]
@@ -343,13 +346,21 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
   val perimeterPoints: Vector[Point] =
     perimeter.toRingNodes.pointsFrom(perimeterAngles)
 
+  val perimeterPointsReal: Vector[PointReal] =
+    perimeter.toRingNodes.pointsRealFrom(perimeterAnglesDegree)
+
   /** Associations of perimeter node and spatial coordinate */
   lazy val perimeterCoords: Coords =
     perimeter.toRingNodes.zip(perimeterPoints).toMap
 
+  lazy val perimeterCoordsReal: CoordsReal =
+    perimeter.toRingNodes.zip(perimeterPointsReal).toMap
   /** Checks there are no multiple perimeter nodes at the same spatial coordinates */
-  def hasPerimeterWithDistinctVertices: Boolean =
+  def hasPerimeterWithDistinctVerticesOld: Boolean =
     edges.isEmpty || perimeterCoords.values.toVector.areAllDistinct
+
+  def hasPerimeterWithDistinctVertices: Boolean =
+    edges.isEmpty || perimeterCoordsReal.values.toSeq.areAllDistinctApprox
 
   /** Perimeter 2D polygon */
   lazy val perimeterSimplePolygon: SimplePolygon =

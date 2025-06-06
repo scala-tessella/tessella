@@ -9,6 +9,7 @@ import Topology.*
 import utility.Utils.{mapKeys, mapValues2}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should
+import spire.math.Real
 
 class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
 
@@ -134,6 +135,13 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
       true
   }
 
+  it can "transform perimeter into Real cartesian points" in {
+    val expected: Vector[PointReal] =
+      Vector(PointReal(0, 0), PointReal(0.5, Real(S6)), PointReal(1, 0))
+    triangle.perimeterPointsReal.almostEqualsReal(expected) shouldBe
+      true
+  }
+
   it can "have a map of nodes and cartesian points" in {
     triangle.perimeterCoords.almostEqualsMap(Map(
       1 -> Point(),
@@ -179,6 +187,17 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
         Point(2, 0), Point(1, 0)
       )
     p4444_4by4_reticulate.perimeterPoints.almostEquals(expected) shouldBe
+      true
+  }
+
+  it can "transform perimeter into Realcartesian points" in {
+    val expected: Vector[PointReal] =
+      Vector(
+        PointReal(0, 0), PointReal(0, 1), PointReal(0, 2), PointReal(0, 3), PointReal(0, 4), PointReal(1, 4), PointReal(2, 4),
+        PointReal(3, 4), PointReal(4, 4), PointReal(4, 3), PointReal(4, 2), PointReal(4, 1), PointReal(4, 0), PointReal(3, 0),
+        PointReal(2, 0), PointReal(1, 0)
+      )
+    p4444_4by4_reticulate.perimeterPointsReal.almostEqualsReal(expected) shouldBe
       true
   }
 

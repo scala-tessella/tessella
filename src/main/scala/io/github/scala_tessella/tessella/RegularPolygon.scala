@@ -1,9 +1,12 @@
 package io.github.scala_tessella.tessella
 
-import Geometry.Radian
+import Geometry.{AngleDegree, Radian}
 import Geometry.Radian.{TAU, TAU_2}
 import utility.Utils.{mapByValue, originalsOnly, toMap2}
 import io.github.scala_tessella.ring_seq.RingSeq.*
+
+import spire.math.Rational
+import spire.compat.fractional
 
 import scala.annotation.targetName
 import scala.math.Ordered.orderingToOrdered
@@ -44,6 +47,9 @@ object RegularPolygon:
     def alpha: Radian =
       TAU_2 * (sides - 2) / sides
 
+    def alphaDegree: AngleDegree =
+      AngleDegree((sides - 2) * 180 / sides)
+
     /** Measure of the area with unit side. */
     def area: Double =
       sides / 4.0 / Math.tan((TAU_2 / sides).toDouble)
@@ -65,6 +71,9 @@ object RegularPolygon:
     /** Measure of the sum of each interior angles joined at a vertex. */
     def alphaSum: Radian =
       Radian(polygons.map(_.alpha.toDouble).sum)
+
+    def alphaDegreesSum: AngleDegree =
+      AngleDegree(polygons.map(_.alphaDegree.toRational).sum)
 
   /** Sequence of adjacent regular polygons around a vertex */
   opaque type Vertex = Vector[Polygon]

@@ -2,8 +2,16 @@ package io.github.scala_tessella.tessella
 
 import utility.Utils.{compareElems, toCouple}
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO}
+import spire.implicits.partialOrderOps
+
+import scala.collection.mutable
+//import spire.implicits.orderOps
+import spire.math.{Rational, Real}
 
 import scala.math.Ordered.orderingToOrdered
+import scala.util.boundary
+import scala.util.boundary.break
+
 //import math.geom2d.Point2D
 //import math.geom2d.line.LineSegment2D
 
@@ -13,6 +21,28 @@ import scala.annotation.targetName
 object Geometry extends Accuracy:
 
   val ACCURACY = 1.0E-12
+
+  val epsilonReal: Real =
+    1.0E-12
+
+  opaque type AngleDegree = Rational
+
+  object AngleDegree:
+
+    def apply(r: Rational): AngleDegree =
+      r
+
+  extension (d: AngleDegree)
+
+    def toRational: Rational =
+      d
+
+    def toRadians: Real =
+      d * Real.pi / 180
+
+    @targetName("plusDegree")
+    def +(that: AngleDegree): AngleDegree =
+        d + that
 
   /** Standard unit of angular measure */
   opaque type Radian = Double
@@ -54,6 +84,25 @@ object Geometry extends Accuracy:
     @targetName("divide")
     def /(i: Int): Radian =
       r / Radian(i)
+
+  case class PointReal(x: Real, y: Real):
+
+    def plus(that: PointReal): PointReal =
+      PointReal(this.x + that.x, this.y + that.y)
+
+    def plusPolar(rho: Real)(theta: AngleDegree): PointReal =
+      plus(PointReal.createPolar(rho, theta))
+
+    def plusPolarUnit: AngleDegree => PointReal =
+      plusPolar(1)
+
+    def almostEquals(that: PointReal): Boolean =
+      (this.x - that.x).abs < epsilonReal && (this.y - that.y).abs < epsilonReal
+
+  object PointReal:
+
+    def createPolar(rho: Real, theta: AngleDegree): PointReal =
+      PointReal(rho * Real.cos(theta.toRadians), rho * Real.sin(theta.toRadians))
 
   /** A point in the plane defined by its 2 Cartesian coordinates x and y */
   case class Point(x: Double, y: Double):
@@ -169,6 +218,56 @@ object Geometry extends Accuracy:
     /** Checks if sequentially almost equal to another sequence */
     def almostEquals(others: Vector[Point]): Boolean =
       points.compareElems(others)(almostEqualCouple)
+
+  extension (points: Seq[PointReal])
+
+   /**
+     * Checks if all PointReal instances in a collection are distinct based on the
+     * `almostEquals` method (which uses an internally defined `epsilonReal`).
+     *
+     * @return `true` if no two points are almost equal, `false` otherwise.
+    */
+   def areAllDistinctApprox: Boolean = boundary[Boolean] { // Wrap in boundary
+     if points.length < 2 then
+       break(true)
+
+     // The cell width for the grid is based on the (positive) epsilon used for comparisons.
+     val cellWidth = epsilonReal
+
+     val grid = mutable.HashMap[(Int, Int), mutable.ListBuffer[PointReal]]()
+
+     for (point <- points)
+       // Determine the grid cell for the current point.
+       val cellX = (point.x / cellWidth).floor.toInt
+       val cellY = (point.y / cellWidth).floor.toInt
+
+       // Check the 3x3 neighborhood (current cell and its 8 neighbors).
+       for (dx <- -1 to 1)
+         for (dy <- -1 to 1)
+           val neighborCellKey = (cellX + dx, cellY + dy)
+           grid.get(neighborCellKey) match
+             case Some(pointsInCell) =>
+               for (otherPoint <- pointsInCell)
+                 // The almostEquals method encapsulates the comparison logic
+                 // using the predefined epsilonReal.
+                 if point.almostEquals(otherPoint) then
+                   // If 'point' and 'otherPoint' are the exact same object reference
+                   // from the input list, they are correctly identified as "not distinct."
+                   break(false)
+             case None => // This neighboring cell is empty so far.
+
+       // If no almost-equal point was found, add the current point to its cell in the grid.
+       grid.getOrElseUpdate((cellX, cellY), mutable.ListBuffer()) += point
+
+     true // All points processed, no almost-equal pairs found. This is the default value for the boundary.
+   }
+
+    private def almostEqualRealCouple: ((PointReal, PointReal)) => Boolean =
+      _.almostEquals(_)
+
+    /** Checks if sequentially almost equal to another sequence */
+    def almostEqualsReal(others: Seq[PointReal]): Boolean =
+      points.compareElems(others)(almostEqualRealCouple)
 
   /** Line segment, defined as the set of points located between the two end points. */
   case class LineSegment(point1: Point, point2: Point):

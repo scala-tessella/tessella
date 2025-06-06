@@ -1,11 +1,11 @@
 package io.github.scala_tessella.tessella
 
-import Geometry.{Box, LineSegment, Point, Radian}
+import Geometry.{AngleDegree, Box, LineSegment, Point, PointReal, Radian}
 import Geometry.Radian.TAU_2
 import Topology.{Edge, Node}
 import utility.Utils.{mapValues2, toCouple}
-
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO, startAt}
+
 import scala.annotation.tailrec
 
 /** Methods to help the spatial representation of a tiling */
@@ -13,6 +13,8 @@ object TilingCoordinates:
 
   /** Associations of node and spatial 2D coordinates */
   type Coords = Map[Node, Point]
+
+  type CoordsReal = Map[Node, PointReal]
 
   /** Spatial coordinates for the first two nodes of a [[Tiling]] */
   private val startingCoords: Coords =
@@ -60,6 +62,11 @@ object TilingCoordinates:
     def pointsFrom(angles: Map[Node, Radian]): Vector[Point] =
       nodes.scanLeft((Point(1, 0), TAU_2: Radian))({
         case ((point, acc), node) => (point.plusPolarUnit(acc), acc + angles(node) + TAU_2)
+      }).map((point, _) => point).tail
+
+    def pointsRealFrom(angles: Map[Node, AngleDegree]): Vector[PointReal] =
+      nodes.scanLeft((PointReal(1, 0), AngleDegree(180)))({
+        case ((point, acc), node) => (point.plusPolarUnit(acc), acc + angles(node) + AngleDegree(180))
       }).map((point, _) => point).tail
 
   extension (coords: Coords)
