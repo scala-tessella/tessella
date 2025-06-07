@@ -4,7 +4,7 @@ import utility.Utils.{compareElems, toCouple}
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO}
 import spire.implicits.partialOrderOps
 
-import scala.collection.mutable
+import scala.collection.{GenIterable, mutable}
 //import spire.implicits.orderOps
 import spire.math.{Rational, Real, max => spireMax, min => spireMin, signum}
 
@@ -485,6 +485,19 @@ object Geometry extends Accuracy:
       else
         vertices.slidingO(2).map(pair => LineSegmentReal(pair.head, pair.last)).toVector // Assumes .slidingO creates (v_n-1, v_0) as last
 
+    /** The indices of pair of non-adjacent edges to be tested for intersection */
+    private def intersectEdgesIndices: Iterator[(Index, Index)] =
+      val length: Int =
+        vertices.size
+      if length < 4 then Iterator.empty
+      else
+        for
+          i <- (0 until length).iterator
+          j <- (i + 1 until length).iterator
+          areAdjacent = (j == i + 1) || (i == 0 && j == length - 1)
+          if !areAdjacent
+        yield (i, j)
+
     /**
      * Checks if the polygon is self-intersecting.
      * A polygon is self-intersecting if any two non-adjacent segments intersect (touch or cross).
@@ -492,55 +505,13 @@ object Geometry extends Accuracy:
      * @return true if the polygon self-intersects, false otherwise.
      */
     def isSelfIntersecting: Boolean =
-      val n_vertices = vertices.length
-      // A polygon with fewer than 4 vertices (e.g., a triangle) cannot self-intersect by this definition.
-      if n_vertices < 4 then false
-      else
-        val polygonEdges: Vector[LineSegmentReal] =
-          edges // Calculate edges once
-
-        boundary[Boolean] { // Allows early exit using break
-          // Iterate over all unique pairs of edges (i, j) where j > i
-          for (i <- 0 until n_vertices)
-            for (j <- i + 1 until n_vertices)
-              // Determine if edges i and j are adjacent
-              // Edge i connects vertices(i) and vertices((i+1)%n_vertices)
-              // Edge j connects vertices(j) and vertices((j+1)%n_vertices)
-              // They are adjacent if j = i+1 (e.g., edge_i and edge_{i+1})
-              // OR if i=0 and j=n_vertices-1 (the wrap-around case, e.g. edge_0 and edge_{n-1})
-              val areAdjacent = (j == i + 1) || (i == 0 && j == n_vertices - 1)
-
-              if !areAdjacent then
-                val edge1 = polygonEdges(i)
-                val edge2 = polygonEdges(j)
-                if edge1.intersects(edge2) then
-                  // If two non-adjacent segments intersect, the polygon is self-intersecting.
-                  break(true)
-          false // No self-intersections found after checking all relevant pairs
-        }
+      intersectEdgesIndices.exists((i, j) => edges(i).intersects(edges(j)))
 
     def intersectingSides: List[(LineSegmentReal, LineSegmentReal)] =
-      val n_vertices = vertices.length
-      // A polygon with fewer than 4 vertices (e.g., a triangle) cannot self-intersect by this definition.
-      if n_vertices < 4 then List.empty
-      else
-        val polygonEdges: Vector[LineSegmentReal] =
-          edges // Calculate edges once
-        var acc: List[(LineSegmentReal, LineSegmentReal)] =
-          List.empty
-        // Iterate over all unique pairs of edges (i, j) where j > i
-        for (i <- 0 until n_vertices)
-          for (j <- i + 1 until n_vertices)
-            val areAdjacent = (j == i + 1) || (i == 0 && j == n_vertices - 1)
-
-            if !areAdjacent then
-              val edge1 = polygonEdges(i)
-              val edge2 = polygonEdges(j)
-              if edge1.intersects(edge2) then
-                  // If two non-adjacent segments intersect, the polygon is self-intersecting.
-                  acc = (edge2, edge1) :: acc
-          false // No self-intersections found after checking all relevant pairs
-        acc
+      intersectEdgesIndices
+        .filter((i, j) => edges(i).intersects(edges(j)))
+        .map((i, j) => (edges(j), edges(i)))
+        .toList.reverse
 
   /** Represents a polygonal domain whose boundary is a single closed polyline. */
   class SimplePolygon(vertices: List[Point]):
