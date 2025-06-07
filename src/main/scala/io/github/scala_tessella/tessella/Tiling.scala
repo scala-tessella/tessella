@@ -343,16 +343,10 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
    *
    * @note they differ from the points found as a whole tiling in [[Tiling.coords]]
    */
-  val perimeterPoints: Vector[Point] =
-    perimeter.toRingNodes.pointsFrom(perimeterAngles)
-
   val perimeterPointsReal: Vector[PointReal] =
     perimeter.toRingNodes.pointsRealFrom(perimeterAnglesDegree)
 
   /** Associations of perimeter node and spatial coordinate */
-  lazy val perimeterCoords: Coords =
-    perimeter.toRingNodes.zip(perimeterPoints).toMap
-
   lazy val perimeterCoordsReal: CoordsReal =
     perimeter.toRingNodes.zip(perimeterPointsReal).toMap
 

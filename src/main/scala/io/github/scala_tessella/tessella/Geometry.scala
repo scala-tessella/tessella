@@ -117,6 +117,9 @@ object Geometry extends Accuracy:
       val angleDegreesReal: Real =
         Real.atan2(dy, dx) * Real(180) / Real.pi
       AngleDegree(angleDegreesReal.toRational)
+      
+    def toPoint =
+      Point(x.toDouble, y.toDouble)  
 
   object PointReal:
 

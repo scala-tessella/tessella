@@ -229,7 +229,7 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
   it can "NOT have perimeter nodes with the same cartesian coords" in {
     Tiling.maybe(smallestTilingWithInvalidSameVertices).left.getOrElse("").take(107) shouldEqual
       """Tiling must have all perimeter nodes at different cartesian coords:
-        | found invalid couple (12,10).
+        | found invalid couple (10,12).
         |See SVG:""".stripMargin
   }
 

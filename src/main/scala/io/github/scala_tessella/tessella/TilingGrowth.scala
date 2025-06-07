@@ -9,7 +9,7 @@ import TilingErrorMessages.*
 import TilingGrowth.OtherNodeStrategy.*
 import TilingGrowth.PerimeterStrategy.{LOWEST_ORDINAL, NARROWEST_ANGLE}
 import Topology.{BeforeAfterOrdering, Edge, EdgeOrdering, Node, NodeOrdering}
-import utility.Utils.toCouple
+import utility.Utils.{mapValues2, toCouple}
 
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, reflectAt}
 
@@ -187,7 +187,7 @@ object TilingGrowth:
                              startFromBefore: Boolean): Either[GrowthLeft, List[Edge]] =
 
       def perimeterCoordsAt(node1: Node, node2: Node): Coords =
-        tiling.perimeterCoords.filter({ case (k, _) => k.equals(node1) || k.equals(node2) })
+        tiling.perimeterCoordsReal.mapValues2(_.toPoint).filter({ case (k, _) => k.equals(node1) || k.equals(node2) })
 
       val start: Node =
         pathNodes.head
@@ -206,7 +206,7 @@ object TilingGrowth:
             )
             .filter((n, _) => n >= pathNodes(1))
       newCoords
-        .filter((_, point) => tiling.perimeterCoords.values.exists(_.almostEquals(point, LESSER_ACCURACY)))
+        .filter((_, point) => tiling.perimeterCoordsReal.mapValues2(_.toPoint).values.exists(_.almostEquals(point, LESSER_ACCURACY)))
         .toList match
         case _ :: _ =>
           Left((tiling.graphEdges ++ newEdges, _.invalidVertexCoordsErrMsg))
@@ -219,7 +219,7 @@ object TilingGrowth:
             newEdges.toBox(newEdgesCoords, 1.0)
           val perimeterLines: List[LineSegment] =
             tiling.perimeter.toRingEdges.toList.withoutNodes(List(node))
-              .toSegments(tiling.perimeterCoords).filter(_.hasEndpointIn(enlargedBox))
+              .toSegments(tiling.perimeterCoordsReal.mapValues2(_.toPoint)).filter(_.hasEndpointIn(enlargedBox))
           if lines.lesserIntersects(perimeterLines) then
             Left((tiling.graphEdges ++ newEdges, _.invalidIntersectionErrMsg))
           else

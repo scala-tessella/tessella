@@ -2,7 +2,7 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
-import TilingCoordinates.toBox
+import TilingCoordinates.{toBox, toCoords}
 import Geometry.{Box, LineSegment, Point}
 import SharedML.*
 import SVG.*
@@ -90,9 +90,9 @@ object SVGInvalid extends ConverterSVG:
      */
     def invalidPerimeterSVG(desc: Description, intersections: Option[Elem] = None): String =
       val toLabelsSVG: Elem =
-        perimeterLabelsGroup(tiling.perimeterCoords.map((node, coordinate) => node.label(coordinate)).toSeq)
+        perimeterLabelsGroup(tiling.perimeterCoordsReal.map((node, coordinate) => node.label(coordinate.toPoint)).toSeq)
       val elems: List[Elem] =
-        polygon(tiling.perimeterPoints).withStyle(perimeterStyle)
+        polygon(tiling.perimeterPointsReal.map(_.toPoint)).withStyle(perimeterStyle)
           :: (intersections match
           case Some(perimeterIntersections) => List(perimeterIntersections, toLabelsSVG)
           case _                            => List(toLabelsSVG)
@@ -101,7 +101,7 @@ object SVGInvalid extends ConverterSVG:
         elems,
         Title("Tiling perimeter"),
         desc,
-        tiling.perimeter.toRingEdges.toList.toBox(tiling.perimeterCoords)
+        tiling.perimeter.toRingEdges.toList.toBox(tiling.perimeterCoordsReal.toCoords)
       )
 
     /** Prettified `svg` showing invalid tiling addition

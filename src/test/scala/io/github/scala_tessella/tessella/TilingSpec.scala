@@ -128,13 +128,6 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
       (3, 0.43301270189221946, 0.6045997880780728)
   }
 
-  it can "transform perimeter into cartesian points" in {
-    val expected: Vector[Point] =
-      Vector(Point(), Point(0.5, S6), Point(1, 0))
-    triangle.perimeterPoints.almostEquals(expected) shouldBe
-      true
-  }
-
   it can "transform perimeter into Real cartesian points" in {
     val expected: Vector[PointReal] =
       Vector(PointReal(0, 0), PointReal(0.5, Real(S6)), PointReal(1, 0))
@@ -143,7 +136,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it can "have a map of nodes and cartesian points" in {
-    triangle.perimeterCoords.almostEqualsMap(Map(
+    triangle.perimeterCoordsReal.mapValues2(_.toPoint).almostEqualsMap(Map(
       1 -> Point(),
       3 -> Point(0.5, S6),
       2 -> Point(1, 0)
@@ -186,7 +179,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
         Point(3, 4), Point(4, 4), Point(4, 3), Point(4, 2), Point(4, 1), Point(4, 0), Point(3, 0),
         Point(2, 0), Point(1, 0)
       )
-    p4444_4by4_reticulate.perimeterPoints.almostEquals(expected) shouldBe
+    p4444_4by4_reticulate.perimeterPointsReal.map(_.toPoint).almostEquals(expected) shouldBe
       true
   }
 
@@ -329,7 +322,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it can "be converted to 2D points" in {
-    p4444_4by4_reticulate.perimeterPoints.almostEquals(
+    p4444_4by4_reticulate.perimeterPointsReal.map(_.toPoint).almostEquals(
       Vector(
         Point(),
         Point(0, 1),
@@ -353,7 +346,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   }
 
   it can "be mapped to coords" in {
-    p4444_4by4_reticulate.perimeterCoords.almostEqualsMap(
+    p4444_4by4_reticulate.perimeterCoordsReal.mapValues2(_.toPoint).almostEqualsMap(
       Map(
         Node(5)  -> Point(0, 4),
         Node(10) -> Point(1, 4),

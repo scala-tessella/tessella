@@ -99,11 +99,6 @@ object TilingCoordinates:
 
   extension (nodes: Vector[Node])
 
-    def pointsFrom(angles: Map[Node, Radian]): Vector[Point] =
-      nodes.scanLeft((Point(1, 0), TAU_2: Radian))({
-        case ((point, acc), node) => (point.plusPolarUnit(acc), acc + angles(node) + TAU_2)
-      }).map((point, _) => point).tail
-
     def pointsRealFrom(angles: Map[Node, AngleDegree]): Vector[PointReal] =
       nodes.scanLeft((PointReal(1, 0), AngleDegree(180)))({
         case ((point, acc), node) => (point.plusPolarUnit(acc), acc + angles(node) + AngleDegree(180))
@@ -132,6 +127,9 @@ object TilingCoordinates:
       coords.get(Node(3)) match
         case Some(point) if point.y < 0 => coords.mapValues2(_.flipVertically)
         case _ => coords
+        
+    def toCoords: Coords =
+      coords.mapValues2(_.toPoint)  
 
   extension (edge: Edge)
 
