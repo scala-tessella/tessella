@@ -142,16 +142,16 @@ object TilingErrorMessages:
 
       val edgeCouples: List[(Edge, Edge)] =
         sideCouples.map((s1, s2) => (edgeFromSide(s1), edgeFromSide(s2)))
-      val crossings: List[Point] =
+      val crossings: List[PointReal] =
         edgeCouples
           .flatMap({
-            case (edge1, edge2) => List(edge1, edge2).toSegments(tiling.perimeterCoords).toCouple match
+            case (edge1, edge2) => List(edge1, edge2).toSegmentsReal(tiling.perimeterCoordsReal).toCouple match
               case (f, s) => f.intersection(s)
           })
       val svg: String =
         addInvalidPerimeterSVG(
           Description("Invalid intersecting edges"),
-          intersectionsGroup(crossings.map(invalidNode))
+          intersectionsGroup(crossings.map(p => invalidNode(Point(p.x.toDouble, p.y.toDouble))))
         )
       s"""Tiling must not have intersecting perimeter edges:
          | found invalid ${formatEdgeCouples(edgeCouples)}.$svg""".stripMargin
