@@ -6,7 +6,7 @@ import spire.math.Real
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class LineSegmentRealIntersectionSpec extends AnyFlatSpec with Matchers {
+class LineSegmentRealIntersectionSpec extends AnyFlatSpec with Matchers:
 
   // Helper to create Real from Double/Int for tests for convenience
   private def R(d: Double): Real = Real(d)
@@ -193,6 +193,3 @@ class LineSegmentRealIntersectionSpec extends AnyFlatSpec with Matchers {
     val s4 = LineSegmentReal(PR(0,0), PR(4,0)) // s3 is contained in s4
     s3.intersection(s4) shouldBe Some(PR(1,0))
   }
-
-
-}
