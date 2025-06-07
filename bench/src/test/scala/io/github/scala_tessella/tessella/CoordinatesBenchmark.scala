@@ -1,12 +1,12 @@
 package io.github.scala_tessella.tessella
 
 import io.github.scala_tessella.tessella.Topology.{Edge, Node}
+import io.github.scala_tessella.tessella.TilingCoordinates.*
 import org.openjdk.jmh.annotations.*
 
 import java.util.concurrent.TimeUnit
 import scala.collection.mutable
-import scala.util.Random
-import scala.util.Try
+import scala.util.{Random, Try}
 
 // --- JMH Annotations ---
 // OutputTimeUnit: Sets the time unit for the results.
@@ -21,7 +21,7 @@ import scala.util.Try
 @Fork(value = 1, jvmArgs = Array("-Xms2G", "-Xmx2G")) // Example JVM args, adjust as needed
 @Warmup(iterations = 20, time = 1, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 20, time = 1, timeUnit = TimeUnit.SECONDS)
-class TopologyBenchmarkWithBFS:
+class CoordinatesBenchmark:
 
   // --- State for the Benchmark ---
   @Param(Array("4", "8", "12", "16", "20")) // Approx number of polygons for square side
@@ -29,10 +29,7 @@ class TopologyBenchmarkWithBFS:
 
   // This variable will hold the graph edges.
   // It's good practice to initialize it in a @Setup method.
-  var graphEdges: List[Edge] = _
-  var rootNode: Node = _
-  var targetNodeOption: Option[Node] = None
-  var targetNodePresent: Node = _
+  var tiling: Tiling = _
 
   val patternsVector: Vector[Int => Tiling] =
     Vector(
@@ -50,35 +47,15 @@ class TopologyBenchmarkWithBFS:
   def setupTilingGraph(): Unit =
     val random = new Random(42) // Seed for reproducibility
     val pattern = random.between(0, patternsVector.size - 1)
-    val tiling = patternsVector(pattern)(side)
+    tiling = patternsVector(pattern)(side)
 
-    graphEdges = tiling.graphEdges
-
-    val z = tiling.graphNodes
-    rootNode = Node(1)
-
-    if z.nonEmpty then
-      targetNodePresent = graphEdges.last.greaterNode // Ensure this target exists
-      targetNodeOption = Some(targetNodePresent)
-    else
-    // Handle empty graph case if necessary, though @Param starts at 100 nodes
-      targetNodePresent = Node(2) // Placeholder
-      targetNodeOption = None
 
   // --- Benchmarks ---
 
   @Benchmark
-  def bfs_original_noTarget(): List[Node] =
-    if (graphEdges.isEmpty) Nil else graphEdges.bfs(rootNode, None)
+  def coord_original(): Coords =
+    if (tiling.graphEdges.isEmpty) Map.empty else tiling.coordinates
 
   @Benchmark
-  def bfsFast_improved_noTarget(): List[Node] =
-    if (graphEdges.isEmpty) Nil else graphEdges.bfsFast(rootNode, None)
-
-  @Benchmark
-  def bfs_original_withTarget(): List[Node] =
-    if (graphEdges.isEmpty) Nil else graphEdges.bfs(rootNode, targetNodeOption)
-
-  @Benchmark
-  def bfsFast_improved_withTarget(): List[Node] =
-    if (graphEdges.isEmpty) Nil else graphEdges.bfsFast(rootNode, targetNodeOption)
+  def coord_alt(): Coords =
+    if (tiling.graphEdges.isEmpty) Map.empty else tiling.coordinatesAlt
