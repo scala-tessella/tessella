@@ -1,7 +1,8 @@
 package io.github.scala_tessella.tessella
 
 import Geometry.{LineSegmentReal, PointReal}
-import spire.math.{Real, signum} // Assuming Geometry object is in scope
+
+import spire.math.Real
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
