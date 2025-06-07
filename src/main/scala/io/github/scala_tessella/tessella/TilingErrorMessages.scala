@@ -107,6 +107,17 @@ object TilingErrorMessages:
         .map((node, _) => node)
         .get
 
+    private def perimeterNodeFromPointReal(point: PointReal, strict: Boolean = false): Node =
+      tiling.perimeterCoordsReal
+        .find((_, mappedPoint) =>
+          if !strict && point.almostEquals(PointReal(0, 0)) then
+            mappedPoint.almostEquals(point)
+          else
+            mappedPoint == point
+        )
+        .map((node, _) => node)
+        .get
+    
     /** Error message for invalid tiling vertex coordinates, with SVG description */
     def invalidVertexCoordsErrMsg: String =
       val pointCouples: List[(Point, Point)] =
@@ -124,10 +135,10 @@ object TilingErrorMessages:
     /** Error message for invalid tiling edges intersection, with SVG description */
     def invalidIntersectionErrMsg: String =
       val sideCouples =
-        tiling.perimeterSimplePolygon.intersectingSides.toList
+        tiling.perimeterSimplePolygonReal.intersectingSides
 
-      def edgeFromSide(side: LineSegment): Edge =
-        Edge((perimeterNodeFromPoint(side.point1), perimeterNodeFromPoint(side.point2)))
+      def edgeFromSide(side: LineSegmentReal): Edge =
+        Edge((perimeterNodeFromPointReal(side.point1), perimeterNodeFromPointReal(side.point2)))
 
       val edgeCouples: List[(Edge, Edge)] =
         sideCouples.map((s1, s2) => (edgeFromSide(s1), edgeFromSide(s2)))

@@ -241,16 +241,16 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
   }
 
   it can "NOT have perimeter with shared area and overlapping sides" in {
-    Tiling.maybe(sharingAreaAndSides).left.getOrElse("").take(151) shouldEqual
+    Tiling.maybe(sharingAreaAndSides).left.getOrElse("").take(184) shouldEqual
       """Tiling must not have intersecting perimeter edges:
-        | found invalid couples ((6--10, 21--22), (6--10, 17--21), (9--10, 17--21), (8--9, 19--22)).
+        | found invalid couples ((9--10, 17--21), (6--10, 17--21), (8--9, 21--22), (6--10, 21--22), (8--9, 19--22), (9--10, 19--22)).
         |See SVG:""".stripMargin
   }
 
   it can "NOT have perimeter with overlapping sides" in {
-    Tiling.maybe(sharingSides).left.getOrElse("").take(117) shouldEqual
+    Tiling.maybe(sharingSides).left.getOrElse("").take(133) shouldEqual
       """Tiling must not have intersecting perimeter edges:
-        | found invalid couples ((19--23, 9--10), (23--24, 8--9)).
+        | found invalid couples ((19--23, 9--10), (23--24, 8--9), (19--23, 8--9)).
         |See SVG:""".stripMargin
   }
 

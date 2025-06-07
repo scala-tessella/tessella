@@ -476,19 +476,6 @@ object Geometry extends Accuracy:
 
   class SimplePolygonReal(vertices: List[PointReal]):
 
-//    private def edges: Vector[LineSegmentReal] =
-//      vertices.slidingO(2).map(_.toCouple).toVector.map(LineSegmentReal(_, _))
-//
-//    private def edgesCombinations: Iterator[(Index, Index)] =
-//      val length: Int =
-//        vertices.size
-//      for
-//        i1 <- (0 until length).iterator
-//        i2 <- (0 until length).iterator
-//        // avoid checking with self, already checked and adjacent edges
-//        if i1 > i2 + 1 && i1 != (if i2 == 0 then length else i2) - 1
-//      yield (i1, i2)
-
     /** The edges of the polygon, connecting consecutive vertices.
      * The last edge connects the last vertex back to the first.
      */
@@ -504,37 +491,56 @@ object Geometry extends Accuracy:
      *
      * @return true if the polygon self-intersects, false otherwise.
      */
-    def isSelfIntersecting: Boolean = {
+    def isSelfIntersecting: Boolean =
       val n_vertices = vertices.length
       // A polygon with fewer than 4 vertices (e.g., a triangle) cannot self-intersect by this definition.
-      if (n_vertices < 4) return false
+      if n_vertices < 4 then false
+      else
+        val polygonEdges: Vector[LineSegmentReal] =
+          edges // Calculate edges once
 
-      val polygonEdges = this.edges // Calculate edges once
+        boundary[Boolean] { // Allows early exit using break
+          // Iterate over all unique pairs of edges (i, j) where j > i
+          for (i <- 0 until n_vertices)
+            for (j <- i + 1 until n_vertices)
+              // Determine if edges i and j are adjacent
+              // Edge i connects vertices(i) and vertices((i+1)%n_vertices)
+              // Edge j connects vertices(j) and vertices((j+1)%n_vertices)
+              // They are adjacent if j = i+1 (e.g., edge_i and edge_{i+1})
+              // OR if i=0 and j=n_vertices-1 (the wrap-around case, e.g. edge_0 and edge_{n-1})
+              val areAdjacent = (j == i + 1) || (i == 0 && j == n_vertices - 1)
 
-      boundary[Boolean] { // Allows early exit using break
+              if !areAdjacent then
+                val edge1 = polygonEdges(i)
+                val edge2 = polygonEdges(j)
+                if edge1.intersects(edge2) then
+                  // If two non-adjacent segments intersect, the polygon is self-intersecting.
+                  break(true)
+          false // No self-intersections found after checking all relevant pairs
+        }
+
+    def intersectingSides: List[(LineSegmentReal, LineSegmentReal)] =
+      val n_vertices = vertices.length
+      // A polygon with fewer than 4 vertices (e.g., a triangle) cannot self-intersect by this definition.
+      if n_vertices < 4 then List.empty
+      else
+        val polygonEdges: Vector[LineSegmentReal] =
+          edges // Calculate edges once
+        var acc: List[(LineSegmentReal, LineSegmentReal)] =
+          List.empty
         // Iterate over all unique pairs of edges (i, j) where j > i
-        for (i <- 0 until n_vertices) {
-          for (j <- i + 1 until n_vertices) {
-            // Determine if edges i and j are adjacent
-            // Edge i connects vertices(i) and vertices((i+1)%n_vertices)
-            // Edge j connects vertices(j) and vertices((j+1)%n_vertices)
-            // They are adjacent if j = i+1 (e.g., edge_i and edge_{i+1})
-            // OR if i=0 and j=n_vertices-1 (the wrap-around case, e.g. edge_0 and edge_{n-1})
+        for (i <- 0 until n_vertices)
+          for (j <- i + 1 until n_vertices)
             val areAdjacent = (j == i + 1) || (i == 0 && j == n_vertices - 1)
 
-            if (!areAdjacent) {
+            if !areAdjacent then
               val edge1 = polygonEdges(i)
               val edge2 = polygonEdges(j)
-              if (edge1.intersects(edge2)) {
-                // If two non-adjacent segments intersect, the polygon is self-intersecting.
-                break(true)
-              }
-            }
-          }
-        }
-        false // No self-intersections found after checking all relevant pairs
-      }
-    }
+              if edge1.intersects(edge2) then
+                  // If two non-adjacent segments intersect, the polygon is self-intersecting.
+                  acc = (edge2, edge1) :: acc
+          false // No self-intersections found after checking all relevant pairs
+        acc
 
   /** Represents a polygonal domain whose boundary is a single closed polyline. */
   class SimplePolygon(vertices: List[Point]):

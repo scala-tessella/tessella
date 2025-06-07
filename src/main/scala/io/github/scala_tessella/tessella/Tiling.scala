@@ -355,10 +355,8 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
 
   lazy val perimeterCoordsReal: CoordsReal =
     perimeter.toRingNodes.zip(perimeterPointsReal).toMap
-  /** Checks there are no multiple perimeter nodes at the same spatial coordinates */
-  def hasPerimeterWithDistinctVerticesOld: Boolean =
-    edges.isEmpty || perimeterCoords.values.toVector.areAllDistinct
 
+  /** Checks there are no multiple perimeter nodes at the same spatial coordinates */
   def hasPerimeterWithDistinctVertices: Boolean =
     edges.isEmpty || perimeterCoordsReal.values.toSeq.areAllDistinctApprox
 
@@ -370,9 +368,6 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
     SimplePolygonReal(perimeterPointsReal.toList)
 
   /** Checks there are no intersecting perimeter edges */
-  def hasPerimeterNotSelfIntersectingOld: Boolean =
-    edges.isEmpty || perimeter.toRingNodes.sizeIs < 13 || !perimeterSimplePolygon.isSelfIntersecting
-
   def hasPerimeterNotSelfIntersecting: Boolean =
     edges.isEmpty || perimeter.toRingNodes.sizeIs < 13 || !perimeterSimplePolygonReal.isSelfIntersecting
 

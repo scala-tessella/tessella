@@ -218,7 +218,7 @@ class TilingGrowthNodePolygonSpec extends AnyFlatSpec with Helper with should.Ma
   it can "NOT have a vertex growing node 3 starting from 7 to intersect some perimeter edges" in {
     (
       intersectTestbed.maybeGrowNode(Node(3), Polygon(6), AFTER_PERIMETER) match
-        case Left(msg) => msg.contains("Tiling must not have intersecting perimeter edges:\n found invalid couples ((6--10, 17--18), (1--2, 18--19))")
+        case Left(msg) => msg.contains("Tiling must not have intersecting perimeter edges:\n found invalid couples ((6--10, 17--18), (1--2, 18--19), (1--2, 19--20))")
         case Right(_)  => false
     ) shouldBe
       true
@@ -247,7 +247,7 @@ class TilingGrowthNodePolygonSpec extends AnyFlatSpec with Helper with should.Ma
       anotherIntersectTestbed.maybeGrowNode(Node(55), Polygon(3), FIXED(Node(57)))
     (
       grown match
-        case Left(msg) => msg.contains("Tiling must not have intersecting perimeter edges:\n found invalid couples ((2--10, 55--68), (2--10, 57--68))")
+        case Left(msg) => msg.contains("Tiling must not have intersecting perimeter edges:\n found invalid couples ((2--10, 57--68), (2--10, 55--68))")
         case Right(_) => false
       ) shouldBe
       true
