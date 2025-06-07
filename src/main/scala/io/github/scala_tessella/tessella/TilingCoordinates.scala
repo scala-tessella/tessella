@@ -1,12 +1,13 @@
 package io.github.scala_tessella.tessella
 
-import Geometry.{AngleDegree, Box, LineSegment, Point, PointReal, Radian}
+import Geometry.{AngleDegree, Box, BoxReal, LineSegment, LineSegmentReal, Point, PointReal, Radian}
 import Geometry.Radian.TAU_2
 import Topology.{Edge, Node}
 import utility.Utils.{mapValues2, toCouple}
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO, startAt}
-
+import spire.math.Real
 import spire.syntax.isReal.partialOrderOps
+import spire.compat.ordering
 
 import scala.annotation.tailrec
 
@@ -137,12 +138,18 @@ object TilingCoordinates:
     /** Creates a `LineSegment` of the given coordinates */
     def toSegment(coords: Coords): LineSegment =
       LineSegment(coords(edge.lesserNode), coords(edge.greaterNode))
+      
+    def toSegmentReal(coords: CoordsReal): LineSegmentReal =
+      LineSegmentReal(coords(edge.lesserNode), coords(edge.greaterNode))
 
   extension (edges: List[Edge])
 
     /** Creates a sequence of `LineSegment` of the given coordinates */
     def toSegments(coords: Coords): List[LineSegment] =
       edges.map(_.toSegment(coords))
+
+    def toSegmentsReal(coords: CoordsReal): List[LineSegmentReal] =
+      edges.map(_.toSegmentReal(coords))
 
     /** Creates a bounding `Box` containing all edges with the given coordinates
      *
@@ -157,3 +164,13 @@ object TilingCoordinates:
       val ys: List[Double] =
         points.map(_.y)
       Box(xs.min - enlargement, xs.max + enlargement, ys.min - enlargement, ys.max + enlargement)
+
+    def toBoxReal(coords: CoordsReal, enlargement: Real = 0.0): BoxReal =
+      val points: List[PointReal] =
+        edges.nodes.map(coords)
+      val xs: List[Real] =
+        points.map(_.x)
+      val ys: List[Real] =
+        points.map(_.y)
+      BoxReal(xs.min - enlargement, xs.max + enlargement, ys.min - enlargement, ys.max + enlargement)
+

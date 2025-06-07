@@ -40,6 +40,9 @@ object Geometry extends Accuracy:
     def toRadians: Real =
       d * Real.pi / 180
 
+    def inverted: AngleDegree =
+      -d
+
     @targetName("plusDegree")
     def +(that: AngleDegree): AngleDegree =
       d + that
@@ -318,6 +321,10 @@ object Geometry extends Accuracy:
         Real.atan2(dy, dx) * Real(180) / Real.pi
       AngleDegree(angleDegreesReal.toRational)
 
+    /** Checks if the given point is approximately equal to one of the two edges of the line segment */
+    def containsAtEdges(point: PointReal): Boolean =
+      point.almostEquals(point1) || point.almostEquals(point2)
+
     /**
      * Checks if this line segment intersects with another line segment.
      * Intersection includes endpoints touching.
@@ -360,6 +367,14 @@ object Geometry extends Accuracy:
       if o4 == 0 && PointReal.onSegment(p2, q1, q2) then return true
 
       false // Segments do not intersect
+
+    /** Checks if intersecting with another segment, without touching the edge points */
+    def lesserIntersects(that: LineSegmentReal): Boolean =
+      this.intersects(that) && !(this.containsAtEdges(that.point1) || this.containsAtEdges(that.point2))
+
+    /** Checks if at least one endpoint is contained in the given box */
+    def hasEndpointIn(box: BoxReal): Boolean =
+      box.contains(point1) || box.contains(point2)
 
   /** Line segment, defined as the set of points located between the two end points. */
   case class LineSegment(point1: Point, point2: Point):
@@ -445,6 +460,12 @@ object Geometry extends Accuracy:
     def hasEndpointIn(box: Box): Boolean =
       box.contains(point1) || box.contains(point2)
 
+  extension (lines: Iterable[LineSegmentReal])
+
+    /** Checks if the two sequences of segments are intersecting */
+    def lesserIntersectsReal(other: Iterable[LineSegmentReal]): Boolean =
+      lines.exists(line => other.exists(line.lesserIntersects))
+
   extension (lines: Iterable[LineSegment])
 
     /** Checks if sequentially almost equal to another sequence */
@@ -472,6 +493,23 @@ object Geometry extends Accuracy:
       x1 - x0
 
     def height: Double =
+      y1 - y0
+
+  case class BoxReal(x0: Real, x1: Real, y0: Real, y1: Real):
+
+    def contains(point: PointReal): Boolean =
+      if point.x < x0 then false
+      else if point.y < y0 then false
+      else if point.x > x1 then false
+      else !(point.y > y1)
+
+    def enlarge(r: Real): BoxReal =
+      BoxReal(x0 - r, x1 + r, y0 - r, y1 + r)
+
+    def width: Real =
+      x1 - x0
+
+    def height: Real =
       y1 - y0
 
   class SimplePolygonReal(vertices: List[PointReal]):
@@ -533,15 +571,15 @@ object Geometry extends Accuracy:
         if i1 > i2 + 1 && i1 != (if i2 == 0 then length else i2) - 1
       yield (i1, i2)
 
-    /** Checks if the polygon is self-intersecting */
-    def isSelfIntersecting: Boolean =
-      edgesCombinations.exists((i1, i2) => edges(i1).intersects(edges(i2)))
-
-    /** Filters the intersecting sides */
-    def intersectingSides: Iterator[(LineSegment, LineSegment)] =
-      edgesCombinations
-        .filter((i1, i2) => edges(i1).intersects(edges(i2)))
-        .map((i1, i2) => (edges(i1), edges(i2)))
+//    /** Checks if the polygon is self-intersecting */
+//    def isSelfIntersecting: Boolean =
+//      edgesCombinations.exists((i1, i2) => edges(i1).intersects(edges(i2)))
+//
+//    /** Filters the intersecting sides */
+//    def intersectingSides: Iterator[(LineSegment, LineSegment)] =
+//      edgesCombinations
+//        .filter((i1, i2) => edges(i1).intersects(edges(i2)))
+//        .map((i1, i2) => (edges(i1), edges(i2)))
 
   /** Represents a regular polygon. */
   class RegularPolygon2D(vertices: List[Point]) extends SimplePolygon(vertices):

@@ -120,6 +120,25 @@ object TilingGrowth:
             (cumulativeCoords, nextNode, acc + orientedAngle + TAU_2)
         })._1
 
+    private def toCoordsReal(node: Node, polygon: Polygon, coords: CoordsReal, startFromBefore: Boolean = true): CoordsReal =
+      if pathNodes.diff(coords.keys.toList).isEmpty then
+        coords
+      else
+        val startingAngle: AngleDegree =
+          coords(node).angleTo(coords(pathNodes.head))
+        val angle: AngleDegree =
+          polygon.alphaDegree
+        //          Polygon(nodes.toNodes.size + 1).alpha
+        val orientedAngle: AngleDegree =
+          if startFromBefore then angle else angle.inverted
+        pathNodes.foldLeft((coords, node, startingAngle))({
+          case ((accCoords, currentNode, acc), nextNode) =>
+            val cumulativeCoords: CoordsReal =
+              if accCoords.contains(nextNode) then accCoords
+              else accCoords + (nextNode -> accCoords(currentNode).plusPolarUnit(acc))
+            (cumulativeCoords, nextNode, acc + orientedAngle + AngleDegree(180))
+        })._1
+
   extension (tiling: Tiling)
 
     private def combinedOrdering[T](orderings: List[Ordering[T]]): Ordering[T] =
@@ -202,6 +221,53 @@ object TilingGrowth:
             tiling.perimeter.toRingEdges.toList.withoutNodes(List(node))
               .toSegments(tiling.perimeterCoords).filter(_.hasEndpointIn(enlargedBox))
           if lines.lesserIntersects(perimeterLines) then
+            Left((tiling.graphEdges ++ newEdges, _.invalidIntersectionErrMsg))
+          else
+            Right(newEdges)
+
+    // check that new edges don't touch or cross the perimeter
+    private def spatialCheckNew(node: Node,
+                             polygon: Polygon,
+                             pathNodes: Vector[Node],
+                             end: Node,
+                             newEdges: List[Edge],
+                             startFromBefore: Boolean): Either[GrowthLeft, List[Edge]] =
+
+      def perimeterCoordsRealAt(node1: Node, node2: Node): CoordsReal =
+        tiling.perimeterCoordsReal.filter({ case (k, _) => k.equals(node1) || k.equals(node2) })
+
+      val start: Node =
+        pathNodes.head
+      val beforeStart: Node =
+        getBeforeStart(start, startFromBefore)
+      val newCoordsReal: CoordsReal =
+        if pathNodes.size < 2 then
+          Map()
+        else
+          pathNodes
+            .toCoordsReal(
+              beforeStart,
+              polygon,
+              perimeterCoordsRealAt(beforeStart, start),
+              startFromBefore
+            )
+            .filter((n, _) => n >= pathNodes(1))
+      newCoordsReal
+        .filter((_, point) => tiling.perimeterCoordsReal.values.exists(_.almostEquals(point)))
+        .toList match
+        case _ :: _ =>
+          Left((tiling.graphEdges ++ newEdges, _.invalidVertexCoordsErrMsg))
+        case Nil =>
+          val newEdgesCoords: CoordsReal =
+            newCoordsReal ++ perimeterCoordsRealAt(end, start)
+          val lines: List[LineSegmentReal] =
+            newEdges.toSegmentsReal(newEdgesCoords)
+          val enlargedBox: BoxReal =
+            newEdges.toBoxReal(newEdgesCoords, 1.0)
+          val perimeterLines: List[LineSegmentReal] =
+            tiling.perimeter.toRingEdges.toList.withoutNodes(List(node))
+              .toSegmentsReal(tiling.perimeterCoordsReal).filter(_.hasEndpointIn(enlargedBox))
+          if lines.lesserIntersectsReal(perimeterLines) then
             Left((tiling.graphEdges ++ newEdges, _.invalidIntersectionErrMsg))
           else
             Right(newEdges)
