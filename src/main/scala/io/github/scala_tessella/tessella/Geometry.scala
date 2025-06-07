@@ -372,6 +372,65 @@ object Geometry extends Accuracy:
     def lesserIntersects(that: LineSegmentReal): Boolean =
       this.intersects(that) && !(this.containsAtEdges(that.point1) || this.containsAtEdges(that.point2))
 
+    /** Finds the intersection point with another line segment.
+     * Returns None if segments do not intersect, are parallel, or are collinear
+     * (overlapping collinear segments are not handled here as a single point).
+     */
+    def intersection(that: LineSegmentReal): Option[PointReal] =
+      val p1 = this.point1
+      val q1 = this.point2
+      val p2 = that.point1
+      val q2 = that.point2
+
+      val denominator = this.dx * that.dy - this.dy * that.dx
+
+      if denominator == Real(0) then
+        // Lines are parallel or collinear.
+        // Check if they intersect (i.e., touch or overlap)
+        if this.intersects(that) then
+          // Check for endpoint touching cases when collinear
+          val o1_ccw_val = PointReal.ccw(p1, q1, p2)
+          val o2_ccw_val = PointReal.ccw(p1, q1, q2)
+          val o1_signum = signum(o1_ccw_val)
+          val o2_signum = signum(o2_ccw_val)
+
+          if o1_signum == 0 && o2_signum == 0 then // Both endpoints of `that` segment are collinear with `this` segment.
+            // Check if any endpoint of one segment is an endpoint of the other AND lies on both segments
+            if (p1.almostEquals(p2) && PointReal.onSegment(p1, p2, q1) && PointReal.onSegment(p2, p1, q2))
+              || (p1.almostEquals(q2) && PointReal.onSegment(p1, q2, q1) && PointReal.onSegment(q2, p1, p2)) then return Some(p1)
+            if (q1.almostEquals(p2) && PointReal.onSegment(q1, p2, p1) && PointReal.onSegment(p2, q1, q2))
+              || (q1.almostEquals(q2) && PointReal.onSegment(q1, q2, p1) && PointReal.onSegment(q2, q1, p2)) then return Some(q1)
+          // If they are collinear and overlap but not merely at a shared endpoint that is an endpoint of both,
+          // one of the below conditions might catch an endpoint of the overlap.
+
+          // Check if an endpoint of `that` segment lies on `this` segment
+          if o1_signum == 0 && PointReal.onSegment(p1, p2, q1) then return Some(p2)
+          if o2_signum == 0 && PointReal.onSegment(p1, q2, q1) then return Some(q2)
+
+          // Check if an endpoint of `this` segment lies on `that` segment
+          val o3_ccw_val = PointReal.ccw(p2, q2, p1) // that, that, this.p1
+          val o4_ccw_val = PointReal.ccw(p2, q2, q1) // that, that, this.p2
+          if signum(o3_ccw_val) == 0 && PointReal.onSegment(p2, p1, q2) then return Some(p1)
+          if signum(o4_ccw_val) == 0 && PointReal.onSegment(p2, q1, q2) then return Some(q1)
+
+        None // Parallel non-intersecting, or collinear and non-touching/non-overlapping, or overlapping in a way not covered above
+      else
+        // Parameter t for this segment: P_intersect = p1 + t * (this.dx, this.dy)
+        val tNumerator = (p1.x - p2.x) * that.dy - (p1.y - p2.y) * that.dx
+        val t = -tNumerator / denominator // Corrected line: added negation to tNumerator or to the fraction
+
+        // Parameter u for that segment: P_intersect = p2 + u * (that.dx, that.dy)
+        // Corrected uNumerator:
+        val uNumerator = this.dx * (p1.y - p2.y) - this.dy * (p1.x - p2.x) // This uNumerator is correct
+        val u = uNumerator / denominator
+
+        if t >= Real(0) && t <= Real(1) && u >= Real(0) && u <= Real(1) then
+          val intersectX = p1.x + t * this.dx
+          val intersectY = p1.y + t * this.dy
+          Some(PointReal(intersectX, intersectY))
+        else
+          None // Lines intersect, but not on both segments
+
     /** Checks if at least one endpoint is contained in the given box */
     def hasEndpointIn(box: BoxReal): Boolean =
       box.contains(point1) || box.contains(point2)
