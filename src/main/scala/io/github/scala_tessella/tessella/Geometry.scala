@@ -251,7 +251,7 @@ object Geometry extends Accuracy:
       !sortedCouples.exists(almostEqualCouple)
 
     /** Filters all points couples that are not distinct in 2D space */
-    def almostEqualCouples: Iterator[(Point, Point)] =
+    def   almostEqualCouples: Iterator[(Point, Point)] =
       sortedCouples.filter(almostEqualCouple)
 
     /** Checks if sequentially almost equal to another sequence */
@@ -260,46 +260,81 @@ object Geometry extends Accuracy:
 
   extension (points: Seq[PointReal])
 
-   /**
+    /**
      * Checks if all PointReal instances in a collection are distinct based on the
      * `almostEquals` method (which uses an internally defined `epsilonReal`).
      *
      * @return `true` if no two points are almost equal, `false` otherwise.
-    */
-   def areAllDistinctApprox: Boolean = boundary[Boolean] { // Wrap in boundary
-     if points.length < 2 then
-       break(true)
+     */
+    def areAllDistinctApprox: Boolean = boundary[Boolean] { // Wrap in boundary
+      if points.length < 2 then
+        break(true)
 
-     // The cell width for the grid is based on the (positive) epsilon used for comparisons.
-     val cellWidth = epsilonReal
+      // The cell width for the grid is based on the (positive) epsilon used for comparisons.
+      val cellWidth = epsilonReal
 
-     val grid = mutable.HashMap[(Int, Int), mutable.ListBuffer[PointReal]]()
+      val grid = mutable.HashMap[(Int, Int), mutable.ListBuffer[PointReal]]()
 
-     for (point <- points)
-       // Determine the grid cell for the current point.
-       val cellX = (point.x / cellWidth).floor.toInt
-       val cellY = (point.y / cellWidth).floor.toInt
+      for (point <- points)
+        // Determine the grid cell for the current point.
+        val cellX = (point.x / cellWidth).floor.toInt
+        val cellY = (point.y / cellWidth).floor.toInt
 
-       // Check the 3x3 neighborhood (current cell and its 8 neighbors).
-       for (dx <- -1 to 1)
-         for (dy <- -1 to 1)
-           val neighborCellKey = (cellX + dx, cellY + dy)
-           grid.get(neighborCellKey) match
-             case Some(pointsInCell) =>
-               for (otherPoint <- pointsInCell)
-                 // The almostEquals method encapsulates the comparison logic
-                 // using the predefined epsilonReal.
-                 if point.almostEquals(otherPoint) then
-                   // If 'point' and 'otherPoint' are the exact same object reference
-                   // from the input list, they are correctly identified as "not distinct."
-                   break(false)
-             case None => // This neighboring cell is empty so far.
+        // Check the 3x3 neighborhood (current cell and its 8 neighbors).
+        for (dx <- -1 to 1)
+          for (dy <- -1 to 1)
+            val neighborCellKey = (cellX + dx, cellY + dy)
+            grid.get(neighborCellKey) match
+              case Some(pointsInCell) =>
+                for (otherPoint <- pointsInCell)
+                  // The almostEquals method encapsulates the comparison logic
+                  // using the predefined epsilonReal.
+                  if point.almostEquals(otherPoint) then
+                    // If 'point' and 'otherPoint' are the exact same object reference
+                    // from the input list, they are correctly identified as "not distinct."
+                    break(false)
+              case None => // This neighboring cell is empty so far.
 
-       // If no almost-equal point was found, add the current point to its cell in the grid.
-       grid.getOrElseUpdate((cellX, cellY), mutable.ListBuffer()) += point
+        // If no almost-equal point was found, add the current point to its cell in the grid.
+        grid.getOrElseUpdate((cellX, cellY), mutable.ListBuffer()) += point
 
-     true // All points processed, no almost-equal pairs found. This is the default value for the boundary.
-   }
+      true // All points processed, no almost-equal pairs found. This is the default value for the boundary.
+    }
+
+    def nonDistinctApprox: List[(PointReal, PointReal)] =
+      if points.length < 2 then
+        List.empty
+      else
+        val almostEqualPairs = mutable.ListBuffer[(PointReal, PointReal)]()
+        // The cell width for the grid is based on the (positive) epsilon used for comparisons.
+        val cellWidth = epsilonReal // epsilonReal is defined in the Geometry object
+
+        val grid = mutable.HashMap[(Int, Int), mutable.ListBuffer[PointReal]]()
+
+        for (point <- points)
+          // Determine the grid cell for the current point.
+          val cellX = (point.x / cellWidth).floor.toInt
+          val cellY = (point.y / cellWidth).floor.toInt
+
+          // Check the 3x3 neighborhood (current cell and its 8 neighbors).
+          for (dx <- -1 to 1)
+            for (dy <- -1 to 1)
+              val neighborCellKey = (cellX + dx, cellY + dy)
+              grid.get(neighborCellKey) match
+                case Some(pointsInCell) =>
+                  for (otherPoint <- pointsInCell) // 'otherPoint' is already in the grid, processed earlier
+                    if point.almostEquals(otherPoint) then
+                      // Found an almost-equal pair.
+                      // 'otherPoint' was processed before 'point', so we add (otherPoint, point)
+                      // to maintain a consistent order and avoid duplicate pairs like (B, A) if (A, B) is already found.
+                      almostEqualPairs += ((otherPoint, point))
+                case None => // This neighboring cell is empty or hasn't been created yet.
+
+          // Add the current point to its cell in the grid.
+          // This ensures it can be found by subsequent points during their neighborhood checks.
+          grid.getOrElseUpdate((cellX, cellY), mutable.ListBuffer()) += point
+
+        almostEqualPairs.toList
 
     private def almostEqualRealCouple: ((PointReal, PointReal)) => Boolean =
       _.almostEquals(_)

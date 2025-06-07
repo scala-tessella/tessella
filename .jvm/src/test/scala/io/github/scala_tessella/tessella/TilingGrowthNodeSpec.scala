@@ -365,7 +365,7 @@ class TilingGrowthNodeSpec extends AnyFlatSpec with Helper with should.Matchers 
     start.maybeGrowNode(Node(8), Vertex(Vector(Polygon(4))), BEFORE_PERIMETER) shouldBe
       Left(
         """Tiling must have all perimeter nodes at different cartesian coords:
-          | found invalid couple (11,10).
+          | found invalid couple (10,11).
           |See SVG:
           |<svg viewBox="-93.30127 -25.0 193.30127 186.60254" xmlns="http://www.w3.org/2000/svg">
           |  <g>

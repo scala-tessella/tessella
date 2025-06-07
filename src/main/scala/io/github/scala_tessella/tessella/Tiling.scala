@@ -361,9 +361,6 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
     edges.isEmpty || perimeterCoordsReal.values.toSeq.areAllDistinctApprox
 
   /** Perimeter 2D polygon */
-  lazy val perimeterSimplePolygon: SimplePolygon =
-    SimplePolygon(perimeterPoints.toList)
-
   lazy val perimeterSimplePolygonReal: SimplePolygonReal =
     SimplePolygonReal(perimeterPointsReal.toList)
 

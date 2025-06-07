@@ -96,17 +96,6 @@ object TilingErrorMessages:
         )
       )
 
-    private def perimeterNodeFromPoint(point: Point, strict: Boolean = false): Node =
-      tiling.perimeterCoords
-        .find((_, mappedPoint) =>
-          if !strict && point.almostEquals(Point(), ACCURACY) then
-            mappedPoint.almostEquals(point, ACCURACY)
-          else
-            mappedPoint == point
-        )
-        .map((node, _) => node)
-        .get
-
     private def perimeterNodeFromPointReal(point: PointReal, strict: Boolean = false): Node =
       tiling.perimeterCoordsReal
         .find((_, mappedPoint) =>
@@ -117,17 +106,27 @@ object TilingErrorMessages:
         )
         .map((node, _) => node)
         .get
-    
+
+    private def perimeterNodeFromPointReal(point: PointReal, excludedNode: Node): Node =
+      tiling.perimeterCoordsReal
+        .find((node, mappedPoint) =>
+           node != excludedNode && mappedPoint == point
+        )
+        .map((node, _) => node)
+        .get
+
     /** Error message for invalid tiling vertex coordinates, with SVG description */
     def invalidVertexCoordsErrMsg: String =
-      val pointCouples: List[(Point, Point)] =
-        tiling.perimeterPoints.almostEqualCouples.toList
+      val pointCouples: List[(PointReal, PointReal)] =
+        tiling.perimeterPointsReal.nonDistinctApprox
       val nodeCouples: List[(Node, Node)] =
-        pointCouples.map((p1, p2) => (perimeterNodeFromPoint(p1, true), perimeterNodeFromPoint(p2, true)))
+        pointCouples.map((p1, p2) =>
+          val node1: Node = perimeterNodeFromPointReal(p1, true)
+          (node1, perimeterNodeFromPointReal(p2, node1)))
       val svg: String =
         addInvalidPerimeterSVG(
           Description("Invalid touching vertices"),
-          intersectionsGroup(pointCouples.map(points => invalidNode(points._1)))
+          intersectionsGroup(pointCouples.map(points => invalidNode(Point(points._1.x.toDouble, points._1.y.toDouble))))
         )
       s"""Tiling must have all perimeter nodes at different cartesian coords:
        | found invalid ${formatCouples(nodeCouples)}.$svg""".stripMargin
