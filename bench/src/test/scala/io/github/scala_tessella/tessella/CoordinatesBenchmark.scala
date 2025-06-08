@@ -54,8 +54,8 @@ class CoordinatesBenchmark:
 
   @Benchmark
   def coord_original(): Coords =
-    if (tiling.graphEdges.isEmpty) Map.empty else tiling.coordinates
+    if (tiling.graphEdges.isEmpty) Map.empty else tiling.coordinatesOld
 
   @Benchmark
   def coord_alt(): Coords =
-    if (tiling.graphEdges.isEmpty) Map.empty else tiling.coordinatesAlt
+    if (tiling.graphEdges.isEmpty) Map.empty else tiling.coordinates

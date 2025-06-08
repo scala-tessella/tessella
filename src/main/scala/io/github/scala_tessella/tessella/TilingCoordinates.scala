@@ -22,7 +22,7 @@ object TilingCoordinates:
   extension (tiling: Tiling)
 
     /** Spatial coordinates of a [[Tiling]] */
-    def coordinates: Coords =
+    def coordinatesOld: Coords =
 
       @tailrec
       def loop(coords: Coords, polygons: List[tiling.PolygonPath]): Coords =
@@ -57,7 +57,7 @@ object TilingCoordinates:
         loop(startingCoords, tiling.orientedPolygons).flipVertically
 
   /** Spatial coordinates of a [[Tiling]] */
-    def coordinatesAlt: Coords =
+    def coordinates: Coords =
       if tiling.graphEdges.isEmpty then
         Map.empty
       else
@@ -92,16 +92,14 @@ object TilingCoordinates:
                   val alpha: Radian =
                     polygon.toPolygon.alpha
 
-                  var currentAngle = startingAngle
+                  var currentAngle = startingAngle // This is the angle of the known edge
                   // Iterate from the known edge to calculate other points
-                  // The startAt index needs to ensure we begin calculations from the known edge,
-                  // processing nodes in order around the polygon.
-                  // (index -1) is to get the node *before* the known edge to start the fold correctly.
-                  // drop(2) because the first two nodes of this reordered sequence are already known.
                   pairs.startAt(knownEdgeIndex - 1).drop(2).map(_.toCouple).foreach {
                     case (previousNode, newNode) =>
+                      // The angle must be updated for each segment traversal along the polygon's perimeter.
+                      // This new currentAngle is the angle of the segment (previousNode, newNode).
+                      currentAngle = currentAngle + TAU_2 - alpha
                       if coords.contains(previousNode) && !coords.contains(newNode) then
-                        currentAngle = currentAngle + TAU_2 - alpha
                         val newPoint = coords(previousNode).plusPolarUnit(currentAngle)
                         coords += (newNode -> newPoint)
                         if !nodesToExplore.contains(newNode) then // Avoid re-adding
