@@ -2,10 +2,61 @@ package io.github.scala_tessella.tessella
 
 import RegularPolygon.{Polygon, Vertex}
 import Tiling.pattern_4444
-import TilingGrowth.*
 import Topology.*
 
 object Outliers extends Helper:
+  
+  val all: List[Tiling] =
+    List(
+      p333333_4by4_reticulate,
+      p333333_grown_hexagon,
+      p4444_4by4_reticulate,
+      p4444_3by3_grown,
+      p666_4by4_reticulate,
+      p666_grown_hexagon,
+      p333333_triangle,
+      p666_triangle,
+      gonExperiment,
+      edges12Nodes8,
+      edges12Nodes8Similar,
+      closer,
+      pentagonGrown,
+      p488,
+      p4612,
+      p31212,
+      p3636,
+      p3464,
+      p33444,
+      p33434,
+      p33336,
+      p2x333333_33336,
+      p333333_2x3366_4x666,
+      p2x333333_2x33336_3366,
+      p333333_33336_3366_666,
+      uniform6,
+      uniform6Other,
+      earlyUniform3,
+      uniform10,
+      differentOrientations,
+      symmetryByAnglesFailing,
+      uniformTricky,
+      orientationTricky,
+      uniform5v1,
+      uniform5v2,
+      uniformityIssue,
+      uniformityIssue2,
+      uniformityIssue3,
+      uniformityIssue4,
+      uniformityIssue5,
+      uniformityIssue6,
+      chokedByTriangles,
+      triangleSquareInserted,
+      minimalComplexInnerPerimeter,
+      minimalTriangleInsertion,
+      minimalSquareInsertion,
+      troubledGrowthByFullVertex,
+      uniformityProblem
+    )
 
   lazy val p333333_4by4_reticulate: Tiling =
     Tiling.pattern_333333(4, 4).unsafe
