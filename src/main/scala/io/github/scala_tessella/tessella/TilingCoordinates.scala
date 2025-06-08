@@ -4,9 +4,10 @@ import Geometry.{Box, LineSegment, Point, Radian}
 import Geometry.Radian.TAU_2
 import Topology.{Edge, Node}
 import utility.Utils.{mapValues2, toCouple}
-
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO, startAt}
+
 import scala.annotation.tailrec
+import scala.collection.mutable
 
 /** Methods to help the spatial representation of a tiling */
 object TilingCoordinates:
@@ -21,15 +22,15 @@ object TilingCoordinates:
   extension (tiling: Tiling)
 
     /** Spatial coordinates of a [[Tiling]] */
-    def coordinates: Coords =
+    def coordinatesOld: Coords =
 
       @tailrec
       def loop(coords: Coords, polygons: List[tiling.PolygonPath]): Coords =
         polygons.find(_.toPolygonPathNodes.slidingO(2).exists(_.forall(node => coords.contains(node)))) match
           case None => coords
           case Some(polygon) =>
-            val pairs: List[Vector[Node]] =
-              polygon.toPolygonPathNodes.slidingO(2).toList
+            val pairs: Vector[Vector[Node]] =
+              polygon.toPolygonPathNodes.slidingO(2).toVector
             val index: Index =
               pairs.indexWhere(_.forall(node => coords.contains(node)))
             val startingAngle: Radian =
@@ -54,6 +55,61 @@ object TilingCoordinates:
         Map()
       else
         loop(startingCoords, tiling.orientedPolygons).flipVertically
+
+  /** Spatial coordinates of a [[Tiling]] */
+    def coordinates: Coords =
+      if tiling.graphEdges.isEmpty then
+        Map.empty
+      else
+        // Preprocessing: Create a map from Node to Polygons it belongs to
+        val nodeToPolygonsMap: Map[Node, List[tiling.PolygonPath]] =
+          tiling.orientedPolygons.foldLeft(Map.empty[Node, List[tiling.PolygonPath]].withDefaultValue(Nil)) { (acc, polygon) =>
+            polygon.toPolygonPathNodes.foldLeft(acc) { (mapAcc, node) =>
+              mapAcc + (node -> (polygon :: mapAcc(node)))
+            }
+          }
+
+        val coords: mutable.Map[Node, Point] = mutable.Map.from(startingCoords)
+        val nodesToExplore: mutable.Queue[Node] = mutable.Queue.from(startingCoords.keys)
+        val processedPolygons: mutable.Set[tiling.PolygonPath] = mutable.Set.empty
+
+        while nodesToExplore.nonEmpty do
+          val currentNode = nodesToExplore.dequeue()
+
+          nodeToPolygonsMap(currentNode).foreach { polygon =>
+            if !processedPolygons.contains(polygon) then
+              val polygonNodes = polygon.toPolygonPathNodes
+              // Find an edge in this polygon where both nodes have known coordinates
+              polygonNodes.slidingO(2).toVector.indexWhere(edgeNodes => edgeNodes.forall(coords.contains)) match
+                case -1 => // No known edge found yet for this polygon with the current currentNode
+                case knownEdgeIndex =>
+                  // A known edge is found, calculate coordinates for other nodes in this polygon
+                  val pairs: Vector[Vector[Node]] =
+                    polygonNodes.slidingO(2).toVector
+
+                  val startingAngle: Radian =
+                    coords(pairs(knownEdgeIndex)(0)).angleTo(coords(pairs(knownEdgeIndex)(1)))
+                  val alpha: Radian =
+                    polygon.toPolygon.alpha
+
+                  var currentAngle = startingAngle // This is the angle of the known edge
+                  // Iterate from the known edge to calculate other points
+                  pairs.startAt(knownEdgeIndex - 1).drop(2).map(_.toCouple).foreach {
+                    case (previousNode, newNode) =>
+                      // The angle must be updated for each segment traversal along the polygon's perimeter.
+                      // This new currentAngle is the angle of the segment (previousNode, newNode).
+                      currentAngle = currentAngle + TAU_2 - alpha
+                      if coords.contains(previousNode) && !coords.contains(newNode) then
+                        val newPoint = coords(previousNode).plusPolarUnit(currentAngle)
+                        coords += (newNode -> newPoint)
+                        if !nodesToExplore.contains(newNode) then // Avoid re-adding
+                          nodesToExplore.enqueue(newNode)
+                  }
+                  // Check if all nodes of the polygon are now in coords, if so, mark as processed
+                  if polygonNodes.forall(coords.contains) then
+                    processedPolygons.add(polygon)
+          }
+        coords.toMap.flipVertically
 
   extension (nodes: Vector[Node])
 
