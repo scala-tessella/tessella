@@ -425,9 +425,40 @@ class TopologySpec extends AnyFlatSpec with should.Matchers {
       5
   }
 
-  it can "be searched for the nodes connected to a give node" in {
+  it can "be searched for the nodes connected to a given node" in {
     sqrEdges.nodesConnectedTo(Node(1)) shouldEqual
       List(1, 2, 6, 7, 11, 12, 16, 17, 21, 22, 3, 8, 13, 18, 23, 4, 9, 14, 19, 24, 5, 10, 15, 20, 25)
+  }
+
+  it can "return an adjacency map" in {
+    sqrEdges.adjacencyMap shouldBe
+      Map(
+        5 -> Set(4, 10),
+        10 -> Set(5, 9, 15),
+        14 -> Set(19, 9, 13, 15),
+        20 -> Set(19, 25, 15),
+        1 -> Set(2, 6),
+        6 -> Set(1, 7, 11),
+        21 -> Set(16, 22),
+        9 -> Set(4, 8, 10, 14),
+        13 -> Set(18, 8, 12, 14),
+        2 -> Set(1, 3, 7),
+        17 -> Set(16, 18, 22, 12),
+        22 -> Set(17, 21, 23),
+        12 -> Set(17, 7, 11, 13),
+        7 -> Set(2, 6, 8, 12),
+        3 -> Set(2, 4, 8),
+        18 -> Set(17, 19, 23, 13),
+        16 -> Set(17, 21, 11),
+        11 -> Set(16, 6, 12),
+        23 -> Set(18, 22, 24),
+        8 -> Set(3, 7, 9, 13),
+        19 -> Set(18, 20, 24, 14),
+        4 -> Set(3, 5, 9),
+        15 -> Set(20, 10, 14),
+        24 -> Set(19, 23, 25),
+        25 -> Set(20, 24)
+      ).map({ case (k, v) => Node(k) -> v.map(Node(_)) })
   }
 
   it can "be searched for circular nodes" in {

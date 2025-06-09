@@ -522,3 +522,13 @@ object Topology:
     /** All sets of disconnected edges. */
     def disconnected: List[List[Edge]] =
       disconnectedNodes.map(withOnlyNodes)
+
+    /** Builds an adjacency map (node -> set of adjacent nodes) from a list of edges. */
+    def adjacencyMap: Map[Node, Set[Node]] =
+      val builder =
+        mutable.Map[Node, mutable.Set[Node]]()
+      edges.foreach { edge =>
+        builder.getOrElseUpdate(edge.lesserNode, mutable.Set.empty) += edge.greaterNode
+        builder.getOrElseUpdate(edge.greaterNode, mutable.Set.empty) += edge.lesserNode
+      }
+      builder.map { case (k, v) => k -> v.toSet }.toMap
