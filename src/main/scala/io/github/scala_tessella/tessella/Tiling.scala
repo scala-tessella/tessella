@@ -48,29 +48,19 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
       s"Invalid regular polygon path: node $node1 and node $node2 are connected internally"
 
     /* once checked that it is a ring, checks that is also a tiling polygon */
-    private def check(nodes: Vector[Node], sides: Int): PolygonPath =
-      val halfSize: Double =
-        sides / 2.0
-      val halfSizeFloored: Int =
-        halfSize.toInt
-      val pairs: Vector[(Node, Node)] =
-        if halfSize == halfSizeFloored then
-          val (firstHalf, secondHalf) = nodes.splitAt(2)
-          firstHalf.zip(secondHalf)
-        else
-          nodes.indices.map(index => (nodes(index), nodes.applyO(index + halfSizeFloored))).toVector
-      pairs.find((from, to) => edges.distance(from, to) < halfSizeFloored) match
-        case Some((from, to)) => throw new IllegalArgumentException(internalPathMsg(from, to))
-        case _                => nodes
+    private def check(nodes: Vector[Node]): PolygonPath =
+      if edges.isPolygonMinimal(nodes) then 
+        nodes
+      else 
+        edges.findPolygonInternalPath(nodes).get match
+          case (from, to) => throw new IllegalArgumentException(internalPathMsg(from, to))
 
     /** Creates a [[PolygonPath]] from a sequence of adjacent nodes ordered from start to end.
      *
      * @throws IllegalArgumentException if sequence don't represent the circular path formed by the vertices of a regular polygon of the [[Tiling]]
      */
     def apply(nodes: Vector[Node]): PolygonPath =
-      val sides: Int =
-        Polygon(nodes.size).toSides
-      check(Path.check(nodes, _.slidingO(2)), sides)
+      check(Path.check(nodes, _.slidingO(2)))
 
   extension (nodes: PolygonPath)
 

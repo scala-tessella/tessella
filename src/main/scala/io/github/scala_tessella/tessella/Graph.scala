@@ -433,29 +433,7 @@ class Graph(edges: List[Edge]):
    *  The approach is more brute force and could be quite slow if the maxLenght is set to 42, better if 12
    * */
   def tilingUnorientedPolygonsAlt(maxLength: Int): List[Vector[Node]] =
-    findSimpleCycles(maxLength).filter { cycleNodes =>
-      val sides = cycleNodes.length
-      if sides < 3 then
-        false // Polygons must have at least 3 sides.
-      else
-        // Create all distinct pairs of nodes from the cycle, along with their min distance on the cycle.
-        val nodePairsWithDistance = for {
-          i <- 0 until sides
-          j <- (i + 1) until sides // Ensures each pair is unique and j > i
-          diff = j - i
-          distCycle = Math.min(diff, sides - diff)
-        } yield (cycleNodes(i), cycleNodes(j), distCycle)
-
-        // A cycle is minimal if for ALL pairs of its nodes, the shortest path
-        // in the graph is not shorter than the path along the cycle's perimeter.
-        val isMinimal = nodePairsWithDistance.forall { case (node1, node2, distCycle) =>
-          // Fetch the shortest path distance between node1 and node2 in the overall graph.
-          val distGraph = edges.distance(node1, node2)
-          // If distGraph is shorter than distCycle, this cycle is not a minimal face.
-          distGraph >= distCycle
-        }
-        isMinimal
-    }
+    findSimpleCycles(maxLength).filter(edges.isPolygonMinimal)
 
   /** Finds all the oriented polygons composing the graph, it should always be defined if the graph is a [[Tiling]]
    *

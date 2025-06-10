@@ -537,3 +537,35 @@ object Topology:
         builder.getOrElseUpdate(edge.greaterNode, mutable.Set.empty) += edge.lesserNode
       }
       builder.map { case (k, v) => k -> v.toSet }.toMap
+
+    /** Computes all distinct pairs of nodes from the given polygon path in a tiling
+     *  along with their minimum distance on the cycle.
+     *
+     * @param polygonNodes a vector containing ordered nodes in a polygon cycle
+     */
+    private def nodePairsWithDistance(polygonNodes: Vector[Node]): IndexedSeq[(Node, Node, Int)] =
+      val sides = polygonNodes.length
+      for
+        i <- 0 until sides
+        j <- (i + 1) until sides // Ensures each pair is unique and j > i
+        diff = j - i
+        distCycle = Math.min(diff, sides - diff)
+      yield (polygonNodes(i), polygonNodes(j), distCycle)
+
+    /** Checks if a polygon path in a tiling is minimal, with no internal paths among its nodes
+     * 
+     * @param polygonNodes the polygon path, unchecked
+     */
+    def isPolygonMinimal(polygonNodes: Vector[Node]): Boolean =
+      nodePairsWithDistance(polygonNodes).forall { case (node1, node2, distCycle) =>
+        // The shortest path distance between node1 and node2 in the overall graph.
+        val distGraph = edges.distance(node1, node2)
+        // If distGraph is shorter than distCycle, this cycle is not a minimal face.
+        distGraph >= distCycle
+      }
+
+    def findPolygonInternalPath(polygonNodes: Vector[Node]): Option[(Node, Node)] =
+      nodePairsWithDistance(polygonNodes).find { case (node1, node2, distCycle) =>
+        val distGraph = edges.distance(node1, node2)
+        distGraph < distCycle
+      } map((node1, node2, _) => (node1, node2))
