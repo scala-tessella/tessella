@@ -34,9 +34,6 @@ object TilingUniformity:
     def isRotationOrReflectionWhereDefined(other: Options[A]): Boolean =
       other.rotationsAndReflections.exists(options.equalsWhereDefined)
 
-//    def findRotationOrReflectionWhereDefined(other: Options[A]): Option[Options[A]] =
-//      other.rotationsAndReflections.find(options.equalsWhereDefined)
-
     private def filterRotationOrReflectionWhereDefined(other: Options[A]): Iterator[Options[A]] =
       other.rotationsAndReflections.filter(options.equalsWhereDefined)
 
@@ -103,42 +100,48 @@ object TilingUniformity:
 
     private def toOrderedPolygons(polygons: List[tiling.PolygonEdges], acc: List[List[tiling.PolygonEdges]]): (List[tiling.PolygonEdges], Boolean) =
       if acc.isEmpty then
-        val startPerimeter: List[Edge] =
-          tiling.unorderedPerimeterEdges(polygons)()
-        val orderedEdges: List[Edge] =
-          tiling.RingPath.simpleFromEdges(startPerimeter).toRingEdges.toList
-        val isLoop: Boolean =
-          Vertex(polygons.toVector.map(_.size).map(Polygon(_))).isFull
-        (orderedEdges.map(edge => polygons.find(_.contains(edge)).get).distinct, isLoop)
+        orderInitialLayer(polygons)
       else
-        val innerPerimeter: List[Edge] =
-          acc.flatMap(_.flatten).filterUnique.toList
-        val threadNodes: List[Node] =
-          innerPerimeter.allDegrees.filter((_, degree) => isThread(degree)).keys.toList
-        val disconnectedInnerPerimeters: List[List[Edge]] =
-          innerPerimeter.withNodes(threadNodes).disconnected
-        val largestInnerPerimeterChunk: List[Edge] =
-          disconnectedInnerPerimeters.maxBy(_.size)
-        val isLoop: Boolean =
-          disconnectedInnerPerimeters.size == 1 && innerPerimeter.diff(polygons.flatten).isEmpty
-        val all: List[tiling.PolygonEdges] =
-          polygons.filter(tiling.hasSharedSidesWith(_)(largestInnerPerimeterChunk))
-        val partialEdges: List[Edge] =
-          all.flatten.disconnected.maxByOption(_.size).getOrElse(Nil)
-        val partialPolygons: List[tiling.PolygonEdges] =
-          polygons.filter(tiling.hasSharedSidesWith(_)(partialEdges))
-        val partialPerimeter: List[Edge] =
-          (tiling.unorderedPerimeterEdges(partialPolygons)() ++ innerPerimeter).filterNotUnique.toList
-        val orderedEdges: List[Edge] =
-          if isLoop then
-            tiling.RingPath.simpleFromEdges(partialPerimeter).toRingEdges.toList
-          else
-            tiling.Path.simpleFrom(partialPerimeter).toPathEdges.toList
-        val orderedPolygons: List[tiling.PolygonEdges] =
-          orderedEdges.map(edge => partialPolygons.find(_.contains(edge)).get)
-        val orderedTailedPolygons: List[tiling.PolygonEdges] =
-          if isLoop then orderedPolygons else tailed(orderedPolygons)
-        (orderedTailedPolygons, isLoop)
+        orderSubsequentLayer(polygons, acc)
+
+    private def orderInitialLayer(polygons: List[tiling.PolygonEdges]): (List[tiling.PolygonEdges], Boolean) =
+      val startPerimeter: List[Edge] =
+        tiling.unorderedPerimeterEdges(polygons)()
+      val orderedEdges: List[Edge] =
+        tiling.RingPath.simpleFromEdges(startPerimeter).toRingEdges.toList
+      val isLoop: Boolean =
+        Vertex(polygons.toVector.map(_.size).map(Polygon(_))).isFull
+      (orderedEdges.map(edge => polygons.find(_.contains(edge)).get).distinct, isLoop)
+
+    private def orderSubsequentLayer(polygons: List[tiling.PolygonEdges], acc: List[List[tiling.PolygonEdges]]): (List[tiling.PolygonEdges], Boolean) =
+      val innerPerimeter: List[Edge] =
+        acc.flatMap(_.flatten).filterUnique.toList
+      val threadNodes: List[Node] =
+        innerPerimeter.allDegrees.filter((_, degree) => isThread(degree)).keys.toList
+      val disconnectedInnerPerimeters: List[List[Edge]] =
+        innerPerimeter.withNodes(threadNodes).disconnected
+      val largestInnerPerimeterChunk: List[Edge] =
+        disconnectedInnerPerimeters.maxBy(_.size)
+      val isLoop: Boolean =
+        disconnectedInnerPerimeters.size == 1 && innerPerimeter.diff(polygons.flatten).isEmpty
+      val all: List[tiling.PolygonEdges] =
+        polygons.filter(tiling.hasSharedSidesWith(_)(largestInnerPerimeterChunk))
+      val partialEdges: List[Edge] =
+        all.flatten.disconnected.maxByOption(_.size).getOrElse(Nil)
+      val partialPolygons: List[tiling.PolygonEdges] =
+        polygons.filter(tiling.hasSharedSidesWith(_)(partialEdges))
+      val partialPerimeter: List[Edge] =
+        (tiling.unorderedPerimeterEdges(partialPolygons)() ++ innerPerimeter).filterNotUnique.toList
+      val orderedEdges: List[Edge] =
+        if isLoop then
+          tiling.RingPath.simpleFromEdges(partialPerimeter).toRingEdges.toList
+        else
+          tiling.Path.simpleFrom(partialPerimeter).toPathEdges.toList
+      val orderedPolygons: List[tiling.PolygonEdges] =
+        orderedEdges.map(edge => partialPolygons.find(_.contains(edge)).get)
+      val orderedTailedPolygons: List[tiling.PolygonEdges] =
+        if isLoop then orderedPolygons else tailed(orderedPolygons)
+      (orderedTailedPolygons, isLoop)
 
     private def outerOrderedPolygonsFrom(origins: List[Node], isStrict: Boolean = true): Map[Node, List[(List[tiling.PolygonEdges], Boolean)]] =
       tiling.outerFrom(origins, toOrderedPolygons, isStrict)
@@ -175,6 +178,81 @@ object TilingUniformity:
     def uniformity: Int =
       groupUniforms.size
 
+    private def completeUniformityByPolygons(
+                                              uni: Map[Node, VertexIndices],
+                                              excluded: List[tiling.PolygonPath],
+                                              polygonReferences: List[Vector[Option[VertexIndices]]]
+                                            ): Option[Either[tiling.PolygonPath, (Map[Node, VertexIndices], List[tiling.PolygonPath])]] =
+      val partialPolygons: List[tiling.PolygonPath] =
+        tiling.orientedPolygons
+          .filterNot(excluded.contains)
+          .filterNot(_.toPolygonPathNodes.forall(uni.contains))
+
+      @tailrec
+      def findPathByGap(gap: Int): Option[tiling.PolygonPath] =
+        partialPolygons.find(_.toPolygonPathNodes.count(!uni.contains(_)) == gap) match
+          case None if gap == 5 => None
+          case None             => findPathByGap(gap + 1)
+          case some             => some
+
+      findPathByGap(1) match
+        case Some(path) =>
+          val nodes = path.toPolygonPathNodes
+          val polygonVertices = nodes.map(uni.get)
+          polygonReferences.filter(polygonVertices.isRotationOrReflectionWhereDefined) match
+            case reference :: Nil =>
+              polygonVertices.filterRotationOrReflectionWhereDefined(reference).toList.distinct match
+                case one :: Nil =>
+                  val result: Map[Node, VertexIndices] =
+                    nodes.indices.filter(index => polygonVertices(index).isEmpty).map(index => nodes(index) -> one(index).get).toMap
+                  val nowIncluded: List[tiling.PolygonPath] =
+                    result.keys.flatMap(node => tiling.orientedPolygons.filter(_.toPolygonPathNodes.contains(node))).toList.distinct
+                  Some(Right(uni ++ result, nowIncluded))
+                case _ => Some(Left(path))
+            case _ => Some(Left(path))
+        case None => None
+
+    private def completeUniformityByAdjacency(
+                                               uni: Map[Node, VertexIndices],
+                                               excludedNodes: List[Node],
+                                               referencedIndices: List[VertexIndices],
+                                               adjacentReferences: Map[VertexIndices, Vector[Option[VertexIndices]]]
+                                             ): Option[Either[Node, (Map[Node, VertexIndices], List[Node])]] =
+      val filteredUniforms: Map[Node, VertexIndices] =
+        uni
+          .filter((_, ref) => referencedIndices.contains(ref))
+          .filterNot((node, _) => excludedNodes.contains(node))
+
+      @tailrec
+      def findNodeByGap(gap: Int): Option[Node] =
+        filteredUniforms
+          .find((node, _) =>
+            tiling.orderedAdjacentNodes.get(node).exists(_.count(!uni.contains(_)) == gap)
+          ) match
+          case None if gap == 5 => None
+          case None             => findNodeByGap(gap + 1)
+          case Some(node, _)    => Some(node)
+
+      findNodeByGap(1) match
+        case Some(node) =>
+          val nodes = tiling.orderedAdjacentNodes(node)
+          val adjacentVertices = nodes.map(uni.get)
+          val reference = adjacentReferences(uni(node))
+          val filtered =
+            if tiling.perimeter.toRingNodes.contains(node) then
+              adjacentVertices.filterReflectionWhereDefined(reference)
+            else
+              adjacentVertices.filterRotationOrReflectionWhereDefined(reference)
+          filtered.toList.distinct match
+            case one :: Nil =>
+              val result: Map[Node, VertexIndices] =
+                nodes.indices.filter(index => adjacentVertices(index).isEmpty).map(index => nodes(index) -> one(index).get).toMap
+              val nowIncluded: List[Node] =
+                result.keys.flatMap(tiling.orderedAdjacentNodes.getOrElse(_, Nil)).toList.distinct
+              Some(Right(uni ++ result, nowIncluded))
+            case _ => Some(Left(node))
+        case None => None
+
     /** Expands the map searching for additional uniform nodes both by same polygons and same adjacent nodes */
     private def uniformityComplete(groupUniforms: Map[VertexIndices, IndexedSeq[Node]]): Map[Node, VertexIndices] =
       val nodeUniforms: Map[Node, VertexIndices] =
@@ -202,79 +280,30 @@ object TilingUniformity:
       val referencedIndices: List[VertexIndices] =
         adjacentReferences.keys.toList
 
-      def loop(uni: Map[Node, VertexIndices], excluded: List[tiling.PolygonPath], limit: Int): Map[Node, VertexIndices] =
-        val partialPolygons: List[tiling.PolygonPath] =
-          tiling.orientedPolygons
-            .filterNot(excluded.contains)
-            .filterNot(_.toPolygonPathNodes.forall(uni.contains))
+      object CompletionLoop:
+        @tailrec
+        def loop(uni: Map[Node, VertexIndices], excluded: List[tiling.PolygonPath], limit: Int): Map[Node, VertexIndices] =
+          completeUniformityByPolygons(uni, excluded, polygonReferences) match
+            case Some(Right((newUni, included))) =>
+              loop(newUni, excluded.diff(included), 0)
+            case Some(Left(path)) =>
+              loop(uni, path :: excluded, limit)
+            case None =>
+              if (limit == 2) uni
+              else loop3(uni, Nil, limit + 1)
 
         @tailrec
-        def loop2(gap: Int): Option[tiling.PolygonPath] =
-          partialPolygons.find(_.toPolygonPathNodes.count(!uni.contains(_)) == gap) match
-            case None if gap == 5 => None
-            case None => loop2(gap + 1)
-            case some => some
+        def loop3(uni: Map[Node, VertexIndices], excludedNodes: List[Node], limit: Int): Map[Node, VertexIndices] =
+          completeUniformityByAdjacency(uni, excludedNodes, referencedIndices, adjacentReferences) match
+            case Some(Right((newUni, included))) =>
+              loop3(newUni, excludedNodes.diff(included), 0)
+            case Some(Left(node)) =>
+              loop3(uni, node :: excludedNodes, limit)
+            case None =>
+              if (limit == 2) uni
+              else loop(uni, Nil, limit + 1)
 
-        loop2(1) match
-          case Some(path) =>
-            val nodes = path.toPolygonPathNodes
-            val polygonVertices = nodes.map(uni.get)
-            polygonReferences.filter(polygonVertices.isRotationOrReflectionWhereDefined) match
-              case reference :: Nil =>
-                polygonVertices.filterRotationOrReflectionWhereDefined(reference).toList.distinct match
-                  case one :: Nil =>
-                    val result: Map[Node, VertexIndices] =
-                      nodes.indices.filter(index => polygonVertices(index).isEmpty).map(index => nodes(index) -> one(index).get).toMap
-                    val nowIncluded: List[tiling.PolygonPath] =
-                      result.keys.flatMap(node => tiling.orientedPolygons.filter(_.toPolygonPathNodes.contains(node))).toList.distinct
-                    loop(uni ++ result, excluded.diff(nowIncluded), 0)
-                  case _ => loop(uni, path :: excluded, limit)
-              case _ => loop(uni, path :: excluded, limit)
-          case None =>
-
-            @tailrec
-            def loop3(uni2: Map[Node, VertexIndices], excludedNodes: List[Node], limit: Int): Map[Node, VertexIndices] =
-              val filteredUniforms: Map[Node, VertexIndices] =
-                uni2
-                  .filter((_, ref) => referencedIndices.contains(ref))
-                  .filterNot((node, _) => excludedNodes.contains(node))
-
-              @tailrec
-              def loop4(gap: Int): Option[Node] =
-                filteredUniforms
-                  .find((node, _) =>
-                    tiling.orderedAdjacentNodes.get(node).exists(_.count(!uni2.contains(_)) == gap)
-                  ) match
-                  case None if gap == 5 => None
-                  case None => loop4(gap + 1)
-                  case Some(node, _) => Some(node)
-
-              loop4(1) match
-                case Some(node) =>
-                  val nodes = tiling.orderedAdjacentNodes(node)
-                  val adjacentVertices = nodes.map(uni2.get)
-                  val reference = adjacentReferences(uni2(node))
-                  val filtered =
-                    if tiling.perimeter.toRingNodes.contains(node) then
-                      adjacentVertices.filterReflectionWhereDefined(reference)
-                    else
-                      adjacentVertices.filterRotationOrReflectionWhereDefined(reference)
-                  filtered.toList.distinct match
-                    case one :: Nil =>
-                      val result: Map[Node, VertexIndices] =
-                        nodes.indices.filter(index => adjacentVertices(index).isEmpty).map(index => nodes(index) -> one(index).get).toMap
-                      val nowIncluded: List[Node] =
-                        result.keys.flatMap(tiling.orderedAdjacentNodes.getOrElse(_, Nil)).toList.distinct
-                      loop3(uni2 ++ result, excludedNodes.diff(nowIncluded), 0)
-                    case _ => loop3(uni2, node :: excludedNodes, limit)
-                case None =>
-                  if limit == 2 then uni2
-                  else loop(uni2, Nil, limit + 1)
-
-            if limit == 2 then uni
-            else loop3(uni, Nil, limit + 1)
-
-      loop(nodeUniforms, Nil, 0)
+      CompletionLoop.loop(nodeUniforms, Nil, 0)
 
     /** Expanded association of leaves of a tree of minor full vertices and nodes.
      * 
