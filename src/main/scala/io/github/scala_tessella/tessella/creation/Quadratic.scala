@@ -34,10 +34,10 @@ trait Quadratic:
       maybeTiling
 
   val standardStrategy: FullStrategy =
-    (List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(HIGHER_ORDINAL), true)
+    FullStrategy(List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(HIGHER_ORDINAL), true)
 
   val standardStrategyFromSmaller: FullStrategy =
-    standardStrategy.copy(_3 = false)
+    standardStrategy.copy(biggestPolygonsFirst = false)
 
   /** Grows a (3*6) hexagon of given side
    *
@@ -70,7 +70,7 @@ trait Quadratic:
    */
   def pattern_33336(side: Int): Either[String, Tiling] =
     val strategy: FullStrategy =
-      (List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(NARROWER_ANGLE, LOWER_ORDINAL), false)
+      FullStrategy(List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(NARROWER_ANGLE, LOWER_ORDINAL), false)
     val sizes: List[Int] =
       List(1, 19, 37, 61, 103, 139, 193, 247, 319, 391, 469, 565)
     fullOfSide(FullVertex.s("(3₄.6)"), side, (i: Int) => sizes(i - 1), strategy)
@@ -83,7 +83,7 @@ trait Quadratic:
    */
   def pattern_33344(side: Int): Either[String, Tiling] =
     val strategy: FullStrategy =
-      (List(LOWEST_ORDINAL), List(BEFORE_PERIMETER), true)
+      FullStrategy(List(LOWEST_ORDINAL), List(BEFORE_PERIMETER), true)
     fullOfSide(FullVertex.s("(3₃.4₂)"), side, fromTerms((21, -27, 8), _), strategy)
 
   /** Grows a (3.4.6.4) hexoid of given side

@@ -55,34 +55,36 @@ object TilingGrowth:
 
 
   /** Strategy to find a perimeter node, an adjacent perimeter node and if biggest polygons first */
-  type FullStrategy = (List[PerimeterStrategy], List[OtherNodeStrategy], Boolean)
+  case class FullStrategy(
+    perimeterStrategies: List[PerimeterStrategy],
+    otherNodeStrategies: List[OtherNodeStrategy],
+    biggestPolygonsFirst: Boolean = true
+  )
 
   private def rawFullVertex[T](steps: Int,
                                fullVertex: FullVertex,
                                empty: T,
                                f: (Range, Either[String, Tiling], (Either[String, Tiling], Int) => Either[String, Tiling]) => T)
-                              (perimeterStrategies: List[PerimeterStrategy],
-                               otherNodeStrategies: List[OtherNodeStrategy],
-                               biggestPolygonsFirst: Boolean = true): T =
+                              (fullStrategy: FullStrategy): T =
     if steps < 1 then
       empty
     else
       val polygons: List[Polygon] =
         fullVertex.minor.vertex.toPolygons.toList.distinct
       val orderedPolygons: List[Polygon] =
-        if biggestPolygonsFirst then polygons.reverse else polygons
+        if fullStrategy.biggestPolygonsFirst then polygons.reverse else polygons
       val start: Either[String, Tiling] =
         Right(Tiling.fromPolygon(orderedPolygons.head))
       f(0 until steps - 1, start, (maybeTiling, step) =>
         maybeTiling.flatMap(t =>
           val sortedNodes: Vector[Node] =
-            t.sortedPerimeterNodes(perimeterStrategies *)
+            t.sortedPerimeterNodes(fullStrategy.perimeterStrategies *)
           val searchable: List[(Node, Polygon)] =
             sortedNodes.toList.flatMap(node => orderedPolygons.map(polygon => (node, polygon)))
           searchable
             .view
-            .filter((node, polygon) => t.isFillableBy(fullVertex, node, polygon, otherNodeStrategies))
-            .map((node, polygon) => t.maybeGrowNode(node, polygon, otherNodeStrategies *))
+            .filter((node, polygon) => t.isFillableBy(fullVertex, node, polygon, fullStrategy.otherNodeStrategies))
+            .map((node, polygon) => t.maybeGrowNode(node, polygon, fullStrategy.otherNodeStrategies *))
             .find(_.isRight)
             .getOrElse(Left(t.noFillablePerimeterEdgesErrMsg(polygons.head, step)))
         )
@@ -90,11 +92,11 @@ object TilingGrowth:
 
   /** Tries to grow a monogonal tiling of given size, from a full vertex, according to a strategy */
   def growFullVertex(size: Int, fullVertex: FullVertex, fullStrategy: FullStrategy): Either[String, Tiling] =
-    rawFullVertex(size, fullVertex, Right(Tiling.empty), _.foldLeft(_)(_)).tupled(fullStrategy)
+    rawFullVertex(size, fullVertex, Right(Tiling.empty), _.foldLeft(_)(_))(fullStrategy)
 
   /** Tries to grow a sequence of monogonal tilings up to given size, from a full vertex, according to a strategy */
   def scanFullVertex(steps: Int, fullVertex: FullVertex, fullStrategy: FullStrategy): IndexedSeq[Either[String, Tiling]] =
-    rawFullVertex(steps, fullVertex, IndexedSeq.empty, _.scanLeft(_)(_)).tupled(fullStrategy)
+    rawFullVertex(steps, fullVertex, IndexedSeq.empty, _.scanLeft(_)(_))(fullStrategy)
 
   /** Left side of an `Either`, when growth fails */
   type GrowthLeft = (List[Edge], Tiling => String)
@@ -102,7 +104,8 @@ object TilingGrowth:
   extension (pathNodes: Vector[Node])
 
     private def toCoords(node: Node, polygon: Polygon, coords: Coords, startFromBefore: Boolean = true): Coords =
-      if pathNodes.diff(coords.keys.toList).isEmpty then
+      //if pathNodes.diff(coords.keys.toList).isEmpty then
+      if pathNodes.forall(coords.contains) then
         coords
       else
         val startingAngle: Radian =

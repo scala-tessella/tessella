@@ -1,10 +1,10 @@
 package io.github.scala_tessella.tessella
 package creation
 
-import TilingGrowth.growFullVertex
+import TilingGrowth.{FullStrategy, growFullVertex}
 import TilingGrowth.OtherNodeStrategy.*
 import TilingGrowth.PerimeterStrategy.*
-import TilingSymmetry.{countSymmetries, countRotationalSymmetries}
+import TilingSymmetry.{countRotationalSymmetries, countSymmetries}
 
 import org.scalatest.*
 import org.scalatest.flatspec.*
@@ -48,7 +48,7 @@ class QuadraticSpec extends AnyFlatSpec with Helper with Quadratic with should.M
       growFullVertex(
         61,
         FullVertex.p(3, 3, 3, 3, 6),
-        (List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(NARROWER_ANGLE, LOWER_ORDINAL), false)
+        FullStrategy(List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(NARROWER_ANGLE, LOWER_ORDINAL), false)
       ).unsafe
     grown.countRotationalSymmetries shouldBe
       6
@@ -59,7 +59,7 @@ class QuadraticSpec extends AnyFlatSpec with Helper with Quadratic with should.M
       growFullVertex(
         38,
         FullVertex.p(3, 3, 3, 4, 4),
-        (List(LOWEST_ORDINAL), List(BEFORE_PERIMETER), true)
+        FullStrategy(List(LOWEST_ORDINAL), List(BEFORE_PERIMETER), true)
       ).unsafe
     grown.countSymmetries shouldBe
       2
