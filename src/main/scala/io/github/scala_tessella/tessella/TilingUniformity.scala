@@ -59,7 +59,10 @@ object TilingUniformity:
       val addingPartials: Map[List[Int], List[Node]] =
         withoutLoopInfo(partials.toList)
           .foldLeft(withExtra)({ case (acc, (partialNode, partialSizes)) =>
-            acc.toList.filter((sizes, _) => partialSizes.size < sizes.size && sizes.reflections.exists(_.containsSliceO(partialSizes))) match
+            val matching = acc.filter({ case (sizes, _) =>
+              partialSizes.size < sizes.size && sizes.reflections.exists(_.containsSliceO(partialSizes))
+            })
+            matching.toList match
               case Nil                           => acc.updated(Nil, partialNode :: acc(Nil))
               case (onlySizes, onlyNodes) :: Nil => acc.updated(onlySizes, partialNode :: onlyNodes)
               case _                             => acc
