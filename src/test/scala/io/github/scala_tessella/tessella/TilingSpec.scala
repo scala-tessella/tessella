@@ -381,7 +381,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
     val caught: IllegalArgumentException =
       intercept[IllegalArgumentException] { p3464.PolygonPath(notAPolygon) }
     caught.getMessage shouldBe
-      "Invalid regular polygon path: node 9 and node 1 are connected internally"
+      "Invalid regular polygon path: node 1 and node 9 are connected internally"
   }
 
   it must "fail if also not a regular polygon" in {
@@ -390,7 +390,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
         p3464.PolygonPath(Vector(9, 1, 2, 10, 27, 26, 25, 24).map(Node(_)))
       }
     caught.getMessage shouldBe
-      "Invalid regular polygon path: node 9 and node 2 are connected internally"
+      "Invalid regular polygon path: node 9 and node 10 are connected internally"
   }
 
   it must "not fail if created unsafe" in {

@@ -60,6 +60,7 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
      * @throws IllegalArgumentException if sequence don't represent the circular path formed by the vertices of a regular polygon of the [[Tiling]]
      */
     def apply(nodes: Vector[Node]): PolygonPath =
+      val polygon: Polygon = Polygon(nodes.size) // check if a valid size
       check(Path.check(nodes, _.slidingO(2)))
 
   extension (nodes: PolygonPath)
