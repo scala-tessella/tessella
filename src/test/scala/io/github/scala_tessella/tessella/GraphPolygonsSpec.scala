@@ -20,6 +20,46 @@ class GraphPolygonsSpec extends AnyFlatSpec with Helper with should.Matchers {
       )
   }
 
+  "A sqr3x3Reticulate" can "be divided in unoriented polygons" in {
+    p4444_3by3_grown.tilingUnorientedPolygons shouldBe
+      Option(
+        List(
+          Vector(1, 4, 3, 2), Vector(4, 5, 6, 1), Vector(6, 7, 8, 1),
+          Vector(3, 12, 11, 2), Vector(4, 15, 16, 5), Vector(15, 14, 3, 4),
+          Vector(12, 13, 14, 3), Vector(8, 9, 2, 1), Vector(11, 10, 9, 2))
+      )
+  }
+
+  it can "have listed all the simple cycles with maximum lenght 4 nodes" in {
+    p4444_3by3_grown.findSimpleCycles(4) shouldBe
+      List(
+        Vector(2, 3, 12, 11), Vector(1, 2, 3, 4), Vector(2, 9, 10, 11),
+        Vector(1, 4, 5, 6), Vector(1, 6, 7, 8), Vector(4, 5, 16, 15),
+        Vector(3, 12, 13, 14), Vector(1, 2, 9, 8), Vector(3, 4, 15, 14)
+      )
+  }
+
+  it can "have listed all the simple cycles with maximum lenght 6 nodes" in {
+    p4444_3by3_grown.findSimpleCycles(6) shouldBe
+      List(
+        Vector(1, 2, 11, 12, 3, 4), Vector(1, 4, 5, 6, 7, 8), Vector(1, 4, 5, 6), Vector(1, 4, 15, 16, 5, 6),
+        Vector(1, 4, 3, 2, 9, 8), Vector(4, 5, 16, 15), Vector(1, 2, 9, 8), Vector(3, 4, 15, 14),
+        Vector(2, 3, 14, 13, 12, 11), Vector(3, 4, 5, 16, 15, 14), Vector(2, 3, 12, 11, 10, 9),
+        Vector(1, 2, 3, 14, 15, 4), Vector(2, 3, 12, 11), Vector(1, 2, 3, 4), Vector(1, 2, 9, 8, 7, 6),
+        Vector(2, 9, 10, 11), Vector(3, 4, 15, 14, 13, 12), Vector(1, 6, 7, 8), Vector(1, 2, 11, 10, 9, 8),
+        Vector(3, 12, 13, 14), Vector(1, 2, 3, 4, 5, 6)
+      )
+  }
+
+  it can "have listed all the unoriented polygons with an alt method" in {
+    p4444_3by3_grown.tilingUnorientedPolygonsAlt(12) shouldBe
+      List(
+        Vector(1, 6, 7, 8), Vector(1, 4, 5, 6), Vector(4, 5, 16, 15),
+        Vector(2, 9, 10, 11), Vector(3, 4, 15, 14), Vector(2, 3, 12, 11),
+        Vector(1, 2, 3, 4), Vector(3, 12, 13, 14), Vector(1, 2, 9, 8)
+      )
+  }
+
   "A triHexOfSide3" can "be divided in oriented polygons" in {
     p333333_grown_hexagon.tilingOrientedPolygons shouldBe
       Option(
@@ -174,7 +214,9 @@ class GraphPolygonsSpec extends AnyFlatSpec with Helper with should.Matchers {
   }
 
   "An earlyUniform3" can "be divided in oriented polygons" in {
-    earlyUniform3.tilingOrientedPolygons shouldBe
+    val maybePolygons = earlyUniform3.tilingOrientedPolygons
+    maybePolygons.get.size shouldBe 74
+    maybePolygons shouldBe
       Option(
         List(
           Vector(57, 31, 14), Vector(57, 58, 59, 31), Vector(57, 55, 56, 63, 64, 58), Vector(62, 73, 63),
@@ -199,8 +241,36 @@ class GraphPolygonsSpec extends AnyFlatSpec with Helper with should.Matchers {
       )
   }
 
-  "an uniformityIssue" can "be divided in oriented polygons" in {
-    uniformityIssue.tilingOrientedPolygons shouldBe
+  it can "have listed all the unoriented polygons with an alt method" in {
+    val polygons = earlyUniform3.tilingUnorientedPolygonsAlt(12)
+    polygons.size shouldBe 74
+    polygons shouldBe
+      List(
+        Vector(61, 62, 73, 72, 71, 70), Vector(17, 18, 40, 44), Vector(18, 32, 40), Vector(30, 31, 59, 60),
+        Vector(92, 93, 94, 99), Vector(2, 10, 12, 11), Vector(15, 18, 32, 24), Vector(36, 37, 38, 48),
+        Vector(85, 90, 98, 95), Vector(4, 5, 22), Vector(9, 14, 57, 55), Vector(79, 80, 85, 90, 89, 83),
+        Vector(89, 94, 103), Vector(11, 15, 24), Vector(58, 59, 65), Vector(82, 83, 93), Vector(4, 16, 23, 22),
+        Vector(52, 56, 63, 62), Vector(1, 3, 4, 5), Vector(1, 2, 3), Vector(94, 99, 100, 101, 102, 103),
+        Vector(64, 69, 74), Vector(40, 41, 51, 44), Vector(6, 19, 46, 45), Vector(20, 21, 81, 82),
+        Vector(12, 13, 28, 27), Vector(69, 74, 76, 77, 78, 75), Vector(53, 61, 87), Vector(33, 34, 84, 81),
+        Vector(46, 54, 80), Vector(72, 73, 74, 76), Vector(45, 46, 54, 53, 52, 47), Vector(24, 25, 39, 32),
+        Vector(11, 12, 27, 26, 25, 24), Vector(32, 39, 43, 42, 41, 40), Vector(16, 17, 38, 37), Vector(52, 53, 61, 62),
+        Vector(21, 33, 81), Vector(10, 12, 13), Vector(47, 52, 56), Vector(55, 56, 63, 64, 58, 57), Vector(17, 38, 44),
+        Vector(31, 57, 58, 59), Vector(20, 79, 83, 82), Vector(23, 33, 34, 35, 36, 37), Vector(9, 10, 13, 14),
+        Vector(7, 8, 47, 45), Vector(1, 5, 6, 7), Vector(61, 70, 88, 87), Vector(85, 86, 95), Vector(2, 3, 15, 11),
+        Vector(14, 31, 57), Vector(8, 47, 56, 55), Vector(63, 64, 74, 73), Vector(5, 6, 19, 20, 21, 22),
+        Vector(62, 63, 73), Vector(19, 20, 79), Vector(58, 64, 69, 65), Vector(81, 82, 93, 92, 91, 84),
+        Vector(65, 66, 75, 69), Vector(53, 54, 86, 87), Vector(38, 44, 51, 50, 49, 48), Vector(83, 89, 94, 93),
+        Vector(8, 9, 55), Vector(86, 87, 88, 97, 96, 95), Vector(54, 80, 85, 86), Vector(3, 4, 16, 17, 18, 15),
+        Vector(19, 46, 80, 79), Vector(59, 60, 68, 67, 66, 65), Vector(1, 2, 10, 9, 8, 7),
+        Vector(13, 14, 31, 30, 29, 28), Vector(6, 7, 45), Vector(16, 23, 37), Vector(21, 22, 23, 33)
+      )
+  }
+
+  "An uniformityIssue" can "be divided in oriented polygons" in {
+    val maybePolygons = uniformityIssue.tilingOrientedPolygons
+    maybePolygons.get.size shouldBe 128
+    maybePolygons shouldBe
       Option(
         List(
           Vector(159, 171, 160), Vector(141, 165, 142),
@@ -246,6 +316,11 @@ class GraphPolygonsSpec extends AnyFlatSpec with Helper with should.Matchers {
           Vector(107, 106, 105, 104, 89, 88, 96, 83, 82, 110, 109, 108)
         )
       )
+  }
+
+  it can "have listed all the unoriented polygons with an alt method" in {
+    val polygons = uniformityIssue.tilingUnorientedPolygonsAlt(12)
+    polygons.size shouldBe 128
   }
 
   "The minimal tiling with a complex inner perimeter" can "be divided in oriented polygons" in {

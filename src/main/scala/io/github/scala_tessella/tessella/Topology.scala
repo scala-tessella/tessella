@@ -1,11 +1,11 @@
 package io.github.scala_tessella.tessella
 
 import utility.Utils.*
-
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO}
 
 import scala.annotation.{tailrec, targetName}
 import scala.collection.mutable
+import scala.math.Ordered.orderingToOrdered
 import scala.util.Try
 
 /** Methods for graph nodes and edges */
@@ -30,6 +30,11 @@ object Topology:
 
     def compare(node1: Node, node2: Node): Int =
       node1 compare node2
+
+  object NodeSeqOrdering extends Ordering[Seq[Node]]:
+
+    def compare(seq1: Seq[Node], seq2: Seq[Node]): Int =
+      seq1 compare seq2
 
   /** Nodes ordered according being before or after the set [[BeforeAfterOrdering.before]] node */
   class BeforeAfterOrdering(beforeNode: Node) extends Ordering[Node]:

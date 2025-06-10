@@ -1,13 +1,13 @@
 package io.github.scala_tessella.tessella
 
 import TilingCoordinates.*
-import Topology.{Degree, Edge, EdgesNodesSizeOrdering, EdgesSizeOrdering, Node, isFork, isThread}
+import Topology.{Degree, Edge, EdgesNodesSizeOrdering, EdgesSizeOrdering, Node, NodeOrdering, NodeSeqOrdering, isFork, isThread}
 import utility.Utils.{filterUnique, toCouple}
 import utility.UtilsOption.firstDefined
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, applyO, reflectAt, slidingO, startAt}
 
 import scala.annotation.tailrec
-import scala.collection.View
+import scala.collection.{View, mutable}
 import scala.util.Try
 
 /** Undirected graph with gonality >= 1 (no nodes outside the edges)
@@ -366,7 +366,8 @@ class Graph(edges: List[Edge]):
       .find((edge, third) => edges.filterNot(_ == edge).shortestPath(edge.lesserNode, edge.greaterNode, third).nonEmpty)
       .map((edge, third) => (edges.filterNot(_ == edge), List(third.head +: edge.nodes.toVector)))
 
-  /** Finds all the unoriented polygons composing the graph, it should always be defined if the graph is a [[Tiling]]
+  /** Finds all the unoriented polygons composing the graph; it should always be defined if the graph is a [[Tiling]]
+   *  The algorithm is a quite bizantine heuristic "pull", progressively peeling away perimeter polygons.
    *
    * @return a sequence of circular paths, each representing a polygon
    */
@@ -388,6 +389,73 @@ class Graph(edges: List[Edge]):
           case None                       => None
 
     loop(edges, Nil)
+
+  /** Returns all simple cycles up to maxLength (as node vectors, canonicalized and with direction normalized). */
+  def findSimpleCycles(maxLength: Int): List[RingPath] =
+    val adjacency: Map[Node, Set[Node]] = edges.adjacencyMap
+    val result = mutable.Set[Vector[Node]]()
+    val path = mutable.ArrayBuffer[Node]()
+    val blocked = mutable.Set[Node]()
+
+    /** Returns the lexicographically minimal rotation of a cycle or its reverse */
+    def canonicalCycle(cycle: Vector[Node]): Vector[Node] =
+      // Remove any repeated last(start) node
+      val simple = if cycle.head == cycle.last then cycle.dropRight(1) else cycle
+      val rotations = simple.indices.map(i => simple.drop(i) ++ simple.take(i))
+      val reversed = simple.reverse
+      val rotationsRev = reversed.indices.map(i => reversed.drop(i) ++ reversed.take(i))
+      (rotations ++ rotationsRev).min(NodeSeqOrdering)
+
+    def dfs(start: Node, current: Node, depth: Int): Unit =
+      if depth > maxLength then return
+      path.append(current)
+      blocked.add(current)
+      for (nbr <- adjacency.getOrElse(current, Set.empty))
+        if nbr == start && path.length >= 3 then
+          // Found a cycle
+          val cycle = canonicalCycle(path.toVector)
+          result.add(cycle)
+        else if !blocked.contains(nbr) && nbr > start then // prevents duplicate cycles
+          dfs(start, nbr, depth + 1)
+      path.remove(path.length - 1)
+      blocked.remove(current)
+
+    val nodes = adjacency.keys.toIndexedSeq.sorted(NodeOrdering)
+    for (i <- nodes.indices)
+      val start = nodes(i)
+      path.clear()
+      blocked.clear()
+      dfs(start, start, 1)
+
+    result.toList
+
+  /** An alternative to tilingUnorientedPolygons, based on a clearer "push" algorithm.
+   *  The approach is more brute force and could be quite slow if the maxLenght is set to 42, better if 12
+   * */
+  def tilingUnorientedPolygonsAlt(maxLength: Int): List[Vector[Node]] =
+    findSimpleCycles(maxLength).filter { cycleNodes =>
+      val sides = cycleNodes.length
+      if sides < 3 then
+        false // Polygons must have at least 3 sides.
+      else
+        // Create all distinct pairs of nodes from the cycle, along with their min distance on the cycle.
+        val nodePairsWithDistance = for {
+          i <- 0 until sides
+          j <- (i + 1) until sides // Ensures each pair is unique and j > i
+          diff = j - i
+          distCycle = Math.min(diff, sides - diff)
+        } yield (cycleNodes(i), cycleNodes(j), distCycle)
+
+        // A cycle is minimal if for ALL pairs of its nodes, the shortest path
+        // in the graph is not shorter than the path along the cycle's perimeter.
+        val isMinimal = nodePairsWithDistance.forall { case (node1, node2, distCycle) =>
+          // Fetch the shortest path distance between node1 and node2 in the overall graph.
+          val distGraph = edges.distance(node1, node2)
+          // If distGraph is shorter than distCycle, this cycle is not a minimal face.
+          distGraph >= distCycle
+        }
+        isMinimal
+    }
 
   /** Finds all the oriented polygons composing the graph, it should always be defined if the graph is a [[Tiling]]
    *
