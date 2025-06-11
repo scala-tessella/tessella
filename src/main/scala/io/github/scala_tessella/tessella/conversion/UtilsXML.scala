@@ -12,5 +12,5 @@ trait UtilsXML:
       elems.foldLeft(NodeBuffer())(_ &+ _)
 
   /** With set width and indentation */
-  val prettyPrinter: PrettyPrinter =
+  def prettyPrinter: PrettyPrinter =
     PrettyPrinter(2000, 2)

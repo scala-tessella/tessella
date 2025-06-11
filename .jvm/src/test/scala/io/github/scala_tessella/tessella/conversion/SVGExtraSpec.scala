@@ -9,7 +9,7 @@ import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
 
-class SVGExtraSpec extends AnyFlatSpec with Helper with should.Matchers {
+class SVGExtraSpec extends AnyFlatSpec with Helper with should.Matchers:
 
   "A tiling" can "be concentric" in {
     prettyPrinter.format(
@@ -127,5 +127,3 @@ class SVGExtraSpec extends AnyFlatSpec with Helper with should.Matchers {
         |  </metadata>
         |</svg>""".stripMargin
   }
-
-}
