@@ -421,18 +421,9 @@ object TilingGrowth:
         )
         .getOrElse(false)
 
-    /** Tries to create a simpler tiling by removing a node */
-    def maybeRemoveNode(node: Node): Either[String, Tiling] =
-      val removed: List[Edge] =
-        tiling.graphEdges.withoutNodes(List(node))
-//      val newEdges: List[Edge] =
-//        removed.map(edge =>
-//          Edge(edge.nodes.map({
-//            case hi if hi > node => Node(hi.toInt - 1)
-//            case lo              => lo
-//          }))
-//       )
-      Tiling.maybe(removed)
+    /** Tries to create a simpler tessellation by removing one or more nodes */
+    def maybeRemoveNodes(nodes: Node *): Either[String, Tiling] =
+      Tiling.maybe(tiling.graphEdges.withoutNodes(nodes.toList))
 
   /** Tries to create a tiling by growing by the same polygon for given steps */
   def maybePolygonGrow(polygon: Polygon, steps: Int): Either[String, Tiling] =

@@ -190,7 +190,7 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
 //  }
 
   val t: Tiling =
-    p4444_4by4_reticulate.maybeRemoveNode(Node(21)).flatMap(_.maybeRemoveNode(Node(5))).unsafe
+    p4444_4by4_reticulate.maybeRemoveNodes(Node(21), Node(5)).unsafe
 
   "A tiling" can "have two separate inner tilings" in {
     t.nestedTilings(isStrict = false) shouldBe
