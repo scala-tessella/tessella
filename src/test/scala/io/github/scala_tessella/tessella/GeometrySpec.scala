@@ -337,16 +337,6 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers:
       )
   }
 
-  it can "be aligned to the two start points" in {
-    coords.alignWithStart.almostEqualsMap(Map(
-      Node(1) -> Point(),
-      Node(2) -> Point(1.0, 0.0),
-      Node(3) -> Point(1.0, 1.0),
-      Node(4) -> Point(0.0, 1.0)
-    )) shouldBe
-      true
-  }
-
   val anEdge: Edge =
     1--2
 

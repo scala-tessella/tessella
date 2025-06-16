@@ -132,17 +132,10 @@ object TilingCoordinates:
 
     /** New coordinates guaranteeing that the third node of a [[Tiling]] has always a positive y value */
     def flipVertically: Coords =
-      coords.get(Node(3)) match
+      val sortedNodes = coords.keys.toVector.sorted(NodeOrdering)
+      coords.get(sortedNodes(2)) match
         case Some(point) if point.y < 0 => coords.mapValues2(_.flipVertically)
         case _                          => coords
-
-    /** New coordinates aligned with starting */
-    def alignWithStart: Coords =
-      (for
-        one <- coords.get(Node(1))
-        two <- coords.get(Node(2))
-      yield coords.mapValues2(_.alignWithStart(one, two)))
-        .map(_.flipVertically).getOrElse(coords)
 
   extension (edge: Edge)
 
