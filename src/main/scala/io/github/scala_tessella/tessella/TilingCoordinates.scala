@@ -2,7 +2,7 @@ package io.github.scala_tessella.tessella
 
 import Geometry.{Box, LineSegment, Point, Radian}
 import Geometry.Radian.TAU_2
-import Topology.{Edge, Node}
+import Topology.{Edge, Node, NodeOrdering}
 import utility.Utils.{mapValues2, toCouple}
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO, startAt}
 
@@ -15,13 +15,23 @@ object TilingCoordinates:
   /** Associations of node and spatial 2D coordinates */
   type Coords = Map[Node, Point]
 
-  /** Spatial coordinates for the first two nodes of a [[Tiling]] */
-  private val startingCoords: Coords =
-    Map(Node(1) -> Point(), Node(2) -> Point(1, 0))
+//  /** Spatial coordinates for the first two nodes of a [[Tiling]] */
+//  private val startingCoords: Coords =
+//    Map(Node(1) -> Point(), Node(2) -> Point(1, 0))
 
   extension (tiling: Tiling)
 
-    /** Spatial coordinates of a [[Tiling]] */
+    /** Spatial coordinates for the first two nodes of a [[Tiling]] */
+    private def getStartingCoords: Coords =
+      val sortedNodes = tiling.graphNodes.sorted(NodeOrdering)
+      if sortedNodes.size >= 2 then
+        Map(sortedNodes.head -> Point(), sortedNodes(1) -> Point(1, 0))
+      else if sortedNodes.nonEmpty then
+        Map(sortedNodes.head -> Point())
+      else
+        Map.empty
+
+  /** Spatial coordinates of a [[Tiling]] */
     def coordinatesOld: Coords =
 
       @tailrec
@@ -54,7 +64,7 @@ object TilingCoordinates:
       if tiling.graphEdges.isEmpty then
         Map()
       else
-        loop(startingCoords, tiling.orientedPolygons).flipVertically
+        loop(getStartingCoords, tiling.orientedPolygons).flipVertically
 
   /** Spatial coordinates of a [[Tiling]] */
     def coordinates: Coords =
@@ -69,8 +79,8 @@ object TilingCoordinates:
             }
           }
 
-        val coords: mutable.Map[Node, Point] = mutable.Map.from(startingCoords)
-        val nodesToExplore: mutable.Queue[Node] = mutable.Queue.from(startingCoords.keys)
+        val coords: mutable.Map[Node, Point] = mutable.Map.from(getStartingCoords)
+        val nodesToExplore: mutable.Queue[Node] = mutable.Queue.from(coords.keys)
         val processedPolygons: mutable.Set[tiling.PolygonPath] = mutable.Set.empty
 
         while nodesToExplore.nonEmpty do

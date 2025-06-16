@@ -30,7 +30,7 @@ class TilingGrowthSpec extends AnyFlatSpec with Helper with should.Matchers {
 
   "A reticulate of triangles" can "have a perimeter node removed" in {
     p333333_4by4_reticulate.maybeRemoveNode(Node(1)).getOrElse(triangle).toString shouldBe
-      "Tiling(1--2, 1--4, 1--5, 2--5, 3--4, 3--6, 3--7, 4--5, 4--7, 4--8, 5--8, 6--7, 6--9, 6--10, 7--8, 7--10, 7--11, 8--11, 9--10, 9--12, 9--13, 10--11, 10--13, 10--14, 11--14, 12--13, 13--14)"
+      "Tiling(2--3, 2--5, 2--6, 3--6, 4--5, 4--7, 4--8, 5--6, 5--8, 5--9, 6--9, 7--8, 7--10, 7--11, 8--9, 8--11, 8--12, 9--12, 10--11, 10--13, 10--14, 11--12, 11--14, 11--15, 12--15, 13--14, 14--15)"
   }
 
   it can "have an inner node removed" in {

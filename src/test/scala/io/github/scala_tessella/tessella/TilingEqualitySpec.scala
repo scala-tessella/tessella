@@ -197,10 +197,10 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
       List(
         List(
           List(
-            List(12--17, 17--18, 13--18, 12--13)
+            List(18--19, 14--19, 13--14, 13--18)
           ),
           List(
-            List(7--12, 6--7, 6--11, 11--12)
+            List(7--8, 7--12, 12--13, 8--13)
           )
         )
       )

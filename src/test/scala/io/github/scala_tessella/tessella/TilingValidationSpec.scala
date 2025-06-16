@@ -11,24 +11,7 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
 
   val tiling: Tiling = Tiling.fromPolygon(3)
 
-  "A Tiling" must "be compacted, all nodes labelled from 1 to next" in {
-    val interruptedEdges: List[Edge] =
-      List(1--2, 1--4, 2--4)
-    Tiling.maybe(interruptedEdges) shouldEqual
-      Left(
-        """Tiling not compacted, nodes should go uninterrupted from 1 to 3:
-          | found node 4.
-          |See DOT:
-          |graph{
-          |1 -- 2
-          |1 -- 4
-          |2 -- 4
-          |4 [color=red fontcolor=red]
-          |}""".stripMargin
-      )
-  }
-
-  it can "NOT have a node originating just one edge" in {
+  "A Tiling" can "NOT have a node originating just one edge" in {
     val oneDegree = tiling.graphEdges :+ 3--4
     Tiling.maybe(oneDegree) shouldEqual
       Left(
