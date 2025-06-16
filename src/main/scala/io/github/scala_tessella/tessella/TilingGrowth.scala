@@ -425,6 +425,6 @@ object TilingGrowth:
     def maybeRemoveNodes(nodes: Node *): Either[String, Tiling] =
       Tiling.maybe(tiling.graphEdges.withoutNodes(nodes.toList))
 
-  /** Tries to create a tiling by growing by the same polygon for given steps */
+  /** Tries to create a tessellation by growing by the same polygon for given steps */
   def maybePolygonGrow(polygon: Polygon, steps: Int): Either[String, Tiling] =
     fromPolygon(polygon).growByPolygon(steps - 1, polygon, List(NARROWEST_ANGLE, LOWEST_ORDINAL), List(HIGHER_ORDINAL))

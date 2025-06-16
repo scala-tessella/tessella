@@ -17,7 +17,7 @@ object Topology:
   /** Companion object for [[Node]] */
   object Node:
 
-    /** Create a [[Node]] from a `Int` */
+    /** Create a [[Node]] from an `Int` */
     def apply(ordinal: Int): Node =
       ordinal
 
@@ -87,7 +87,7 @@ object Topology:
   /** Companion object for [[Degree]] */
   object Degree:
 
-    /** Create a [[Degree]] from a `Int` */
+    /** Create a [[Degree]] from an `Int` */
     def apply(i: Int): Degree = i
 
   extension (deg: Degree)
@@ -244,6 +244,16 @@ object Topology:
     def stringify: String =
       edges.sorted(EdgeOrdering).map(_.stringify).mkString(", ")
 
+    /** Builds an adjacency map (node -> set of adjacent nodes) from a list of edges. */
+    def adjacencyMap: Map[Node, Set[Node]] =
+      val builder =
+        mutable.Map[Node, mutable.Set[Node]]()
+      edges.foreach { edge =>
+        builder.getOrElseUpdate(edge.lesserNode, mutable.Set.empty) += edge.greaterNode
+        builder.getOrElseUpdate(edge.greaterNode, mutable.Set.empty) += edge.lesserNode
+      }
+      builder.map { case (k, v) => k -> v.toSet }.toMap
+
     private def rawNodes: List[Node] =
       edges.flatMap(_.nodes)
 
@@ -258,6 +268,7 @@ object Topology:
     /** @return association of nodes and degrees */
     def allDegrees: Map[Node, Degree] =
       rawNodes.groupBySize.mapValues2(Degree(_))
+      //adjacencyMap.mapValues2(nodes => Degree(nodes.size))
 
     private def nodesWithDegree(f: Degree => Boolean): List[Node] =
       allDegrees.onlyWithDegree(f).keys.toList
@@ -506,6 +517,9 @@ object Topology:
           case _                                    => None
         case _ => None
 
+    def areContinuous: Boolean =
+      edges.size < 2 || maybePathNodes.isDefined
+
     /** All sets of disconnected nodes. */
     def disconnectedNodes: List[List[Node]] =
 
@@ -527,16 +541,6 @@ object Topology:
     /** All sets of disconnected edges. */
     def disconnected: List[List[Edge]] =
       disconnectedNodes.map(withOnlyNodes)
-
-    /** Builds an adjacency map (node -> set of adjacent nodes) from a list of edges. */
-    def adjacencyMap: Map[Node, Set[Node]] =
-      val builder =
-        mutable.Map[Node, mutable.Set[Node]]()
-      edges.foreach { edge =>
-        builder.getOrElseUpdate(edge.lesserNode, mutable.Set.empty) += edge.greaterNode
-        builder.getOrElseUpdate(edge.greaterNode, mutable.Set.empty) += edge.lesserNode
-      }
-      builder.map { case (k, v) => k -> v.toSet }.toMap
 
     /** Computes all distinct pairs of nodes from the given polygon path in a tiling
      *  along with their minimum distance on the cycle.
