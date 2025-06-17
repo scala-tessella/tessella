@@ -7,7 +7,7 @@ import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
 
-class TopologySpec extends AnyFlatSpec with should.Matchers {
+class TopologySpec extends AnyFlatSpec with should.Matchers:
 
   "A Node" can "be created as an opaque type" in {
     Node(1).toString shouldBe
@@ -522,4 +522,13 @@ class TopologySpec extends AnyFlatSpec with should.Matchers {
       )
   }
 
-}
+  "Edges" can "be checked for continuity" in {
+    List().areContinuous shouldBe
+      true
+    List(1--2).areContinuous shouldBe
+      true
+    List(1--2, 1--3).areContinuous shouldBe
+      true
+    List(1--2, 3--4).areContinuous shouldBe
+      false
+  }
