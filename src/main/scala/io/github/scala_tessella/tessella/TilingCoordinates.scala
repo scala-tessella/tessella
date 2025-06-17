@@ -23,13 +23,13 @@ object TilingCoordinates:
 
     /** Spatial coordinates for the first two nodes of a [[Tiling]] */
     private def getStartingCoords: Coords =
-      val sortedNodes = tiling.graphNodes.sorted(NodeOrdering)
-      if sortedNodes.size >= 2 then
-        Map(sortedNodes.head -> Point(), sortedNodes(1) -> Point(1, 0))
-      else if sortedNodes.nonEmpty then
-        Map(sortedNodes.head -> Point())
-      else
-        Map.empty
+      tiling.graphNodes.minOption(NodeOrdering) match
+        case Some(first) =>
+          Map(
+            first -> Point(),
+            tiling.graphEdges.adjacentTo(first).min(NodeOrdering) -> Point(1, 0)
+          )
+        case None => Map.empty
 
   /** Spatial coordinates of a [[Tiling]] */
     def coordinatesOld: Coords =
