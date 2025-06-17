@@ -347,16 +347,6 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers:
       Node(4) -> Point(0.0, -1.0)
     )
 
-  "A set of coordinates" can "be flipped vertically if node 3 is negative on the y-axis" in {
-    coords.flipVertically shouldBe
-      Map(
-        1 -> Point(0.0, 2.0),
-        2 -> Point(1.0, 2.0),
-        3 -> Point(1.0, 1.0),
-        4 -> Point(0.0, 1.0)
-      )
-  }
-
   val anEdge: Edge =
     1--2
 

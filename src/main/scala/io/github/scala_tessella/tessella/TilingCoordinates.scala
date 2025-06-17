@@ -51,10 +51,10 @@ object TilingCoordinates:
         val startingCoords: List[(Node, Point)] =
           anchors match
             case first :: second :: _ if tiling.graphEdges.contains(Edge(first._1, second._1))
-              && first._2.hasUnitDistanceTo(second._2) => List(first, second)
+              && first._2.hasUnitDistanceTo(second._2) => anchors.take(3)
             case _ => getStartingCoords
 
-        val coords: mutable.Map[Node, Point] = mutable.Map.from(startingCoords)
+        val coords: mutable.Map[Node, Point] = mutable.Map.from(startingCoords.take(2))
         val nodesToExplore: mutable.Queue[Node] = mutable.Queue.from(coords.keys)
         val processedPolygons: mutable.Set[tiling.PolygonPath] = mutable.Set.empty
 
