@@ -96,6 +96,12 @@ object Geometry extends Accuracy:
     def angleTo(other: Point): Radian =
       LineSegment(this, other).horizontalAngle
 
+    def distanceTo(other: Point): Double =
+      LineSegment(this, other).length
+      
+    def hasUnitDistanceTo(other: Point, accuracy: Double = ACCURACY): Boolean =
+      distanceTo(other).~=(1.0, accuracy)
+      
     /** New point moved to align with reference to two other points */
     def alignWithStart(first: Point, second: Point): Point =
       minus(first).rotate(Radian.TAU - first.angleTo(second))
@@ -182,6 +188,9 @@ object Geometry extends Accuracy:
 //    private def toLineSegment2D: LineSegment2D =
 //      LineSegment2D(point1.toPoint2D, point2.toPoint2D)
 
+    def length: Double =
+      Math.hypot(dx, dy)
+ 
     /** Checks if the given point is approximately equal to one of the two edges of the line segment */
     def containsAtEdges(point: Point): Boolean =
       point.almostEquals(point1, ACCURACY) || point.almostEquals(point2, ACCURACY)

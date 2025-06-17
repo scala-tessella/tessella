@@ -26,7 +26,7 @@ object TilingCoordinates:
       tiling.graphNodes.minOption(NodeOrdering) match
         case Some(first) =>
           Map(
-            first -> Point(),
+            first                                                 -> Point(),
             tiling.graphEdges.adjacentTo(first).min(NodeOrdering) -> Point(1, 0)
           )
         case None => Map.empty
@@ -67,7 +67,7 @@ object TilingCoordinates:
         loop(getStartingCoords, tiling.orientedPolygons).flipVertically
 
   /** Spatial coordinates of a [[Tiling]] */
-    def coordinates: Coords =
+    def coordinates(anchors: List[(Node, Point)] = Nil): Coords =
       if tiling.graphEdges.isEmpty then
         Map.empty
       else
@@ -79,7 +79,12 @@ object TilingCoordinates:
             }
           }
 
-        val coords: mutable.Map[Node, Point] = mutable.Map.from(getStartingCoords)
+        val coords: mutable.Map[Node, Point] =
+          anchors match
+            case first :: second :: _ if tiling.graphEdges.contains(Edge(first._1, second._1))
+              && first._2.hasUnitDistanceTo(second._2) => mutable.Map(first, second)
+            case _ => mutable.Map.from(getStartingCoords)
+
         val nodesToExplore: mutable.Queue[Node] = mutable.Queue.from(coords.keys)
         val processedPolygons: mutable.Set[tiling.PolygonPath] = mutable.Set.empty
 

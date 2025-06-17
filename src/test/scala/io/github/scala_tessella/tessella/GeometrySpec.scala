@@ -83,6 +83,22 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers:
       TAU_4
   }
 
+  it can "calculate the distance to another point" in {
+    point.distanceTo(Point(4.0, 3.0)) shouldBe 5.0
+  }
+
+  it can "check for unit distance to another point" in {
+    point.hasUnitDistanceTo(Point(2.0, -1.0)) shouldBe true
+  }
+
+  it can "check for an almost unit distance to another point" in {
+    point.hasUnitDistanceTo(Point(2.0000000000001, -1.0)) shouldBe true
+  }
+
+  it can "check for non-unit distance to another point" in {
+    point.hasUnitDistanceTo(Point(3.0, -1.0)) shouldBe false
+  }
+
   it can "be aligned to other two points" in {
     point.alignWithStart(Point(), Point(1.0, 0.0)).almostEquals(point, ACCURACY) shouldBe
       true
@@ -125,7 +141,11 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers:
   val sameOrigin: LineSegment =
     LineSegment(Point(), Point(3.0, 3.0))
 
-  "A LineSegment" can "intersect with another one (X shape)" in {
+  "A LineSegment" can "calculate its length" in {
+    LineSegment(Point(1, 2), Point(4, 6)).length shouldBe 5.0
+  }
+
+  it can "intersect with another one (X shape)" in {
     segment.intersects(intersecting) shouldBe true
     intersecting.intersects(segment) shouldBe true
     segment.intersection(intersecting).get.almostEquals(Point(0.5, -0.5)) shouldBe true
@@ -504,5 +524,3 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers:
     val p2 = Point(0.5, -1) // below
     Point.ccw(p0, p1, p2) shouldBe -1
   }
-
-

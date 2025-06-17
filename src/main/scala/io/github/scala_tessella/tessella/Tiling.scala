@@ -441,7 +441,7 @@ class Tiling private(edges: List[Edge]) extends Graph(edges) with Ordered[Tiling
 
   /** Associations of tiling node and spatial coordinate */
   lazy val coords: Coords =
-    this.coordinates
+    this.coordinates()
 
   private def polygonsAt(node: Node): List[PolygonPath] =
     orientedPolygons.filter(_.toPolygonPathNodes.contains(node))
