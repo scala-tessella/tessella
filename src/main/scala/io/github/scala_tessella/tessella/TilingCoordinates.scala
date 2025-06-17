@@ -27,7 +27,15 @@ object TilingCoordinates:
         case Some(first) => List(first -> Point(), tiling.graphEdges.adjacentTo(first).min(NodeOrdering) -> Point(1, 0))
         case None        => Nil
 
-  /** Spatial coordinates of a [[Tiling]] */
+  /** Spatial coordinates of a [[Tiling]]
+   *
+   * @param anchors pairs of node-point coords, if
+   *                - none: it will start building coords from origin and point 1,0
+   *                - two: if they represent an edge and have unit distance, it will start from them
+   *                - three: the additional third node, if found in the proposed point, will confirm that a vertical
+   *                  flip is not needed
+   * @return the coordinates, flipped if the calculated third node has a negative y coord
+   */
     def coordinates(anchors: List[(Node, Point)] = Nil): Coords =
       if tiling.graphEdges.isEmpty then
         Map.empty
@@ -86,7 +94,13 @@ object TilingCoordinates:
                   if polygonNodes.forall(coords.contains) then
                     processedPolygons.add(polygon)
           }
-        coords.toMap.flipVertically
+
+        val third: Node =
+          (startingCoords: @unchecked) match
+            case first :: second :: _ => tiling.graphEdges.adjacentTo(second._1).filterNot(_ == first._1).min(NodeOrdering)
+        coords.get(third) match
+          case Some(point) if point.y < 0 => coords.toMap.mapValues2(_.flipVertically)
+          case _                          => coords.toMap
 
   extension (nodes: Vector[Node])
 
@@ -94,15 +108,6 @@ object TilingCoordinates:
       nodes.scanLeft((Point(1, 0), TAU_2: Radian))({
         case ((point, acc), node) => (point.plusPolarUnit(acc), acc + angles(node) + TAU_2)
       }).map((point, _) => point).tail
-
-  extension (coords: Coords)
-
-    /** New coordinates guaranteeing that the third node of a [[Tiling]] has always a positive y value */
-    def flipVertically: Coords =
-      val sortedNodes = coords.keys.toVector.sorted(NodeOrdering)
-      coords.get(sortedNodes(2)) match
-        case Some(point) if point.y < 0 => coords.mapValues2(_.flipVertically)
-        case _                          => coords
 
   extension (edge: Edge)
 
