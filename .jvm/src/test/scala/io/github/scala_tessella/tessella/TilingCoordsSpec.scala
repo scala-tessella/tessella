@@ -3,6 +3,7 @@ package io.github.scala_tessella.tessella
 import Outliers.*
 import Geometry.*
 import RegularPolygon.{Polygon, Vertex}
+import TilingCoordinates.*
 import TilingGrowth.*
 import TilingGrowth.OtherNodeStrategy.BEFORE_PERIMETER
 import Topology.*
@@ -14,7 +15,31 @@ import org.scalatest.*
 import org.scalatest.flatspec.*
 import org.scalatest.matchers.*
 
-class TilingCoordsSpec extends AnyFlatSpec with should.Matchers {
+class TilingCoordsSpec extends AnyFlatSpec with Helper with should.Matchers {
+
+  "A square" can "have coords found without anchors" in {
+    square.coordinates().almostEqualsMap(
+      Map(
+        1 -> Point(),
+        2 -> Point(1, 0),
+        3 -> Point(1, 1),
+        4 -> Point(0, 1)
+      ).mapKeys(Node(_))
+    ) shouldBe
+      true
+  }
+
+  it can "have different coords found with anchors" in {
+    square.coordinates(List((Node(1), Point(10, 10)), (Node(4), Point(11, 10)))).almostEqualsMap(
+      Map(
+        1 -> Point(10, 10),
+        2 -> Point(10, 11),
+        3 -> Point(11, 11),
+        4 -> Point(11, 10)
+      ).mapKeys(Node(_))
+    ) shouldBe
+      true
+  }
 
   "A tiling made of triangles" can "return its coords" in {
     p333333_4by4_reticulate.coords.almostEqualsMap(
