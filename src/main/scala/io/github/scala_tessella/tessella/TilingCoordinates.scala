@@ -22,49 +22,10 @@ object TilingCoordinates:
   extension (tiling: Tiling)
 
     /** Spatial coordinates for the first two nodes of a [[Tiling]] */
-    private def getStartingCoords: Coords =
+    private def getStartingCoords: List[(Node, Point)] =
       tiling.graphNodes.minOption(NodeOrdering) match
-        case Some(first) =>
-          Map(
-            first                                                 -> Point(),
-            tiling.graphEdges.adjacentTo(first).min(NodeOrdering) -> Point(1, 0)
-          )
-        case None => Map.empty
-
-  /** Spatial coordinates of a [[Tiling]] */
-    def coordinatesOld: Coords =
-
-      @tailrec
-      def loop(coords: Coords, polygons: List[tiling.PolygonPath]): Coords =
-        polygons.find(_.toPolygonPathNodes.slidingO(2).exists(_.forall(node => coords.contains(node)))) match
-          case None => coords
-          case Some(polygon) =>
-            val pairs: Vector[Vector[Node]] =
-              polygon.toPolygonPathNodes.slidingO(2).toVector
-            val index: Index =
-              pairs.indexWhere(_.forall(node => coords.contains(node)))
-            val startingAngle: Radian =
-              coords(pairs(index)(0)).angleTo(coords(pairs(index)(1)))
-            val alpha: Radian =
-              polygon.toPolygon.alpha
-            val newCoords: Coords =
-              pairs.startAt(index - 1).drop(2).map(_.toCouple).foldLeft((coords, startingAngle))({
-                case ((cumulativeCoordinates, angle), (previous, node)) =>
-                  val newAngle: Radian =
-                    angle + TAU_2 - alpha
-                  val newCumulativeCoordinates: Coords =
-                    if cumulativeCoordinates.contains(node) then cumulativeCoordinates
-                    else cumulativeCoordinates + (node -> cumulativeCoordinates(previous).plusPolarUnit(newAngle))
-                  (newCumulativeCoordinates, newAngle)
-              })._1
-            val newPolygons: List[tiling.PolygonPath] =
-              polygons.diff(List(polygon)).filter(_.toPolygonPathNodes.exists(node => !newCoords.contains(node)))
-            loop(newCoords, newPolygons)
-
-      if tiling.graphEdges.isEmpty then
-        Map()
-      else
-        loop(getStartingCoords, tiling.orientedPolygons).flipVertically
+        case Some(first) => List(first -> Point(), tiling.graphEdges.adjacentTo(first).min(NodeOrdering) -> Point(1, 0))
+        case None        => Nil
 
   /** Spatial coordinates of a [[Tiling]] */
     def coordinates(anchors: List[(Node, Point)] = Nil): Coords =
@@ -79,12 +40,13 @@ object TilingCoordinates:
             }
           }
 
-        val coords: mutable.Map[Node, Point] =
+        val startingCoords: List[(Node, Point)] =
           anchors match
             case first :: second :: _ if tiling.graphEdges.contains(Edge(first._1, second._1))
-              && first._2.hasUnitDistanceTo(second._2) => mutable.Map(first, second)
-            case _ => mutable.Map.from(getStartingCoords)
+              && first._2.hasUnitDistanceTo(second._2) => List(first, second)
+            case _ => getStartingCoords
 
+        val coords: mutable.Map[Node, Point] = mutable.Map.from(startingCoords)
         val nodesToExplore: mutable.Queue[Node] = mutable.Queue.from(coords.keys)
         val processedPolygons: mutable.Set[tiling.PolygonPath] = mutable.Set.empty
 
