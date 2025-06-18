@@ -4,8 +4,6 @@ import utility.Utils.{compareElems, toCouple}
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO}
 
 import scala.math.Ordered.orderingToOrdered
-//import math.geom2d.Point2D
-//import math.geom2d.line.LineSegment2D
 
 import scala.annotation.targetName
 
@@ -194,7 +192,6 @@ object Geometry extends Accuracy:
       val U: Matrix2x2 = fromColumns(u1, u2)
       V.inverse.map(U.multiply)
 
-
   extension (points: Vector[Point])
 
     private def sortedCouples: Iterator[(Point, Point)] =
@@ -220,7 +217,8 @@ object Geometry extends Accuracy:
 
     /** Checks if two sequences of side lengths are congruent (allowing reflection) */
     def isCongruentTo(other: Vector[Point]): Boolean =
-      if points.length != other.length then false
+      if points.isEmpty then true
+      else if points.sizeCompare(other) != 0 then false
       else
         val thisSides: Vector[Double] = points.distances
         val otherSides: Vector[Double] = other.distances
@@ -228,7 +226,14 @@ object Geometry extends Accuracy:
         def allAlmostEq(xs: Vector[Double], ys: Vector[Double]): Boolean =
           xs.zip(ys).forall(_.~=(_, ACCURACY))
 
-        allAlmostEq(thisSides, otherSides) || allAlmostEq(thisSides, otherSides.reverse)
+        // Check all rotations of otherSides
+        val otherRotations = otherSides.indices.map(i => otherSides.drop(i) ++ otherSides.take(i))
+        val otherReversedRotations = otherSides.indices.map(i => {
+          val reversed = otherSides.reverse
+          reversed.drop(i) ++ reversed.take(i)
+        })
+
+        (otherRotations ++ otherReversedRotations).exists(allAlmostEq(thisSides, _))
 
   /** Line segment, defined as the set of points located between the two end points. */
   case class LineSegment(point1: Point, point2: Point):
