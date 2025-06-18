@@ -1,7 +1,7 @@
 package io.github.scala_tessella.tessella
 
 import utility.Utils.{compareElems, toCouple}
-import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO}
+import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO, rotationsAndReflections}
 
 import scala.math.Ordered.orderingToOrdered
 
@@ -226,14 +226,7 @@ object Geometry extends Accuracy:
         def allAlmostEq(xs: Vector[Double], ys: Vector[Double]): Boolean =
           xs.zip(ys).forall(_.~=(_, ACCURACY))
 
-        // Check all rotations of otherSides
-        val otherRotations = otherSides.indices.map(i => otherSides.drop(i) ++ otherSides.take(i))
-        val otherReversedRotations = otherSides.indices.map(i => {
-          val reversed = otherSides.reverse
-          reversed.drop(i) ++ reversed.take(i)
-        })
-
-        (otherRotations ++ otherReversedRotations).exists(allAlmostEq(thisSides, _))
+        otherSides.rotationsAndReflections.exists(allAlmostEq(thisSides, _))
 
   /** Line segment, defined as the set of points located between the two end points. */
   case class LineSegment(point1: Point, point2: Point):
