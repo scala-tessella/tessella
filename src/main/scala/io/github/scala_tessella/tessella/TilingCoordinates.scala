@@ -15,10 +15,6 @@ object TilingCoordinates:
   /** Associations of node and spatial 2D coordinates */
   type Coords = Map[Node, Point]
 
-//  /** Spatial coordinates for the first two nodes of a [[Tiling]] */
-//  private val startingCoords: Coords =
-//    Map(Node(1) -> Point(), Node(2) -> Point(1, 0))
-
   extension (tiling: Tiling)
 
     /** Spatial coordinates of a [[Tiling]]
@@ -28,7 +24,7 @@ object TilingCoordinates:
     def coordinates: Coords =
       tiling.graphNodes.minOption(NodeOrdering) match
         case Some(first) =>
-          coordinatesFinder(
+          buildCoordinates(
             Edge(first, tiling.graphEdges.adjacentTo(first).min(NodeOrdering)),
             LineSegment(Point(), Point(1, 0))
           )
@@ -46,7 +42,7 @@ object TilingCoordinates:
           tiling.graphEdges.adjacentTo(node).min(NodeOrdering)
         val deltaX: Double =
           if otherNode > node then 1 else -1
-        coordinatesFinder(
+        buildCoordinates(
           Edge(node, otherNode),
           LineSegment(point, point.plus(Point(deltaX, 0)))
         )
@@ -60,7 +56,7 @@ object TilingCoordinates:
      */
     def coordinatesFromStartingEdge(edge: Edge, lineSegment: LineSegment): Coords =
       if tiling.graphEdges.contains(edge) && lineSegment.hasUnitLength() then
-        coordinatesFinder(edge, lineSegment)
+        buildCoordinates(edge, lineSegment)
       else coordinates
 
     /** Creates a map from Node to Polygons it belongs to */
@@ -71,7 +67,7 @@ object TilingCoordinates:
         }
       }
 
-    private def coordinatesFinder(edge: Edge, lineSegment: LineSegment): Coords =
+    private def buildCoordinates(edge: Edge, lineSegment: LineSegment): Coords =
       if tiling.graphEdges.isEmpty then
         Map.empty
       else
@@ -137,7 +133,7 @@ object TilingCoordinates:
       coords.view.mapValues(_.flipVertically).toMap
 
     /**
-     * Tries to find a transformation (including optional mirroring) that maps each of the three
+     * Tries to find a transformation (including reflection) that maps each of the three
      * originalNodes to each of the given targetPoints.
      * If the triangles do not have the same shape (are not congruent up to reflection), returns None.
      * Otherwise, returns a transformed Coords where all node coordinates are transformed accordingly.
