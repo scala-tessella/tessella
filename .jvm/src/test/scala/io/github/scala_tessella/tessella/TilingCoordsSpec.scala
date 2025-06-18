@@ -32,7 +32,10 @@ class TilingCoordsSpec extends AnyFlatSpec with Helper with should.Matchers {
   it can "have its coords transformed" in {
     square
       .coordinates
-      .transform(1--4, LineSegment(Point(10, 10), Point(11, 10)))
+      .affine(
+        (Node(1), Node(2), Node(4)),
+        (Point(10, 10), Point(10, 9), Point(11, 10))
+      )
       .get
       .almostEqualsMap(
         Map(
@@ -40,6 +43,24 @@ class TilingCoordsSpec extends AnyFlatSpec with Helper with should.Matchers {
           2 -> Point(10, 9),
           3 -> Point(11, 9),
           4 -> Point(11, 10)
+        ).mapKeys(Node(_))
+      ) shouldBe
+      true
+  }
+  it can "have its coords transformed with a reflection" in {
+    square
+      .coordinates
+      .affine(
+        (Node(1), Node(2), Node(4)),
+        (Point(10, 10), Point(10, 9), Point(9, 10))
+      )
+      .get
+      .almostEqualsMap(
+        Map(
+          1 -> Point(10, 10),
+          2 -> Point(10, 9),
+          3 -> Point(9, 9),
+          4 -> Point(9, 10)
         ).mapKeys(Node(_))
       ) shouldBe
       true
@@ -68,31 +89,6 @@ class TilingCoordsSpec extends AnyFlatSpec with Helper with should.Matchers {
     ) shouldBe
       true
   }
-
-  it can "have different coords based on a starting edge plus triangle" in {
-    square.coordinatesTriangulation(1--4, LineSegment(Point(10, 10), Point(11, 10)), Node(2), Point(10, 11)).almostEqualsMap(
-      Map(
-        1 -> Point(10, 10),
-        2 -> Point(10, 11),
-        3 -> Point(11, 11),
-        4 -> Point(11, 10)
-      ).mapKeys(Node(_))
-    ) shouldBe
-      true
-  }
-
-  it can "have flipped coords based on a starting edge plus triangle" in {
-    square.coordinatesTriangulation(1--4, LineSegment(Point(10, 10), Point(11, 10)), Node(2), Point(10, -11)).almostEqualsMap(
-      Map(
-        1 -> Point(10, -10),
-        2 -> Point(10, -11),
-        3 -> Point(11, -11),
-        4 -> Point(11, -10)
-      ).mapKeys(Node(_))
-    ) shouldBe
-      true
-  }
-
 
   "A tiling made of triangles" can "return its coords" in {
     p333333_4by4_reticulate.coords.almostEqualsMap(
