@@ -63,17 +63,21 @@ object TilingCoordinates:
         coordinatesFinder(edge, lineSegment)
       else coordinates
 
+    /** Creates a map from Node to Polygons it belongs to */
+    private def buildNodeToPolygonsMap: Map[Node, List[tiling.PolygonPath]] =
+      tiling.orientedPolygons.foldLeft(Map.empty[Node, List[tiling.PolygonPath]].withDefaultValue(Nil)) { (acc, polygon) =>
+        polygon.toPolygonPathNodes.foldLeft(acc) { (mapAcc, node) =>
+          mapAcc + (node -> (polygon :: mapAcc(node)))
+        }
+      }
+
     private def coordinatesFinder(edge: Edge, lineSegment: LineSegment): Coords =
       if tiling.graphEdges.isEmpty then
         Map.empty
       else
-        // Preprocessing: Create a map from Node to Polygons it belongs to
+        // Preprocessing
         val nodeToPolygonsMap: Map[Node, List[tiling.PolygonPath]] =
-          tiling.orientedPolygons.foldLeft(Map.empty[Node, List[tiling.PolygonPath]].withDefaultValue(Nil)) { (acc, polygon) =>
-            polygon.toPolygonPathNodes.foldLeft(acc) { (mapAcc, node) =>
-              mapAcc + (node -> (polygon :: mapAcc(node)))
-            }
-          }
+          buildNodeToPolygonsMap
 
         val startingCoords: List[(Node, Point)] =
           List(
@@ -160,8 +164,8 @@ object TilingCoordinates:
           // Side lengths for both triangles
           def dist(p1: Point, p2: Point): Double = p1.distanceTo(p2)
 
-          val origSides = Seq(dist(a, b), dist(b, c), dist(c, a))
-          val targetSides = Seq(dist(aQ, bQ), dist(bQ, cQ), dist(cQ, aQ))
+          val origSides: Seq[Double] = Seq(dist(a, b), dist(b, c), dist(c, a))
+          val targetSides: Seq[Double] = Seq(dist(aQ, bQ), dist(bQ, cQ), dist(cQ, aQ))
 
           def allAlmostEq(xs: Seq[Double], ys: Seq[Double]): Boolean =
             xs.zip(ys).forall((x, y) => (x - y).abs < ACCURACY)
