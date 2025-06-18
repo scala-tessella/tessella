@@ -53,6 +53,31 @@ class TilingCoordsSpec extends AnyFlatSpec with Helper with should.Matchers {
       true
   }
 
+  it can "have different coords based on a starting edge plus triangle" in {
+    square.coordinatesTriangulation(1--4, LineSegment(Point(10, 10), Point(11, 10)), Node(2), Point(10, 11)).almostEqualsMap(
+      Map(
+        1 -> Point(10, 10),
+        2 -> Point(10, 11),
+        3 -> Point(11, 11),
+        4 -> Point(11, 10)
+      ).mapKeys(Node(_))
+    ) shouldBe
+      true
+  }
+
+  it can "have flipped coords based on a starting edge plus triangle" in {
+    square.coordinatesTriangulation(1--4, LineSegment(Point(10, 10), Point(11, 10)), Node(2), Point(10, -11)).almostEqualsMap(
+      Map(
+        1 -> Point(10, -10),
+        2 -> Point(10, -11),
+        3 -> Point(11, -11),
+        4 -> Point(11, -10)
+      ).mapKeys(Node(_))
+    ) shouldBe
+      true
+  }
+
+
   "A tiling made of triangles" can "return its coords" in {
     p333333_4by4_reticulate.coords.almostEqualsMap(
       Map(

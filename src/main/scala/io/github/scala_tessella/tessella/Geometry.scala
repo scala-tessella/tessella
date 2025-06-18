@@ -69,7 +69,7 @@ object Geometry extends Accuracy:
     def minus(that: Point): Point =
       Point(this.x - that.x, this.y - that.y)
 
-    private def rotate(theta: Radian): Point =
+    def rotate(theta: Radian): Point =
       val cot: Double =
         Math.cos(theta)
       val sit: Double =
@@ -187,9 +187,12 @@ object Geometry extends Accuracy:
 
     def length: Double =
       Math.hypot(dx, dy)
-      
+
     def hasUnitLength(accuracy: Double = ACCURACY): Boolean =
       length.~=(1.0, accuracy)
+      
+    def hasAlmostEqualLength(that: LineSegment, accuracy: Double = ACCURACY): Boolean =
+      this.length.~=(that.length, accuracy)
  
     /** Checks if the given point is approximately equal to one of the two edges of the line segment */
     def containsAtEdges(point: Point): Boolean =

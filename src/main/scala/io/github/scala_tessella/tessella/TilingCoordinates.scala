@@ -63,7 +63,12 @@ object TilingCoordinates:
         coordinatesFinder(edge, lineSegment)
       else coordinates
 
-    private def coordinatesFinder(edge: Edge, lineSegment: LineSegment): Coords =
+    def coordinatesTriangulation(edge: Edge, lineSegment: LineSegment, node: Node, point: Point): Coords =
+      if tiling.graphEdges.contains(edge) && lineSegment.hasUnitLength() && tiling.graphNodes.contains(node) then
+        coordinatesFinder(edge, lineSegment, Some((node, point)))
+      else coordinates
+
+    private def coordinatesFinder(edge: Edge, lineSegment: LineSegment, maybeTriangle: Option[(Node, Point)] = None): Coords =
       if tiling.graphEdges.isEmpty then
         Map.empty
       else
@@ -121,12 +126,57 @@ object TilingCoordinates:
                     processedPolygons.add(polygon)
           }
 
-        val third: Node =
-          (startingCoords: @unchecked) match
-            case first :: second :: _ => tiling.graphEdges.adjacentTo(second._1).filterNot(_ == first._1).min(NodeOrdering)
-        coords.get(third) match
-          case Some(point) if point.y < 0 => coords.toMap.mapValues2(_.flipVertically)
-          case _                          => coords.toMap
+        maybeTriangle match
+          case Some((third, point)) if point.almostEquals(coords(third))                => coords.toMap
+          case Some((third, point)) if point.almostEquals(coords(third).flipVertically) => coords.toMap.flipVertically
+          case _ =>
+            val third: Node =
+              tiling.graphEdges.adjacentTo(edge.greaterNode).filterNot(_ == edge.lesserNode).min(NodeOrdering)
+            coords.get(third) match
+              case Some(point) if point.y < 0 => coords.toMap.flipVertically
+              case _                          => coords.toMap
+
+  extension (coords: Coords)
+
+    def flipVertically: Coords =
+      coords.mapValues2(_.flipVertically)
+
+    def flipVertically(node: Node, reference: Point): Option[Coords] =
+      coords.get(node) match
+        case Some(point) if reference.almostEquals(point)                => Some(coords)
+        case Some(point) if reference.almostEquals(point.flipVertically) => Some(flipVertically)
+        case _                                                           => None
+
+    def transform(edge: Edge, lineSegment: LineSegment): Option[Coords] =
+      val nodes: Vector[Node] = coords.keys.toVector
+      if nodes.contains(edge.lesserNode)
+        && nodes.contains(edge.greaterNode)
+        && LineSegment(coords(edge.lesserNode), coords(edge.greaterNode)).hasAlmostEqualLength(lineSegment)
+      then
+        val currentPoint1 = coords(edge.lesserNode)
+        val currentPoint2 = coords(edge.greaterNode)
+        val currentLineSegment = LineSegment(currentPoint1, currentPoint2)
+
+        // Calculate the transformation needed
+        val currentAngle: Radian = currentLineSegment.horizontalAngle
+        val targetAngle: Radian = lineSegment.horizontalAngle
+        val rotationAngle: Radian = targetAngle - currentAngle
+
+        // Transform all coordinates
+        val transformedCoords =
+          coords.map { (node, point) =>
+            // First translate to origin (relative to current point1)
+            val translatedPoint: Point = point.minus(currentPoint1)
+            // Then rotate around origin
+            val rotatedPoint: Point = translatedPoint.rotate(rotationAngle)
+            // Finally translate to target position
+            val finalPoint: Point = rotatedPoint.plus(lineSegment.point1)
+            node -> finalPoint
+          }
+
+        Some(transformedCoords)
+      else
+        None
 
   extension (nodes: Vector[Node])
 
