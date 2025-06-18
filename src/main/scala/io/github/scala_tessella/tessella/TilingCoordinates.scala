@@ -3,10 +3,9 @@ package io.github.scala_tessella.tessella
 import Geometry.*
 import Geometry.Radian.TAU_2
 import Topology.{Edge, Node, NodeOrdering}
-import utility.Utils.{mapValues2, toCouple}
+import utility.Utils.toCouple
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO, startAt}
 
-import scala.annotation.tailrec
 import scala.collection.mutable
 
 /** Methods to help the spatial representation of a tiling */
@@ -32,8 +31,8 @@ object TilingCoordinates:
 
     /** Spatial coordinates of a [[Tiling]] from a localized node
      *
-     * @param node
-     * @param point
+     * @param node starting node
+     * @param point coordinates of the starting node
      * @return the coordinates with the given node at the given point and its lowest adjacent at +1 on the x-axis
      */
     def coordinatesFromStartingNode(node: Node, point: Point): Coords =
@@ -50,8 +49,8 @@ object TilingCoordinates:
 
     /** Spatial coordinates of a [[Tiling]] from a localized edge
      *
-     * @param edge
-     * @param lineSegment
+     * @param edge starting edge
+     * @param lineSegment coordinates of the starting edge
      * @return the coordinates with the given edge at the given points
      */
     def coordinatesFromStartingEdge(edge: Edge, lineSegment: LineSegment): Coords =
