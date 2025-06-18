@@ -29,6 +29,22 @@ class TilingCoordsSpec extends AnyFlatSpec with Helper with should.Matchers {
       true
   }
 
+  it can "have its coords transformed" in {
+    square
+      .coordinates
+      .transform(1--4, LineSegment(Point(10, 10), Point(11, 10)))
+      .get
+      .almostEqualsMap(
+        Map(
+          1 -> Point(10, 10),
+          2 -> Point(10, 9),
+          3 -> Point(11, 9),
+          4 -> Point(11, 10)
+        ).mapKeys(Node(_))
+      ) shouldBe
+      true
+  }
+
   it can "have different coords based on a starting node" in {
     square.coordinatesFromStartingNode(Node(1), Point(5, 5)).almostEqualsMap(
       Map(
