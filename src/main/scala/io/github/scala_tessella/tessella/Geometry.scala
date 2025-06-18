@@ -153,6 +153,48 @@ object Geometry extends Accuracy:
         if Math.hypot(dx1, dy1) < Math.hypot(dx2, dy2) then 1 else 0
       else -1
 
+  /** 2x2 matrix for linear transformations */
+  case class Matrix2x2(m00: Double, m01: Double, m10: Double, m11: Double):
+
+    /** Determinant of the matrix */
+    def determinant: Double =
+      m00 * m11 - m01 * m10
+
+    /** Inverse of the matrix, if it exists */
+    def inverse: Option[Matrix2x2] =
+      val det = determinant
+      if det.abs < ACCURACY then None
+      else Some(Matrix2x2(
+        m11 / det, -m01 / det,
+        -m10 / det, m00 / det
+      ))
+
+    /** Matrix multiplication with another 2x2 matrix */
+    def multiply(other: Matrix2x2): Matrix2x2 =
+      Matrix2x2(
+        m00 * other.m00 + m01 * other.m10,
+        m00 * other.m01 + m01 * other.m11,
+        m10 * other.m00 + m11 * other.m10,
+        m10 * other.m01 + m11 * other.m11
+      )
+
+    /** Apply this matrix to a point (treating point as column vector) */
+    def transform(p: Point): Point =
+      Point(m00 * p.x + m01 * p.y, m10 * p.x + m11 * p.y)
+
+  object Matrix2x2:
+
+    /** Creates a matrix from two column vectors */
+    def fromColumns(v1: Point, v2: Point): Matrix2x2 =
+      Matrix2x2(v1.x, v2.x, v1.y, v2.y)
+
+    /** Finds the linear transformation matrix that maps vectors v1->u1 and v2->u2 */
+    def findTransform(v1: Point, v2: Point, u1: Point, u2: Point): Option[Matrix2x2] =
+      val V: Matrix2x2 = fromColumns(v1, v2)
+      val U: Matrix2x2 = fromColumns(u1, u2)
+      V.inverse.map(U.multiply)
+
+
   extension (points: Vector[Point])
 
     private def sortedCouples: Iterator[(Point, Point)] =
@@ -172,6 +214,21 @@ object Geometry extends Accuracy:
     /** Checks if sequentially almost equal to another sequence */
     def almostEquals(others: Vector[Point]): Boolean =
       points.compareElems(others)(almostEqualCouple)
+
+    def distances: Vector[Double] =
+      points.slidingO(2).map(_.toCouple).map(_.distanceTo(_)).toVector
+
+    /** Checks if two sequences of side lengths are congruent (allowing reflection) */
+    def isCongruentTo(other: Vector[Point]): Boolean =
+      if points.length != other.length then false
+      else
+        val thisSides: Vector[Double] = points.distances
+        val otherSides: Vector[Double] = other.distances
+
+        def allAlmostEq(xs: Vector[Double], ys: Vector[Double]): Boolean =
+          xs.zip(ys).forall(_.~=(_, ACCURACY))
+
+        allAlmostEq(thisSides, otherSides) || allAlmostEq(thisSides, otherSides.reverse)
 
   /** Line segment, defined as the set of points located between the two end points. */
   case class LineSegment(point1: Point, point2: Point):

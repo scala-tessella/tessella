@@ -1,6 +1,6 @@
 package io.github.scala_tessella.tessella
 
-import Geometry.{Box, LineSegment, Point, Radian}
+import Geometry.*
 import Geometry.Radian.TAU_2
 import Topology.{Edge, Node, NodeOrdering}
 import utility.Utils.{mapValues2, toCouple}
@@ -147,7 +147,6 @@ object TilingCoordinates:
      * @return Option[Coords] with all points transformed, or None if impossible
      */
     def affine(originalNodes: (Node, Node, Node), targetPoints: (Point, Point, Point)): Option[Coords] =
-      import Geometry.ACCURACY
 
       val (aN, bN, cN) = originalNodes
       val (aP, bP, cP) = (coords.get(aN), coords.get(bN), coords.get(cN))
@@ -155,75 +154,28 @@ object TilingCoordinates:
 
       (aP, bP, cP) match
         case (Some(a), Some(b), Some(c)) =>
-          // Vectors of original and target triangles
-          val v1 = b.minus(a) // AB
-          val v2 = c.minus(a) // AC
-          val u1 = bQ.minus(aQ) // A'B'
-          val u2 = cQ.minus(aQ) // A'C'
+          val originalTriangle: Vector[Point] = Vector(a, b, c)
+          val targetTriangle: Vector[Point] = Vector(aQ, bQ, cQ)
 
-          // Side lengths for both triangles
-          def dist(p1: Point, p2: Point): Double = p1.distanceTo(p2)
-
-          val origSides: Seq[Double] = Seq(dist(a, b), dist(b, c), dist(c, a))
-          val targetSides: Seq[Double] = Seq(dist(aQ, bQ), dist(bQ, cQ), dist(cQ, aQ))
-
-          def allAlmostEq(xs: Seq[Double], ys: Seq[Double]): Boolean =
-            xs.zip(ys).forall((x, y) => (x - y).abs < ACCURACY)
-
-          def isSameTriangle(sides1: Seq[Double], sides2: Seq[Double]): Boolean =
-            allAlmostEq(sides1, sides2) || allAlmostEq(sides1, sides2.reverse)
-
-          if !isSameTriangle(origSides, targetSides) then None
+          // Check if triangles are congruent
+          if !originalTriangle.isCongruentTo(targetTriangle) then None
           else
-            // Construct the transformation matrix (a linear map possibly including mirroring)
-            // Map vectors v1 -> u1, v2 -> u2
-            //
-            // Build a 2x2 linear map:
-            // Solve:
-            //   (v1.x v2.x) (m00 m01) = (u1.x u2.x)
-            //   (v1.y v2.y) (m10 m11)   (u1.y u2.y)
-            //
-            // So, given V = [v1 v2] and U = [u1 u2], find M such that U = M * V => M = U * V^(-1)
-            //
-            val vx = Array(v1.x, v2.x)
-            val vy = Array(v1.y, v2.y)
-            val ux = Array(u1.x, u2.x)
-            val uy = Array(u1.y, u2.y)
+            // Vectors from first point to others
+            val v1 = b.minus(a) // AB
+            val v2 = c.minus(a) // AC
+            val u1 = bQ.minus(aQ) // A'B'
+            val u2 = cQ.minus(aQ) // A'C'
 
-            val det = vx(0) * vy(1) - vx(1) * vy(0)
-            if det.abs < ACCURACY then return None // degenerate triangle
+            // Find the linear transformation matrix
+            Matrix2x2.findTransform(v1, v2, u1, u2) match
+              case None => None // Degenerate triangle
+              case Some(matrix) =>
+                // Compose full affine transform: p' = M * (p - a) + aQ
+                def transform(p: Point): Point =
+                  matrix.transform(p.minus(a)).plus(aQ)
 
-            // Inverse of [v1 v2]
-            val inv = Array(
-              Array(vy(1) / det, -vx(1) / det),
-              Array(-vy(0) / det, vx(0) / det)
-            )
-
-            // Build linear map matrix
-            // M = U * V^(-1)
-            // [m00 m01] = [ux uy] * inv
-            // [m10 m11]
-            def dot(a: Array[Double], b: Array[Double]) = a(0) * b(0) + a(1) * b(1)
-
-            val m00 = dot(ux, Array(inv(0)(0), inv(1)(0)))
-            val m01 = dot(ux, Array(inv(0)(1), inv(1)(1)))
-            val m10 = dot(uy, Array(inv(0)(0), inv(1)(0)))
-            val m11 = dot(uy, Array(inv(0)(1), inv(1)(1)))
-
-            // Compose full affine transform:
-            // For each point p: p' = M * (p - a) + aQ
-            def transform(p: Point): Point =
-              val dx = p.x - a.x
-              val dy = p.y - a.y
-              val xNew = m00 * dx + m01 * dy + aQ.x
-              val yNew = m10 * dx + m11 * dy + aQ.y
-              Point(xNew, yNew)
-
-            // Optionally, verify handedness (orientation). If original triangle is counter-clockwise,
-            // but target is clockwise, then the matrix contains mirroring. This is allowed.
-
-            // Apply transform to all nodes
-            Some(coords.view.mapValues(transform).toMap)
+                // Apply transform to all nodes
+                Some(coords.view.mapValues(transform).toMap)
         case _ => None
 
   extension (nodes: Vector[Node])
