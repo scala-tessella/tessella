@@ -21,22 +21,49 @@ object TilingCoordinates:
 
   extension (tiling: Tiling)
 
-    /** Spatial coordinates for the first two nodes of a [[Tiling]] */
-    private def getStartingCoords: List[(Node, Point)] =
+    /** Spatial coordinates of a [[Tiling]]
+     *
+     * @return the coordinates with the lowest node at origin and its lowest adjacent at 1,0
+     */
+    def coordinates: Coords =
       tiling.graphNodes.minOption(NodeOrdering) match
-        case Some(first) => List(first -> Point(), tiling.graphEdges.adjacentTo(first).min(NodeOrdering) -> Point(1, 0))
-        case None        => Nil
+        case Some(first) =>
+          coordinatesFinder(
+            Edge(first, tiling.graphEdges.adjacentTo(first).min(NodeOrdering)),
+            LineSegment(Point(), Point(1, 0))
+          )
+        case None => Map.empty
 
-  /** Spatial coordinates of a [[Tiling]]
-   *
-   * @param anchors pairs of node-point coords, if
-   *                - none: it will start building coords from origin and point 1,0
-   *                - two: if they represent an edge and have unit distance, it will start from them
-   *                - three: the additional third node, if found in the proposed point, will confirm that a vertical
-   *                  flip is not needed
-   * @return the coordinates, flipped if the calculated third node has a negative y coord
-   */
-    def coordinates(anchors: List[(Node, Point)] = Nil): Coords =
+    /** Spatial coordinates of a [[Tiling]] from a localized node
+     *
+     * @param node
+     * @param point
+     * @return the coordinates with the given node at the given point and its lowest adjacent at +1 on the x-axis
+     */
+    def coordinatesFromStartingNode(node: Node, point: Point): Coords =
+      if tiling.graphNodes.contains(node) then
+        val otherNode: Node =
+          tiling.graphEdges.adjacentTo(node).min(NodeOrdering)
+        val deltaX: Double =
+          if otherNode > node then 1 else -1
+        coordinatesFinder(
+          Edge(node, otherNode),
+          LineSegment(point, point.plus(Point(deltaX, 0)))
+        )
+      else coordinates
+
+    /** Spatial coordinates of a [[Tiling]] from a localized edge
+     *
+     * @param edge
+     * @param lineSegment
+     * @return the coordinates with the given edge at the given points
+     */
+    def coordinatesFromStartingEdge(edge: Edge, lineSegment: LineSegment): Coords =
+      if tiling.graphEdges.contains(edge) && lineSegment.hasUnitLength() then
+        coordinatesFinder(edge, lineSegment)
+      else coordinates
+
+    private def coordinatesFinder(edge: Edge, lineSegment: LineSegment): Coords =
       if tiling.graphEdges.isEmpty then
         Map.empty
       else
@@ -49,12 +76,11 @@ object TilingCoordinates:
           }
 
         val startingCoords: List[(Node, Point)] =
-          anchors match
-            case first :: second :: _ if tiling.graphEdges.contains(Edge(first._1, second._1))
-              && first._2.hasUnitDistanceTo(second._2) => anchors.take(3)
-            case _ => getStartingCoords
-
-        val coords: mutable.Map[Node, Point] = mutable.Map.from(startingCoords.take(2))
+          List(
+            (edge.lesserNode, lineSegment.point1),
+            (edge.greaterNode, lineSegment.point2)
+          )
+        val coords: mutable.Map[Node, Point] = mutable.Map.from(startingCoords)
         val nodesToExplore: mutable.Queue[Node] = mutable.Queue.from(coords.keys)
         val processedPolygons: mutable.Set[tiling.PolygonPath] = mutable.Set.empty
 

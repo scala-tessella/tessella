@@ -87,18 +87,6 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers:
     point.distanceTo(Point(4.0, 3.0)) shouldBe 5.0
   }
 
-  it can "check for unit distance to another point" in {
-    point.hasUnitDistanceTo(Point(2.0, -1.0)) shouldBe true
-  }
-
-  it can "check for an almost unit distance to another point" in {
-    point.hasUnitDistanceTo(Point(2.0000000000001, -1.0)) shouldBe true
-  }
-
-  it can "check for non-unit distance to another point" in {
-    point.hasUnitDistanceTo(Point(3.0, -1.0)) shouldBe false
-  }
-
   it can "be aligned to other two points" in {
     point.alignWithStart(Point(), Point(1.0, 0.0)).almostEquals(point, ACCURACY) shouldBe
       true

@@ -17,8 +17,8 @@ import org.scalatest.matchers.*
 
 class TilingCoordsSpec extends AnyFlatSpec with Helper with should.Matchers {
 
-  "A square" can "have coords found without anchors" in {
-    square.coordinates().almostEqualsMap(
+  "A square" can "have coords given automatically" in {
+    square.coordinates.almostEqualsMap(
       Map(
         1 -> Point(),
         2 -> Point(1, 0),
@@ -29,8 +29,20 @@ class TilingCoordsSpec extends AnyFlatSpec with Helper with should.Matchers {
       true
   }
 
-  it can "have different coords found with anchors" in {
-    square.coordinates(List((Node(1), Point(10, 10)), (Node(4), Point(11, 10)))).almostEqualsMap(
+  it can "have different coords based on a starting node" in {
+    square.coordinatesFromStartingNode(Node(1), Point(5, 5)).almostEqualsMap(
+      Map(
+        1 -> Point(5, 5),
+        2 -> Point(6, 5),
+        3 -> Point(6, 4),
+        4 -> Point(5, 4)
+      ).mapKeys(Node(_))
+    ) shouldBe
+      true
+  }
+
+  it can "have different coords based on a starting edge" in {
+    square.coordinatesFromStartingEdge(1--4, LineSegment(Point(10, 10), Point(11, 10))).almostEqualsMap(
       Map(
         1 -> Point(10, 10),
         2 -> Point(10, 11),
