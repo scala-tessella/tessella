@@ -141,7 +141,7 @@ object TilingCoordinates:
      * @param targetPoints  Triple of new points (A', B', C') desired for the mapped triangle
      * @return Option[Coords] with all points transformed, or None if impossible
      */
-    def affine(originalNodes: (Node, Node, Node), targetPoints: (Point, Point, Point)): Option[Coords] =
+    def transform(originalNodes: (Node, Node, Node), targetPoints: (Point, Point, Point)): Option[Coords] =
 
       val (aN, bN, cN) = originalNodes
       val (aP, bP, cP) = (coords.get(aN), coords.get(bN), coords.get(cN))

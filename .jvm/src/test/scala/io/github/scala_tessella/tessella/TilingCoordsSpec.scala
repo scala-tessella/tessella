@@ -32,7 +32,7 @@ class TilingCoordsSpec extends AnyFlatSpec with Helper with should.Matchers {
   it can "have its coords transformed" in {
     square
       .coordinates
-      .affine(
+      .transform(
         (Node(1), Node(2), Node(4)),
         (Point(10, 10), Point(10, 9), Point(11, 10))
       )
@@ -50,7 +50,7 @@ class TilingCoordsSpec extends AnyFlatSpec with Helper with should.Matchers {
   it can "have its coords transformed with a reflection" in {
     square
       .coordinates
-      .affine(
+      .transform(
         (Node(1), Node(2), Node(4)),
         (Point(10, 10), Point(10, 9), Point(9, 10))
       )
