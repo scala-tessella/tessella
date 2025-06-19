@@ -3,7 +3,7 @@ package io.github.scala_tessella.tessella
 import Geometry.*
 import Geometry.Radian.TAU_2
 import Topology.{Edge, Node, NodeOrdering}
-import utility.Utils.toCouple
+import utility.Utils.{mapValues2, toCouple}
 import io.github.scala_tessella.ring_seq.RingSeq.{Index, slidingO, startAt}
 
 import scala.collection.mutable
@@ -129,7 +129,7 @@ object TilingCoordinates:
   extension (coords: Coords)
 
     def flipVertically: Coords =
-      coords.view.mapValues(_.flipVertically).toMap
+      coords.mapValues2(_.flipVertically)
 
     /**
      * Tries to find a transformation (including reflection) that maps each of the three
@@ -170,7 +170,7 @@ object TilingCoordinates:
                   matrix.transform(p.minus(a)).plus(aQ)
 
                 // Apply transform to all nodes
-                Some(coords.view.mapValues(transform).toMap)
+                Some(coords.mapValues2(transform))
         case _ => None
 
   extension (nodes: Vector[Node])
