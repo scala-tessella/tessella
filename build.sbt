@@ -31,7 +31,7 @@ lazy val root: Project =
       paradoxProperties += ("scaladoc.base_url" -> "api"),
       libraryDependencies ++= Seq(
         "io.github.scala-tessella" %% "ring-seq" % "0.6.2",
-        "io.github.iltotore" %% "iron" % "2.6.0",
+        "io.github.iltotore" %% "iron" % "3.0.2",
         "org.scala-lang.modules" %% "scala-xml" % "2.3.0",
       ),
       git.remoteRepo := sonatypeProjectHosting.value.get.scmUrl,
@@ -48,7 +48,7 @@ lazy val tessella: CrossProject =
       description := "Tilings by regular polygons",
       libraryDependencies ++= Seq(
         "io.github.scala-tessella" %%% "ring-seq" % "0.6.2",
-        "io.github.iltotore" %%% "iron" % "2.6.0",
+        "io.github.iltotore" %%% "iron" % "3.0.2",
         "org.scala-lang.modules" %%% "scala-xml" % "2.3.0",
         "org.scalatest" %%% "scalatest" % "3.2.19" % Test,
         "org.scalacheck" %%% "scalacheck" % "1.18.1" % Test,
