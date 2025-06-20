@@ -1,7 +1,6 @@
 package io.github.scala_tessella.tessella
 package utility
 
-import scala.annotation.tailrec
 import scala.collection.immutable.SeqOps
 
 /** Useful additional methods for collections of `Option` */
@@ -28,16 +27,7 @@ object UtilsOption:
 
     /** Gets the result from the first defined method */
     def firstDefined(from: B): Option[A] =
-
-      @tailrec
-      def loop(remainingMethods: List[B => Option[A]]): Option[A] =
-        remainingMethods match
-          case Nil => None
-          case h :: t => h(from) match
-            case None => loop(t)
-            case some => some
-
-      loop(methods)
+      methods.iterator.map(_(from)).collectFirst { case Some(a) => a }
 
   /** A collection of `Option` of given type */
   type Options[A] = Vector[Option[A]]
