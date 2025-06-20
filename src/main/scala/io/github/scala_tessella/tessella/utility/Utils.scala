@@ -2,6 +2,7 @@ package io.github.scala_tessella.tessella
 package utility
 
 import scala.annotation.tailrec
+import scala.collection.mutable
 
 /** Useful additional methods for collections */
 object Utils:
@@ -51,7 +52,7 @@ object Utils:
     def mapByValue: Map[A, B] =
       grouped.flatMap((key, value) => value.map(_ -> key))
 
-  extension[A](seq: Seq[A])
+  extension [A](seq: Seq[A])
 
     /** Convert the first two elements of the sequence into a tuple
      *
@@ -66,7 +67,7 @@ object Utils:
      * @example {{{List(1, 2, 2).groupBySize // Map(1 -> 1, 2 -> 2)}}}
      */
     def groupBySize: Map[A, Int] =
-      seq.groupBy(identity).mapValues2(_.size)
+      seq.groupMapReduce(identity)(_ => 1)(_ + _)
 
     /** Convert to a `Map` where key is the element and value is a function applied to it
      *
@@ -75,19 +76,27 @@ object Utils:
      * @example {{{List(1, 2).toMap2(_ + 1) // Map(1 -> 2, 2 -> 3)}}}
      */
     def toMap2[T](f: A => T): Map[A, T] =
-      seq.map(elem => elem -> f(elem)).toMap
+      seq.view.map(elem => elem -> f(elem)).toMap
 
-    private def filterBySize(f: Int => Boolean): Iterable[A] =
-      groupBySize.filter((_, size) => f(size)).keys
+    private def partitionedByUniqueness: (mutable.HashSet[A], mutable.HashSet[A]) =
+      val seen = mutable.HashSet[A] ()
+      val duplicates = mutable.HashSet[A] ()
+      seq.foreach { elem =>
+        if !seen.add(elem) then
+          duplicates.add(elem)
+      }
+      (seen, duplicates)
 
     /** Filter all elements occurring just once
-     * 
+     *
      * @note it doesn't preserve the order
-     * @return an 'Iterable' 
+     * @return an 'Iterable'
      * @example {{{List(1, 1, 2, 3, 2, 1, 4).filterUnique // Iterable(4, 3)}}}
      */
     def filterUnique: Iterable[A] =
-      filterBySize(_ == 1)
+      val (seen, duplicates) = partitionedByUniqueness
+      seen -- duplicates
+
 
     /** Filter all elements occurring more than once
      *
@@ -96,22 +105,43 @@ object Utils:
      * @example {{{List(1, 1, 2, 3, 2, 1, 4).filterNotUnique // Iterable(2, 1)}}}
      */
     def filterNotUnique: Iterable[A] =
-      filterBySize(_ > 1)
+      val (_, duplicates) = partitionedByUniqueness
+      duplicates
 
   extension[A](list: List[A])
 
+    def groupConnectedOld(areConnected: (A, A) => Boolean): List[List[A]] =
+      list.foldLeft(list.map(List(_)))((groups, elem) =>
+        val (connected, unconnected) =
+          groups.partition(_.exists(areConnected(_, elem)))
+        connected.flatten :: unconnected
+      )
+
     /** Separate elements in disconnected groups
+     * More performant variant with a graph traversal algorithm (like a Breadth-First Search)
+     * that finds connected components in a single pass over the data
      *
      * @param areConnected the connection function
      * @return a 'List' of 'List'
      * @example {{{List(1, 2, 3, 5).groupConnected((x, y) => Math.abs(x - y) < 2) // List(List(5), List(1, 2, 3)}}}
      */
     def groupConnected(areConnected: (A, A) => Boolean): List[List[A]] =
-      list.foldLeft(list.map(List(_)))((groups, elem) =>
-        val (connected, unconnected) =
-          groups.partition(_.exists(areConnected(_, elem)))
-        connected.flatten :: unconnected
-      )
+      var unvisited = list
+      var allGroups = List.empty[List[A]]
+      while (unvisited.nonEmpty)
+        val component = mutable.ListBuffer(unvisited.head)
+        val queue = mutable.Queue(unvisited.head)
+        var remainingForComponent = unvisited.tail
+        while (queue.nonEmpty)
+          val current = queue.dequeue()
+          val (neighbors, rest) = remainingForComponent.partition(other => areConnected(current, other))
+          component ++= neighbors
+          neighbors.foreach(queue.enqueue)
+          remainingForComponent = rest
+        allGroups = component.toList :: allGroups
+        unvisited = remainingForComponent
+      allGroups
+
 
   extension[A](iterable: Iterable[A])
 

@@ -190,17 +190,17 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
 //  }
 
   val t: Tiling =
-    p4444_4by4_reticulate.maybeRemoveNode(Node(21)).flatMap(_.maybeRemoveNode(Node(5))).unsafe
+    p4444_4by4_reticulate.maybeRemoveNodes(Node(21), Node(5)).unsafe
 
   "A tiling" can "have two separate inner tilings" in {
     t.nestedTilings(isStrict = false) shouldBe
       List(
         List(
           List(
-            List(12--17, 17--18, 13--18, 12--13)
+            List(18--19, 14--19, 13--14, 13--18)
           ),
           List(
-            List(7--12, 6--7, 6--11, 11--12)
+            List(8--13, 7--8, 7--12, 12--13)
           )
         )
       )
@@ -211,10 +211,10 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
       List(
         List(
           List(
-            List(12--13, 7--12, 7--8, 8--13),
-            List(13--18, 17--18, 12--17, 12--13),
-            List(8--13, 8--9, 9--14, 13--14),
-            List(13--14, 14--19, 18--19, 13--18)
+            List(12--13, 7--12, 7--8, 8--13).reverse,
+            List(12--13, 13--18, 17--18, 12--17).reverse,
+            List(13--14, 8--13, 8--9, 9--14).reverse,
+            List(13--18, 13--14, 14--19, 18--19).reverse
           )
         )
       )
@@ -228,8 +228,8 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
       List(
         List(
           List(
-            List(6--11, 7--11, 6--7),
-            List(6--11, 6--10, 10--11)
+            List(7--11, 6--11, 6--7),
+            List(6--10, 6--11, 10--11)
           )
         )
       )
@@ -240,24 +240,24 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
       List(
         List(
           List(
-            List(9--10, 9--14, 10--14)
+            List(9--14, 9--10, 10--14)
           ),
           List(
-            List(7--11, 11--12, 7--12),
-            List(6--11, 7--11, 6--7),
-            List(2--7, 2--6, 6--7),
-            List(10--15, 11--15, 10--11),
-            List(6--11, 6--10, 10--11),
-            List(5--10, 6--10, 5--6)
+            List(3--7, 3--8, 7--8)
           ),
           List(
-            List(3--8, 3--7, 7--8)
+            List(11--15, 10--15, 10--11),
+            List(6--10, 6--11, 10--11),
+            List(7--11, 6--11, 6--7),
+            List(6--10, 5--10, 5--6),
+            List(7--11, 7--12, 11--12),
+            List(2--6, 2--7, 6--7),
           )
         ),
         List(
           List(
-            List(6--11, 7--11, 6--7),
-            List(6--11, 6--10, 10--11)
+            List(6--10, 6--11, 10--11),
+            List(7--11, 6--11, 6--7)
           )
         )
       )
@@ -266,17 +266,9 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
   it can "return the strictly concentric perimeters" in {
     aTriangleNet.nestedPerimeters(isStrict = true) shouldBe
       List(
-        List(
-          Vector(1, 5, 9, 13, 14, 15, 16, 12, 8, 4, 3, 2)
-        ),
-        List(
-          Vector(10, 9, 14),
-          Vector(5, 10, 15, 11, 12, 7, 2, 6),
-          Vector(7, 3, 8)
-        ),
-        List(
-          Vector(6, 7, 11, 10)
-        )
+        List(Vector(1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5)),
+        List(Vector(9, 10, 14), Vector(3, 7, 8), Vector(11, 15, 10, 5, 6, 2, 7, 12)),
+        List(Vector(7, 6, 10, 11))
       )
   }
 

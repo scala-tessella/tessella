@@ -11,24 +11,7 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
 
   val tiling: Tiling = Tiling.fromPolygon(3)
 
-  "A Tiling" must "be compacted, all nodes labelled from 1 to next" in {
-    val interruptedEdges: List[Edge] =
-      List(1--2, 1--4, 2--4)
-    Tiling.maybe(interruptedEdges) shouldEqual
-      Left(
-        """Tiling not compacted, nodes should go uninterrupted from 1 to 3:
-          | found node 4.
-          |See DOT:
-          |graph{
-          |1 -- 2
-          |1 -- 4
-          |2 -- 4
-          |4 [color=red fontcolor=red]
-          |}""".stripMargin
-      )
-  }
-
-  it can "NOT have a node originating just one edge" in {
+  "A Tiling" can "NOT have a node originating just one edge" in {
     val oneDegree = tiling.graphEdges :+ 3--4
     Tiling.maybe(oneDegree) shouldEqual
       Left(
@@ -229,7 +212,7 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
   it can "NOT have perimeter nodes with the same cartesian coords" in {
     Tiling.maybe(smallestTilingWithInvalidSameVertices).left.getOrElse("").take(107) shouldEqual
       """Tiling must have all perimeter nodes at different cartesian coords:
-        | found invalid couple (12,10).
+        | found invalid couple (10,12).
         |See SVG:""".stripMargin
   }
 
@@ -250,7 +233,7 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
   it can "NOT have perimeter with overlapping sides" in {
     Tiling.maybe(sharingSides).left.getOrElse("").take(117) shouldEqual
       """Tiling must not have intersecting perimeter edges:
-        | found invalid couples ((19--23, 9--10), (23--24, 8--9)).
+        | found invalid couples ((9--10, 19--23), (8--9, 23--24)).
         |See SVG:""".stripMargin
   }
 
@@ -273,13 +256,13 @@ class TilingValidationSpec extends AnyFlatSpec with should.Matchers {
     Graph(problematicEdges).tilingUnorientedPolygons shouldBe
       Option(
         List(
-          Vector(5, 31, 34, 6), Vector(31, 30, 5), Vector(30, 4, 5), Vector(34, 40, 6), Vector(40, 7, 6),
+          Vector(5, 31, 34, 6), Vector(31, 30, 5), Vector(30, 4, 5), Vector(6, 40, 34), Vector(40, 7, 6),
           Vector(4, 2, 1, 13, 12, 11, 10, 9, 8, 7, 6, 5), Vector(11, 43, 10), Vector(43, 37, 11),
           Vector(12, 32, 37, 11), Vector(12, 13, 22), Vector(12, 32, 22), Vector(2, 3, 1),
           Vector(3, 14, 15, 16, 17, 18, 19, 20, 21, 22, 13, 1), Vector(15, 23, 14), Vector(15, 33, 23),
-          Vector(33, 38, 16, 15), Vector(16, 17, 44), Vector(16, 38, 44), Vector(32, 36, 21, 22), Vector(21, 20, 41),
-          Vector(21, 36, 41), Vector(23, 24, 35, 33), Vector(30, 29, 39, 31), Vector(39, 45, 29), Vector(45, 28, 29),
-          Vector(24, 42, 35), Vector(24, 25, 42), Vector(28, 27, 26, 25, 24, 23, 14, 3, 2, 4, 30, 29),
+          Vector(33, 38, 16, 15), Vector(16, 17, 44), Vector(16, 38, 44), Vector(21, 36, 32, 22), Vector(21, 20, 41),
+          Vector(21, 36, 41), Vector(23, 24, 35, 33), Vector(31, 39, 29, 30), Vector(29, 45, 39), Vector(45, 28, 29),
+          Vector(24, 42, 35), Vector(42, 25, 24), Vector(28, 27, 26, 25, 24, 23, 14, 3, 2, 4, 30, 29),
           Vector(36, 48, 47, 46, 37, 32), Vector(35, 51, 50, 49, 38, 33), Vector(39, 52, 53, 54, 34, 31)
         )
       )

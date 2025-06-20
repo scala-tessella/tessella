@@ -111,7 +111,7 @@ class TilingGrowthNodeSpec extends AnyFlatSpec with Helper with should.Matchers 
         |      <line x1="0.0" y1="0.0" x2="-25.0" y2="-43.30127"/>
         |      <line x1="25.0" y1="-43.30127" x2="-25.0" y2="-43.30127"/>
         |    </g>
-        |    <polygon style="fill:none;stroke:blue;stroke-width:2" points="50.0,0.0 93.30127,25.0 143.30127,25.0 168.30127,68.30127 118.30127,68.30127 68.30127,68.30127 25.0,43.30127 -18.30127,68.30127 -43.30127,25.0 -68.30127,-18.30127 -25.0,-43.30127 25.0,-43.30127"/>
+        |    <polygon style="fill:none;stroke:blue;stroke-width:2" points="50.0,0.0 25.0,-43.30127 -25.0,-43.30127 -68.30127,-18.30127 -43.30127,25.0 -18.30127,68.30127 25.0,43.30127 68.30127,68.30127 118.30127,68.30127 168.30127,68.30127 143.30127,25.0 93.30127,25.0"/>
         |    <g style="fill:#4a4a4a;text-anchor:middle;font-family:Arial,Helvetica,sans-serif">
         |      <title>Node labels</title>
         |      <desc>Each node showing its value</desc>
@@ -362,7 +362,7 @@ class TilingGrowthNodeSpec extends AnyFlatSpec with Helper with should.Matchers 
   it can "NOT have a polygon added that touches a vertex of the existing perimeter" in {
     val start: Tiling =
       Tiling.maybe(commonEdges.dropRight(2)).unsafe
-    start.maybeGrowNode(Node(8), Vertex(Vector(Polygon(4))), BEFORE_PERIMETER) shouldBe
+    start.maybeGrowNode(Node(8), Vertex(Vector(Polygon(4))), AFTER_PERIMETER) shouldBe
       Left(
         """Tiling must have all perimeter nodes at different cartesian coords:
           | found invalid couple (11,10).

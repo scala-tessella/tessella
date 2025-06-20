@@ -4,27 +4,6 @@ A `Tiling` instance that represents a valid tessellation is an undirected graph 
 
 ## Labelling
 
-### All vertices must be numbered starting from 1 and increasing by one with no gaps
-
-```raw
-<div style="width: 180px;">
-```
-| ![non-compact](svg/non-compact.svg)   |
-|---------------------------------------|
-| `Tiling` _with invalid labels_        |
-```raw
-</div>
-```
-```scala
-Tiling.maybe(1--2, 1--4, 2--4).isRight // false
-```
-
-@@@ warning { title='Failing' }
-
-Three only vertices must be labelled 1, 2 and 3
-
-@@@
-
 ## Nodes degree
 
 ### All vertices must be connected to at least 2 other vertices (node degree >= 2)

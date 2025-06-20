@@ -26,7 +26,7 @@ class SVGExtraSpec extends AnyFlatSpec with Helper with should.Matchers:
         |    </g>
         |    <g style="fill-opacity:0.5">
         |      <g>
-        |        <polygon style="fill:red" points="150.0,173.205081 125.0,129.903811 75.0,129.903811 50.0,173.205081 75.0,216.506351 125.0,216.506351"/>
+        |        <polygon style="fill:red" points="75.0,216.506351 50.0,173.205081 75.0,129.903811 125.0,129.903811 150.0,173.205081 125.0,216.506351"/>
         |      </g>
         |    </g>
         |  </g>

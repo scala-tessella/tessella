@@ -83,6 +83,10 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers:
       TAU_4
   }
 
+  it can "calculate the distance to another point" in {
+    point.distanceTo(Point(4.0, 3.0)) shouldBe 5.0
+  }
+
   it can "be aligned to other two points" in {
     point.alignWithStart(Point(), Point(1.0, 0.0)).almostEquals(point, ACCURACY) shouldBe
       true
@@ -125,7 +129,11 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers:
   val sameOrigin: LineSegment =
     LineSegment(Point(), Point(3.0, 3.0))
 
-  "A LineSegment" can "intersect with another one (X shape)" in {
+  "A LineSegment" can "calculate its length" in {
+    LineSegment(Point(1, 2), Point(4, 6)).length shouldBe 5.0
+  }
+
+  it can "intersect with another one (X shape)" in {
     segment.intersects(intersecting) shouldBe true
     intersecting.intersects(segment) shouldBe true
     segment.intersection(intersecting).get.almostEquals(Point(0.5, -0.5)) shouldBe true
@@ -327,26 +335,6 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers:
       Node(4) -> Point(0.0, -1.0)
     )
 
-  "A set of coordinates" can "be flipped vertically if node 3 is negative on the y-axis" in {
-    coords.flipVertically shouldBe
-      Map(
-        1 -> Point(0.0, 2.0),
-        2 -> Point(1.0, 2.0),
-        3 -> Point(1.0, 1.0),
-        4 -> Point(0.0, 1.0)
-      )
-  }
-
-  it can "be aligned to the two start points" in {
-    coords.alignWithStart.almostEqualsMap(Map(
-      Node(1) -> Point(),
-      Node(2) -> Point(1.0, 0.0),
-      Node(3) -> Point(1.0, 1.0),
-      Node(4) -> Point(0.0, 1.0)
-    )) shouldBe
-      true
-  }
-
   val anEdge: Edge =
     1--2
 
@@ -515,4 +503,182 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers:
     Point.ccw(p0, p1, p2) shouldBe -1
   }
 
+  "A Matrix2x2" can "be created with four components" in {
+    val matrix = Matrix2x2(1.0, 2.0, 3.0, 4.0)
+    matrix.m00 shouldBe 1.0
+    matrix.m01 shouldBe 2.0
+    matrix.m10 shouldBe 3.0
+    matrix.m11 shouldBe 4.0
+  }
 
+  it can "calculate its determinant" in {
+    val matrix = Matrix2x2(1.0, 2.0, 3.0, 4.0)
+    matrix.determinant shouldBe -2.0 // 1*4 - 2*3 = -2
+  }
+
+  it can "calculate determinant for identity matrix" in {
+    val identity = Matrix2x2(1.0, 0.0, 0.0, 1.0)
+    identity.determinant shouldBe 1.0
+  }
+
+  it can "calculate determinant for singular matrix" in {
+    val singular = Matrix2x2(1.0, 2.0, 2.0, 4.0)
+    singular.determinant shouldBe 0.0
+  }
+
+  it can "calculate its inverse when non-singular" in {
+    val matrix = Matrix2x2(1.0, 2.0, 3.0, 4.0)
+    val inverse = matrix.inverse.get
+    inverse.m00 shouldBe -2.0
+    inverse.m01 shouldBe 1.0
+    inverse.m10 shouldBe 1.5
+    inverse.m11 shouldBe -0.5
+  }
+
+  it can "return None for inverse when singular" in {
+    val singular = Matrix2x2(1.0, 2.0, 2.0, 4.0)
+    singular.inverse shouldBe None
+  }
+
+  it can "multiply with another matrix" in {
+    val m1 = Matrix2x2(1.0, 2.0, 3.0, 4.0)
+    val m2 = Matrix2x2(5.0, 6.0, 7.0, 8.0)
+    val result = m1.multiply(m2)
+    result.m00 shouldBe 19.0 // 1*5 + 2*7
+    result.m01 shouldBe 22.0 // 1*6 + 2*8
+    result.m10 shouldBe 43.0 // 3*5 + 4*7
+    result.m11 shouldBe 50.0 // 3*6 + 4*8
+  }
+
+  it can "multiply with identity matrix" in {
+    val matrix = Matrix2x2(1.0, 2.0, 3.0, 4.0)
+    val identity = Matrix2x2(1.0, 0.0, 0.0, 1.0)
+    val result = matrix.multiply(identity)
+    result shouldBe matrix
+  }
+
+  it can "transform a point" in {
+    val matrix = Matrix2x2(2.0, 0.0, 0.0, 3.0) // Scale by 2 in x, 3 in y
+    val point = Point(1.0, 1.0)
+    val transformed = matrix.transform(point)
+    transformed shouldBe Point(2.0, 3.0)
+  }
+
+  it can "transform the origin" in {
+    val matrix = Matrix2x2(1.0, 2.0, 3.0, 4.0)
+    val origin = Point(0.0, 0.0)
+    val transformed = matrix.transform(origin)
+    transformed shouldBe Point(0.0, 0.0)
+  }
+
+  "Matrix2x2 companion object" can "create matrix from column vectors" in {
+    val v1 = Point(1.0, 2.0)
+    val v2 = Point(3.0, 4.0)
+    val matrix = Matrix2x2.fromColumns(v1, v2)
+    matrix.m00 shouldBe 1.0
+    matrix.m01 shouldBe 3.0
+    matrix.m10 shouldBe 2.0
+    matrix.m11 shouldBe 4.0
+  }
+
+  it can "find transformation matrix for simple scaling" in {
+    val v1 = Point(1.0, 0.0)
+    val v2 = Point(0.0, 1.0)
+    val u1 = Point(2.0, 0.0)
+    val u2 = Point(0.0, 3.0)
+    val transform = Matrix2x2.findTransform(v1, v2, u1, u2).get
+    transform.transform(v1).almostEquals(u1) shouldBe true
+    transform.transform(v2).almostEquals(u2) shouldBe true
+  }
+
+  it can "find transformation matrix for rotation" in {
+    import Geometry.Radian.TAU_4
+    val v1 = Point(1.0, 0.0)
+    val v2 = Point(0.0, 1.0)
+    val u1 = Point(0.0, 1.0) // 90 degree rotation
+    val u2 = Point(-1.0, 0.0)
+    val transform = Matrix2x2.findTransform(v1, v2, u1, u2).get
+    transform.transform(v1).almostEquals(u1) shouldBe true
+    transform.transform(v2).almostEquals(u2) shouldBe true
+  }
+
+  it can "return None when finding transformation for degenerate case" in {
+    val v1 = Point(1.0, 0.0)
+    val v2 = Point(2.0, 0.0) // Collinear with v1
+    val u1 = Point(0.0, 1.0)
+    val u2 = Point(0.0, 2.0)
+    Matrix2x2.findTransform(v1, v2, u1, u2) shouldBe None
+  }
+
+  "Vector of Points isCongruentTo method" can "identify congruent triangles" in {
+    val triangle1 = Vector(Point(0, 0), Point(1, 0), Point(0, 1))
+    val triangle2 = Vector(Point(0, 0), Point(1, 0), Point(0, 1))
+    triangle1.isCongruentTo(triangle2) shouldBe true
+  }
+
+  it can "identify congruent triangles with different ordering" in {
+    val triangle1 = Vector(Point(0, 0), Point(1, 0), Point(0, 1))
+    val triangle2 = Vector(Point(1, 0), Point(0, 1), Point(0, 0))
+    triangle1.isCongruentTo(triangle2) shouldBe true
+  }
+
+  it can "identify congruent triangles with reflection" in {
+    val triangle1 = Vector(Point(0, 0), Point(1, 0), Point(0, 1))
+    val triangle2 = Vector(Point(0, 0), Point(0, 1), Point(1, 0)) // Reflected
+    triangle1.isCongruentTo(triangle2) shouldBe true
+  }
+
+  it can "identify congruent squares" in {
+    val square1 = Vector(Point(0, 0), Point(1, 0), Point(1, 1), Point(0, 1))
+    val square2 = Vector(Point(0, 0), Point(2, 0), Point(2, 2), Point(0, 2)) // Scaled by 2, not congruent
+    square1.isCongruentTo(square2) shouldBe false
+  }
+
+  it can "identify congruent squares with same side lengths" in {
+    val square1 = Vector(Point(0, 0), Point(1, 0), Point(1, 1), Point(0, 1))
+    val square2 = Vector(Point(1, 1), Point(2, 1), Point(2, 2), Point(1, 2)) // Translated
+    square1.isCongruentTo(square2) shouldBe true
+  }
+
+  it can "identify non-congruent shapes with different side lengths" in {
+    val triangle = Vector(Point(0, 0), Point(1, 0), Point(0, 1))
+    val scaledTriangle = Vector(Point(0, 0), Point(2, 0), Point(0, 2))
+    triangle.isCongruentTo(scaledTriangle) shouldBe false
+  }
+
+  it can "identify non-congruent shapes with different number of sides" in {
+    val triangle = Vector(Point(0, 0), Point(1, 0), Point(0, 1))
+    val square = Vector(Point(0, 0), Point(1, 0), Point(1, 1), Point(0, 1))
+    triangle.isCongruentTo(square) shouldBe false
+  }
+
+  it can "handle degenerate cases with single point" in {
+    val singlePoint1 = Vector(Point(0, 0))
+    val singlePoint2 = Vector(Point(1, 1))
+    singlePoint1.isCongruentTo(singlePoint2) shouldBe true
+  }
+
+  it can "handle degenerate cases with two points" in {
+    val twoPoints1 = Vector(Point(0, 0), Point(1, 0))
+    val twoPoints2 = Vector(Point(0, 0), Point(0, 1))
+    twoPoints1.isCongruentTo(twoPoints2) shouldBe true // Same distance
+  }
+
+  it can "handle empty vectors" in {
+    val empty1 = Vector.empty[Point]
+    val empty2 = Vector.empty[Point]
+    empty1.isCongruentTo(empty2) shouldBe true
+  }
+
+  it can "identify congruent regular hexagons" in {
+    // Create two regular hexagons with same side length but different positions/orientations
+    val hexagon1 = Vector(
+      Point(1, 0), Point(0.5, Math.sqrt(3) / 2), Point(-0.5, Math.sqrt(3) / 2),
+      Point(-1, 0), Point(-0.5, -Math.sqrt(3) / 2), Point(0.5, -Math.sqrt(3) / 2)
+    )
+    val hexagon2 = Vector(
+      Point(2, 0), Point(1.5, Math.sqrt(3) / 2), Point(0.5, Math.sqrt(3) / 2),
+      Point(0, 0), Point(0.5, -Math.sqrt(3) / 2), Point(1.5, -Math.sqrt(3) / 2)
+    )
+    hexagon1.isCongruentTo(hexagon2) shouldBe true
+  }

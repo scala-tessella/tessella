@@ -274,7 +274,7 @@ class TilingGrowthNodePolygonSpec extends AnyFlatSpec with Helper with should.Ma
     val r: Tiling =
       edges12Nodes8.maybeGrowNode(Node(1), vertex, AFTER_PERIMETER).unsafe
     r.nonPerimeterOrderedPolygons(Node(1)) shouldBe
-      Vector(4, 4, 3, 3, 3)
+      Vector(3, 3, 4, 4, 3)
   }
 
   it can "have a vertex entirely filling a perimeter node starting from a node" in {

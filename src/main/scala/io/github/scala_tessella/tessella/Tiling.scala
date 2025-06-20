@@ -685,9 +685,7 @@ object Tiling extends UniTriangle with UniHex with Uni4Hex with Uni5Hex with Lay
   def maybe(edges: List[Edge]): Either[String, Tiling] =
     val tentative: Graph =
       Graph(edges.distinct)
-    if !tentative.isCompacted then
-      Left(interruptedErrMsg(tentative))
-    else if tentative.graphEdges.allDegrees.values.exists(invalidDegrees) then
+    if tentative.graphEdges.allDegrees.values.exists(invalidDegrees) then
       Left(tentative.invalidDegreeErrMsg(invalidDegrees, "Tiling must have each node connected to min 2 and max 6"))
     else if !tentative.isConnected then
       Left(tentative.disconnectedErrMsg("Tiling"))

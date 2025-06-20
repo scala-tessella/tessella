@@ -65,12 +65,12 @@ object TilingErrorMessages:
         invalids.map((node, degree) => s"$node [degree $degree]").mkString(", ")
       }).${addDOT(graph.toDOT(nodes, graph.graphEdges.filter(_.nodes.intersect(nodes).nonEmpty)))}"
 
-    /** Error message for not compacted tiling, with DOT description */
-    def interruptedErrMsg: String =
-      val nodes: List[Node] =
-        graph.diffFromCompacted
-      s"""Tiling not compacted, nodes should go uninterrupted from 1 to ${graph.graphEdges.nodes.size}:
-         | found ${formatNodes(nodes)}.${addDOT(graph.toDOT(nodes))}""".stripMargin
+//    /** Error message for not compacted tiling, with DOT description */
+//    def interruptedErrMsg: String =
+//      val nodes: List[Node] =
+//        graph.diffFromCompacted
+//      s"""Tiling not compacted, nodes should go uninterrupted from 1 to ${graph.graphEdges.nodes.size}:
+//         | found ${formatNodes(nodes)}.${addDOT(graph.toDOT(nodes))}""".stripMargin
 
   extension (tiling: Tiling)
 

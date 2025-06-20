@@ -35,28 +35,28 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
 
   "A tiling" must "have a perimeter as a circular path" in {
     p4444_4by4_reticulate.perimeter shouldEqual
-      Vector(1, 2, 3, 4, 5, 10, 15, 20, 25, 24, 23, 22, 21, 16, 11, 6)
+      Vector(1, 6, 11, 16, 21, 22, 23, 24, 25, 20, 15, 10, 5, 4, 3, 2)
   }
 
   it must "have a map of perimeter polygons as circular paths" in {
     p4444_4by4_reticulate.perimeterOrderedPolygonPaths shouldEqual
       Map(
-        5 -> Vector(Vector(5, 10, 9, 4)),
-        10 -> Vector(Vector(10, 15, 14, 9), Vector(10, 9, 4, 5)),
-        20 -> Vector(Vector(20, 25, 24, 19), Vector(20, 19, 14, 15)),
-        1 -> Vector(Vector(1, 2, 7, 6)),
-        6 -> Vector(Vector(6, 1, 2, 7), Vector(6, 7, 12, 11)),
-        21 -> Vector(Vector(21, 16, 17, 22)),
-        2 -> Vector(Vector(2, 3, 8, 7), Vector(2, 7, 6, 1)),
-        22 -> Vector(Vector(22, 21, 16, 17), Vector(22, 17, 18, 23)),
-        3 -> Vector(Vector(3, 4, 9, 8), Vector(3, 8, 7, 2)),
-        16 -> Vector(Vector(16, 11, 12, 17), Vector(16, 17, 22, 21)),
-        11 -> Vector(Vector(11, 6, 7, 12), Vector(11, 12, 17, 16)),
-        23 -> Vector(Vector(23, 22, 17, 18), Vector(23, 18, 19, 24)),
-        4 -> Vector(Vector(4, 5, 10, 9), Vector(4, 9, 8, 3)),
-        15 -> Vector(Vector(15, 20, 19, 14), Vector(15, 14, 9, 10)),
-        24 -> Vector(Vector(24, 23, 18, 19), Vector(24, 19, 20, 25)),
-        25 -> Vector(Vector(25, 24, 19, 20))
+        5 -> Vector(Vector(5, 4, 9, 10)),
+        10 -> Vector(Vector(10, 5, 4, 9), Vector(10, 9, 14, 15)),
+        20 -> Vector(Vector(20, 15, 14, 19), Vector(20, 19, 24, 25)),
+        1 -> Vector(Vector(1, 6, 7, 2)),
+        6 -> Vector(Vector(6, 11, 12, 7), Vector(6, 7, 2, 1)),
+        21 -> Vector(Vector(21, 22, 17, 16)),
+        2 -> Vector(Vector(2, 1, 6, 7), Vector(2, 7, 8, 3)),
+        22 -> Vector(Vector(22, 23, 18, 17), Vector(22, 17, 16, 21)),
+        3 -> Vector(Vector(3, 2, 7, 8), Vector(3, 8, 9, 4)),
+        16 -> Vector(Vector(16, 21, 22, 17), Vector(16, 17, 12, 11)),
+        11 -> Vector(Vector(11, 16, 17, 12), Vector(11, 12, 7, 6)),
+        23 -> Vector(Vector(23, 24, 19, 18), Vector(23, 18, 17, 22)),
+        4 -> Vector(Vector(4, 3, 8, 9), Vector(4, 9, 10, 5)),
+        15 -> Vector(Vector(15, 10, 9, 14), Vector(15, 14, 19, 20)),
+        24 -> Vector(Vector(24, 25, 20, 19), Vector(24, 19, 18, 23)),
+        25 -> Vector(Vector(25, 20, 19, 24))
       )
   }
 
@@ -149,7 +149,7 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
       p4444_4by4_reticulate.orderedPerimeterAngles,
     ) shouldBe
       (
-        Vector(1, 2, 3, 4, 5, 10, 15, 20, 25, 24, 23, 22, 21, 16, 11, 6),
+        Vector(1, 6, 11, 16, 21, 22, 23, 24, 25, 20, 15, 10, 5, 4, 3, 2),
         Vector(
           TAU_4, TAU_2, TAU_2, TAU_2, TAU_4, TAU_2, TAU_2, TAU_2,
           TAU_4, TAU_2, TAU_2, TAU_2, TAU_4, TAU_2, TAU_2, TAU_2
@@ -336,21 +336,21 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   it can "be mapped to coords" in {
     p4444_4by4_reticulate.perimeterCoords.almostEqualsMap(
       Map(
-        Node(5)  -> Point(0, 4),
-        Node(10) -> Point(1, 4),
-        Node(20) -> Point(3, 4),
+        Node(5)  -> Point(4, 0),
+        Node(10) -> Point(4, 1),
+        Node(20) -> Point(4, 3),
         Node(1)  -> Point(),
-        Node(6)  -> Point(1, 0),
-        Node(21) -> Point(4, 0),
-        Node(2)  -> Point(0, 1),
-        Node(22) -> Point(4, 1),
-        Node(3)  -> Point(0, 2),
-        Node(16) -> Point(3, 0),
-        Node(11) -> Point(2, 0),
-        Node(23) -> Point(4, 2),
-        Node(4)  -> Point(0, 3),
-        Node(15) -> Point(2, 4),
-        Node(24) -> Point(4, 3),
+        Node(6)  -> Point(0, 1),
+        Node(21) -> Point(0, 4),
+        Node(2)  -> Point(1, 0),
+        Node(22) -> Point(1, 4),
+        Node(3)  -> Point(2, 0),
+        Node(16) -> Point(0, 3),
+        Node(11) -> Point(0, 2),
+        Node(23) -> Point(2, 4),
+        Node(4)  -> Point(3, 0),
+        Node(15) -> Point(4, 2),
+        Node(24) -> Point(3, 4),
         Node(25) -> Point(4, 4)
       )
     ) shouldBe
@@ -470,8 +470,8 @@ class TilingSpec extends AnyFlatSpec with Accuracy with should.Matchers {
   it can "have a dual graph" in {
     p333333_4by4_reticulate.dual.graphEdges shouldBe
       List(
-        6--8, 9--10, 14--15, 3--4, 2--7, 11--12, 4--5, 2--8, 10--11,
-        13--15, 5--6, 8--9, 10--14, 15--16, 1--4, 2--3, 7--11, 12--13
+        5--6, 8--10, 14--15, 2--3, 7--9, 11--12, 3--4, 6--7, 10--11,
+        13--15, 4--5, 6--8, 10--14, 15--16, 1--3, 2--7, 9--11, 12--13
       )
   }
 
