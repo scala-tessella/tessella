@@ -2,6 +2,7 @@ package io.github.scala_tessella.tessella
 package utility
 
 import scala.annotation.tailrec
+import scala.collection.mutable
 
 /** Useful additional methods for collections */
 object Utils:
@@ -51,7 +52,7 @@ object Utils:
     def mapByValue: Map[A, B] =
       grouped.flatMap((key, value) => value.map(_ -> key))
 
-  extension[A](seq: Seq[A])
+  extension [A](seq: Seq[A])
 
     /** Convert the first two elements of the sequence into a tuple
      *
@@ -66,7 +67,7 @@ object Utils:
      * @example {{{List(1, 2, 2).groupBySize // Map(1 -> 1, 2 -> 2)}}}
      */
     def groupBySize: Map[A, Int] =
-      seq.groupBy(identity).mapValues2(_.size)
+      seq.groupMapReduce(identity)(_ => 1)(_ + _)
 
     /** Convert to a `Map` where key is the element and value is a function applied to it
      *
@@ -77,17 +78,25 @@ object Utils:
     def toMap2[T](f: A => T): Map[A, T] =
       seq.map(elem => elem -> f(elem)).toMap
 
-    private def filterBySize(f: Int => Boolean): Iterable[A] =
-      groupBySize.filter((_, size) => f(size)).keys
+    private def partitionedByUniqueness: (mutable.HashSet[A], mutable.HashSet[A]) =
+      val seen = mutable.HashSet[A] ()
+      val duplicates = mutable.HashSet[A] ()
+      seq.foreach { elem =>
+        if !seen.add(elem) then
+          duplicates.add(elem)
+      }
+      (seen, duplicates)
 
     /** Filter all elements occurring just once
-     * 
+     *
      * @note it doesn't preserve the order
-     * @return an 'Iterable' 
+     * @return an 'Iterable'
      * @example {{{List(1, 1, 2, 3, 2, 1, 4).filterUnique // Iterable(4, 3)}}}
      */
     def filterUnique: Iterable[A] =
-      filterBySize(_ == 1)
+      val (seen, duplicates) = partitionedByUniqueness
+      seen -- duplicates
+
 
     /** Filter all elements occurring more than once
      *
@@ -96,7 +105,8 @@ object Utils:
      * @example {{{List(1, 1, 2, 3, 2, 1, 4).filterNotUnique // Iterable(2, 1)}}}
      */
     def filterNotUnique: Iterable[A] =
-      filterBySize(_ > 1)
+      val (_, duplicates) = partitionedByUniqueness
+      duplicates
 
   extension[A](list: List[A])
 

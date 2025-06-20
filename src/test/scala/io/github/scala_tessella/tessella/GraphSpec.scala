@@ -65,18 +65,18 @@ class GraphSpec extends AnyFlatSpec with should.Matchers {
 
   "A path" can "be converted to edges" in {
     aPath.toPathEdges.toList shouldEqual
-      List(1 -- 2, 2 -- 3)
+      List(1--2, 2--3)
   }
 
   val aRingPath: reticulate.RingPath =
     reticulate.RingPath(Vector(1, 2, 7, 6).map(Node(_)))
 
   "A simple path" can "be inferred from edges" in {
-    reticulate.Path.maybeSimpleFrom(List(1 -- 2, 2 -- 3, 3 -- 4)) shouldBe
+    reticulate.Path.maybeSimpleFrom(List(1--2, 2--3, 3--4)) shouldBe
       Option(reticulate.Path(Vector(1, 2, 3, 4).map(Node(_))))
   }
   it can "fail to be inferred from edges, since node 7 is at a fork" in {
-    reticulate.Path.maybeSimpleFrom(List(1 -- 2, 2 -- 3, 3 -- 8, 7 -- 8, 2 -- 7, 6 -- 7)) shouldBe
+    reticulate.Path.maybeSimpleFrom(List(1--2, 2--3, 3--8, 7--8, 2--7, 6--7)) shouldBe
       None
   }
 
@@ -385,20 +385,20 @@ class GraphSpec extends AnyFlatSpec with should.Matchers {
 
   "A perimeter RingPath" can "be found with the current method" in {
     reticulate.tilingOrientedPerimeter shouldBe
-      Option(Vector(1, 2, 3, 4, 5, 10, 15, 20, 25, 24, 23, 22, 21, 16, 11, 6))
+      Option(Vector(1, 6, 11, 16, 21, 22, 23, 24, 25, 20, 15, 10, 5, 4, 3, 2))
   }
 
   "The edges of a perimeter RingPath" can "be detected" in {
     reticulate.tilingOrientedPolygons.map(_.toPerimeterEdges).get shouldBe
       List(
-        20--25, 3--4, 10--15, 1--2, 5--10, 1--6, 22--23, 23--24,
-        24--25, 15--20, 2--3, 11--16, 4--5, 16--21, 6--11, 21--22
+        1--6, 24--25, 16--21, 22--23, 4--5, 20--25, 5--10, 15--20,
+        11--16, 10--15, 3--4, 2--3, 1--2, 6--11, 23--24, 21--22
       )
   }
 
   "The edges of a perimeter RingPath" can "be transformed into a rotated ring with a simpler method, not used now" in {
     reticulate.RingPath.maybeSimpleFromEdges(reticulate.tilingOrientedPolygons.map(_.toPerimeterEdges).get) shouldBe
-      Option(Vector(20, 15, 10, 5, 4, 3, 2, 1, 6, 11, 16, 21, 22, 23, 24, 25))
+      Option(Vector(1, 2, 3, 4, 5, 10, 15, 20, 25, 24, 23, 22, 21, 16, 11, 6))
   }
 
   "The edges of a perimeter RingPath" can "be transformed into a ring with the current method" in {

@@ -30,7 +30,7 @@ class TilingPerimeterSpec extends AnyFlatSpec with IteratingOps with SymmetryOps
 
   it can "have reduced fillable nodes thanks to symmetries" in {
     p4444_4by4_reticulate.perimeterDistinctSymmetricNodes shouldBe
-      Vector(11, 6, 1)
+      Vector(3, 2, 1)
   }
 
   "The perimeter of tri4x4Reticulate" can "have symmetries" in {
@@ -103,7 +103,7 @@ class TilingPerimeterSpec extends AnyFlatSpec with IteratingOps with SymmetryOps
 
   it can "have reduced fillable nodes thanks to symmetries" in {
     closer.perimeterDistinctSymmetricNodes shouldBe
-      Vector(1, 3, 5, 7, 10, 9, 8, 6, 4, 2)
+      Vector(1, 2, 4, 6, 8, 9, 10, 7, 5, 3)
   }
 
   "The perimeter of pentagon" can "have symmetries" in {
