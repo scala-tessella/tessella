@@ -243,21 +243,21 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
             List(9--14, 9--10, 10--14)
           ),
           List(
-            List(7--11, 7--12, 11--12),
-            List(7--11, 6--11, 6--7),
-            List(2--6, 2--7, 6--7),
-            List(11--15, 10--15, 10--11),
-            List(6--10, 6--11, 10--11),
-            List(6--10, 5--10, 5--6)
+            List(3--7, 3--8, 7--8)
           ),
           List(
-            List(3--7, 3--8, 7--8)
+            List(11--15, 10--15, 10--11),
+            List(6--10, 6--11, 10--11),
+            List(7--11, 6--11, 6--7),
+            List(6--10, 5--10, 5--6),
+            List(7--11, 7--12, 11--12),
+            List(2--6, 2--7, 6--7),
           )
         ),
         List(
           List(
-            List(7--11, 6--11, 6--7),
-            List(6--10, 6--11, 10--11)
+            List(6--10, 6--11, 10--11),
+            List(7--11, 6--11, 6--7)
           )
         )
       )
@@ -267,7 +267,7 @@ class TilingEqualitySpec extends AnyFlatSpec with Helper with ring_seq.Iterating
     aTriangleNet.nestedPerimeters(isStrict = true) shouldBe
       List(
         List(Vector(1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5)),
-        List(Vector(9, 10, 14), Vector(11, 15, 10, 5, 6, 2, 7, 12), Vector(3, 7, 8)),
+        List(Vector(9, 10, 14), Vector(3, 7, 8), Vector(11, 15, 10, 5, 6, 2, 7, 12)),
         List(Vector(7, 6, 10, 11))
       )
   }

@@ -76,7 +76,7 @@ object Utils:
      * @example {{{List(1, 2).toMap2(_ + 1) // Map(1 -> 2, 2 -> 3)}}}
      */
     def toMap2[T](f: A => T): Map[A, T] =
-      seq.map(elem => elem -> f(elem)).toMap
+      seq.view.map(elem => elem -> f(elem)).toMap
 
     private def partitionedByUniqueness: (mutable.HashSet[A], mutable.HashSet[A]) =
       val seen = mutable.HashSet[A] ()
@@ -110,18 +110,38 @@ object Utils:
 
   extension[A](list: List[A])
 
+    def groupConnectedOld(areConnected: (A, A) => Boolean): List[List[A]] =
+      list.foldLeft(list.map(List(_)))((groups, elem) =>
+        val (connected, unconnected) =
+          groups.partition(_.exists(areConnected(_, elem)))
+        connected.flatten :: unconnected
+      )
+
     /** Separate elements in disconnected groups
+     * More performant variant with a graph traversal algorithm (like a Breadth-First Search)
+     * that finds connected components in a single pass over the data
      *
      * @param areConnected the connection function
      * @return a 'List' of 'List'
      * @example {{{List(1, 2, 3, 5).groupConnected((x, y) => Math.abs(x - y) < 2) // List(List(5), List(1, 2, 3)}}}
      */
     def groupConnected(areConnected: (A, A) => Boolean): List[List[A]] =
-      list.foldLeft(list.map(List(_)))((groups, elem) =>
-        val (connected, unconnected) =
-          groups.partition(_.exists(areConnected(_, elem)))
-        connected.flatten :: unconnected
-      )
+      var unvisited = list
+      var allGroups = List.empty[List[A]]
+      while (unvisited.nonEmpty)
+        val component = mutable.ListBuffer(unvisited.head)
+        val queue = mutable.Queue(unvisited.head)
+        var remainingForComponent = unvisited.tail
+        while (queue.nonEmpty)
+          val current = queue.dequeue()
+          val (neighbors, rest) = remainingForComponent.partition(other => areConnected(current, other))
+          component ++= neighbors
+          neighbors.foreach(queue.enqueue)
+          remainingForComponent = rest
+        allGroups = component.toList :: allGroups
+        unvisited = remainingForComponent
+      allGroups
+
 
   extension[A](iterable: Iterable[A])
 
