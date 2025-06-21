@@ -139,3 +139,14 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
     result.isLeft shouldBe true
     result.left.getOrElse(fail("Expected an error message")) shouldBe "Perimeter edge not found."
   }
+
+  it should "add a dodecagon to a triangle and another dodecagon" in {
+    val dodecagon = TilingAlt.fromPolygon(12)
+    val dodecagonAndTriangle = TilingAlt.addPolygon(dodecagon, Polygon(3), 1--2).toOption.get
+    val result = TilingAlt.addPolygon(dodecagonAndTriangle, Polygon(12), 1--13)
+    result.isRight shouldBe true
+    val t31212 = result.getOrElse(fail("Expected a TilingAlt"))
+
+    t31212.edges should have size 24
+
+  }
