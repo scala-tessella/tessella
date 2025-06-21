@@ -3,6 +3,7 @@ package io.github.scala_tessella.tessella
 import Geometry.Point
 import RegularPolygon.Polygon
 import Topology.{--, Edge, Node}
+import conversion.SVG.*
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -79,7 +80,7 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "throw an AssertionError for a non-perimeter edge" in {
-    an [AssertionError] should be thrownBy 
+    an [AssertionError] should be thrownBy
       square.calculateNewPolygonCoords(Polygon(4), 1--3) // Diagonal, not on perimeter
   }
 
@@ -177,4 +178,25 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
     t3121212.edges should have size 33
     t3121212.perimeter should contain theSameElementsInOrderAs
       Vector(3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 22, 21, 20, 19, 18, 17, 16, 15, 14, 30, 29, 28, 27, 26, 25, 24, 23)
+  }
+
+  // Tiling where one square is almost completely surrounded by others
+  val quasiEnclosedSquareTiling: TilingAlt =
+    TilingAlt.fromPolygon(4) // Central square (1,2,3,4)
+      .addPolygon(Polygon(4), 1--2).getOrElse(fail())
+      .addPolygon(Polygon(4), 2--3).getOrElse(fail())
+      .addPolygon(Polygon(4), 3--4).getOrElse(fail())
+
+  it should "add 3 squares to a central square" in {
+//    println(quasiEnclosedSquareTiling.toSVG().toString)
+    quasiEnclosedSquareTiling.perimeter should have size 10
+    quasiEnclosedSquareTiling.edges should have size 13
+  }
+
+  it should "add 4 squares to a central square" in {
+    val result = quasiEnclosedSquareTiling.addPolygon(Polygon(4), 4--1)
+    result.isRight shouldBe true
+    val enclosedSquareTiling = result.getOrElse(fail("Expected a TilingAlt"))
+
+    enclosedSquareTiling.perimeter should have size 12
   }
