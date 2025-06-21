@@ -4,9 +4,8 @@ import Geometry.{Box, Point, Radian}
 import Geometry.Radian.TAU_2
 import RegularPolygon.Polygon
 import TilingCoordinates.{Coords, pointsFrom, toBox}
-import Topology.{Edge, Node}
-
-import io.github.scala_tessella.ring_seq.RingSeq.slidingO
+import Topology.{Edge, Node, NodeOrdering}
+import io.github.scala_tessella.ring_seq.RingSeq.{rotationsAndReflections, slidingO}
 
 import scala.collection.mutable
 
@@ -32,6 +31,24 @@ case class TilingAlt private (
 
   def maxNode: Node =
     coordinates.keys.maxBy(_.toInt)
+
+  def perimeterOrientedPolygons: List[Vector[Node]] =
+    val perimeterEdgeSet = perimeter.toEdgesO.toSet
+    orientedPolygons.filter(_.toEdgesO.exists(perimeterEdgeSet.contains))
+    
+  def perimeterPolygonsContain(polygonPath: Vector[Node]): Boolean =
+    val pathRotationsAndReflections = polygonPath.rotationsAndReflections.toSet
+    perimeterOrientedPolygons.exists(pathRotationsAndReflections.contains)
+
+  def polygonsContain(polygonPath: Vector[Node]): Boolean =
+    val pathRotationsAndReflections = polygonPath.rotationsAndReflections.toSet
+    orientedPolygons.exists(pathRotationsAndReflections.contains)
+
+  def perimeterTouchpoints(polygonPath: Vector[Node]): (List[Edge], List[Node]) =
+    val touchNodes = perimeter.intersect(polygonPath).toList
+    val perimeterEdgeSet = perimeter.toEdgesO.toSet
+    val touchEdges = polygonPath.toEdgesO.filter(perimeterEdgeSet.contains).toList
+    (touchEdges, touchNodes)
 
   /**
    * Calculates the coordinates for the new vertices of a regular polygon attached to an existing tiling's perimeter.
@@ -188,7 +205,39 @@ case class TilingAlt private (
     )
 
   def removePolygon(polygonPath: Vector[Node]): Either[String, TilingAlt] =
-    ???
+    val (touchEdges, touchNodes) = perimeterTouchpoints(polygonPath)
+    if touchEdges.isEmpty then
+      return Left("Polygon not sharing any edge with the perimeter. Cannot remove it.")
+    if touchEdges.nodes.diff(touchNodes).nonEmpty then
+      return Left("Polygon sharing separate nodes with the perimeter. Cannot remove it.")  
+    if !touchEdges.areContinuous then
+      return Left("Polygon sharing non-continuos edges with the perimeter. Cannot remove it.")
+    if !perimeterPolygonsContain(polygonPath) then
+      return Left("Polygon not found.")
+
+    // Edges of the removed polygon that were NOT on the perimeter.
+    val subtractableEdges = polygonPath.toEdgesO.toList.diff(touchEdges)
+    val newEdges = edges.diff(subtractableEdges)
+
+    // Nodes of the removed polygon that were NOT on the perimeter.
+    val subtractableNodes = polygonPath.diff(touchNodes)
+    val newCoords = coordinates -- subtractableNodes
+
+    val sortedPathNodes = polygonPath.sorted(NodeOrdering)
+    val newPolygons = orientedPolygons.filterNot(_.sorted(NodeOrdering) == sortedPathNodes)
+
+    // The new perimeter is formed by the old perimeter, with the `touchEdges` segment
+    // replaced by the `subtractableEdges` segment. The existing updatePerimeter method correctly handles this.
+    val newPerimeter = updatePerimeter(perimeter, polygonPath)
+
+    Right(
+      TilingAlt(
+        newEdges,
+        newPolygons,
+        newPerimeter,
+        newCoords
+      )
+    )
 
   /** Finds the 2D box */
   def toBox: Box =
