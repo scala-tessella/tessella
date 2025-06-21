@@ -77,24 +77,24 @@ object TilingAlt:
    * @return A tuple containing the ordered path of the new polygon (nodes) and a `Coords` map
    *         for only the newly created vertices.
    */
-  private def calculateNewPolygonCoords(
+  def calculateNewPolygonCoords(
                                          existingTiling: TilingAlt,
                                          polygon: Polygon,
                                          perimeterEdge: Edge
                                        ): (Vector[Node], Coords) = {
     val (n1, n2) = (perimeterEdge.lesserNode, perimeterEdge.greaterNode)
 
-    // --- ALTERNATIVE 1: Determine orientation by perimeter traversal (commented out) ---
-    /*
+    // --- ALTERNATIVE 1: Determine orientation by perimeter traversal ---
+
     val (startNode, nextNode) =
       existingTiling.perimeter.slidingO(2).find(p => (p.head == n1 && p.last == n2) || (p.head == n2 && p.last == n1)) match {
-        case Some(pair) => (pair.last, pair.head) // Build on the reversed edge to go "outwards".
+        case Some(pair) => (pair.head, pair.last) // Build on the reversed edge to go "outwards".
         case None => throw new AssertionError(s"Edge $perimeterEdge not found on perimeter.")
       }
-    */
 
-    // --- ALTERNATIVE 2: Determine orientation by checking adjacent polygon's spatial location ---
-    val (startNode, nextNode) = {
+
+    // --- ALTERNATIVE 2: Determine orientation by checking adjacent polygon's spatial location (commented out) ---
+    /* val (startNode, nextNode) = {
       // Find the polygon that already contains this edge. Because it's a perimeter edge, there is only one.
       val adjacentPolygon = existingTiling.orientedPolygons
         .find(p => p.slidingO(2).exists(pair => Edge(pair) == perimeterEdge))
@@ -111,7 +111,7 @@ object TilingAlt:
       // counter-clockwise from p2->p1 to build "outward". Otherwise, from p1->p2.
       if (Point.ccw(p1, p2, p3) > 0) (n2, n1) else (n1, n2)
     }
-
+    */
     // 2. Generate the required number of new nodes for the polygon.
     val sides = polygon.toSides
     val newNodesCount = sides - 2

@@ -7,7 +7,7 @@ import Topology.{--, Edge, Node}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class TilingAltSpec extends AnyFlatSpec with Matchers {
+class TilingAltSpec extends AnyFlatSpec with Matchers:
 
   "An empty TilingAlt" should "have no elements" in {
     val emptyTiling = TilingAlt.empty
@@ -18,8 +18,10 @@ class TilingAltSpec extends AnyFlatSpec with Matchers {
     emptyTiling.coordinates shouldBe empty
   }
 
+  val square: TilingAlt =
+    TilingAlt.fromPolygon(4)
+
   "A TilingAlt from a polygon" should "be a single regular polygon" in {
-    val square = TilingAlt.fromPolygon(4)
     square shouldBe a [TilingAlt]
     square.edges should have size 4
     square.edges should contain theSameElementsAs List(1--2, 2--3, 3--4, 4--1)
@@ -44,4 +46,52 @@ class TilingAltSpec extends AnyFlatSpec with Matchers {
     an [IllegalArgumentException] should be thrownBy TilingAlt.fromPolygon(2)
   }
 
-}
+  "The TilingAlt companion object" should "correctly calculate coords for a square added to a square" in {
+    val (newPolygonPath, newCoords) = TilingAlt.calculateNewPolygonCoords(
+      square,
+      Polygon(4),
+      3--4
+    )
+
+    newPolygonPath should contain theSameElementsInOrderAs Vector(6, 5, 4, 3)
+
+    newCoords should have size 2
+    newCoords(Node(5)).almostEquals(Point(2.0, 0.0)) shouldBe true
+    newCoords(Node(6)).almostEquals(Point(2.0, 1.0)) shouldBe true
+  }
+
+  it should "correctly calculate coords for a triangle added to a square" in {
+    val (newPolygonPath, newCoords) = TilingAlt.calculateNewPolygonCoords(
+      square,
+      Polygon(3),
+      1--2
+    )
+
+    newPolygonPath should contain theSameElementsInOrderAs Vector(5, 2, 1)
+
+    newCoords should have size 1
+    newCoords(Node(5)).almostEquals(Point(-0.8660254037844386, 0.5)) shouldBe true
+  }
+
+  it should "handle building on a reversed perimeter edge" in {
+    val (newPolygonPath, newCoords) = TilingAlt.calculateNewPolygonCoords(
+      square,
+      Polygon(4),
+      4--1
+    )
+
+    newPolygonPath should contain theSameElementsInOrderAs Vector(6, 5, 1, 4)
+
+    newCoords should have size 2
+    println(newCoords(Node(5)))
+    newCoords(Node(5)).almostEquals(Point(0.0, -1.0)) shouldBe true
+    newCoords(Node(6)).almostEquals(Point(1.0, -1.0)) shouldBe true
+  }
+
+  it should "throw an AssertionError for a non-perimeter edge" in {
+    an [AssertionError] should be thrownBy TilingAlt.calculateNewPolygonCoords(
+      square,
+      Polygon(4),
+      1--3 // Diagonal, not on perimeter
+    )
+  }
