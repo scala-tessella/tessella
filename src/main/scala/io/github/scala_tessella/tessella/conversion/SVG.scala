@@ -390,3 +390,28 @@ object SVG extends ConverterSVG:
       toViewBox(
         tessellationGroup(showPerimeter, fillPolygons, labelledNodes, markStyle, showGrowth, showDual)
       )
+      
+  extension (tilingAlt: TilingAlt)
+
+    private def graphSVG: Option[Elem] =
+      Option(graphGroup(tilingAlt.edges.map(edge =>
+        line(tilingAlt.coordinates(edge.lesserNode), tilingAlt.coordinates(edge.greaterNode))
+      )))
+
+    def tessellationGroup(): Elem =
+      group(
+        Option(Title("Tiling")),
+        Option(Description("Finite tessellation of regular polygons")),
+        List(
+          graphSVG
+        ).flatten *
+      )
+
+    /** `svg` element with metadata and `viewBox` fitting the tiling */
+    def toViewBox(elems: Elem*): Elem =
+      svg(tilingAlt.toBox, elems :+ signatureMetadata *).addAttributes(rdfAttributes *)
+
+    def toSVG(): Elem =
+      toViewBox(
+        tessellationGroup()
+      )

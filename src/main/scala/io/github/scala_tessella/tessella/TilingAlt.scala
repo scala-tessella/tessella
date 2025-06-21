@@ -1,10 +1,11 @@
 package io.github.scala_tessella.tessella
 
+import Geometry.{Box, Point, Radian}
+import Geometry.Radian.TAU_2
 import RegularPolygon.Polygon
-import TilingCoordinates.{Coords, pointsFrom}
+import TilingCoordinates.{Coords, pointsFrom, toBox}
 import Topology.{Edge, Node}
-import io.github.scala_tessella.tessella.Geometry.Radian.TAU_2
-import io.github.scala_tessella.tessella.Geometry.{Point, Radian}
+
 import io.github.scala_tessella.ring_seq.RingSeq.{applyO, slidingO}
 
 import scala.collection.mutable
@@ -31,6 +32,10 @@ case class TilingAlt private (
 
   def maxNode: Node =
     coordinates.keys.maxBy(_.toInt)
+
+  /** Finds the 2D box */
+  def toBox: Box =
+    edges.toBox(coordinates)
 
 // The companion object becomes the "smart" factory and manager.
 // It contains all the logic for creating and growing tilings,
