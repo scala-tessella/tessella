@@ -47,11 +47,8 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   }
 
   "The TilingAlt companion object" should "correctly calculate coords for a square added to a square" in {
-    val (newPolygonPath, newCoords) = TilingAlt.calculateNewPolygonCoords(
-      square,
-      Polygon(4),
-      3--4
-    )
+    val (newPolygonPath, newCoords) =
+      square.calculateNewPolygonCoords(Polygon(4), 3--4)
 
     newPolygonPath should contain theSameElementsInOrderAs Vector(6, 5, 4, 3)
 
@@ -61,11 +58,8 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "correctly calculate coords for a triangle added to a square" in {
-    val (newPolygonPath, newCoords) = TilingAlt.calculateNewPolygonCoords(
-      square,
-      Polygon(3),
-      1--2
-    )
+    val (newPolygonPath, newCoords) =
+      square.calculateNewPolygonCoords(Polygon(3), 1--2)
 
     newPolygonPath should contain theSameElementsInOrderAs Vector(5, 2, 1)
 
@@ -74,11 +68,8 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "handle building on a reversed perimeter edge" in {
-    val (newPolygonPath, newCoords) = TilingAlt.calculateNewPolygonCoords(
-      square,
-      Polygon(4),
-      4--1
-    )
+    val (newPolygonPath, newCoords) =
+      square.calculateNewPolygonCoords(Polygon(4), 4--1)
 
     newPolygonPath should contain theSameElementsInOrderAs Vector(6, 5, 1, 4)
 
@@ -88,15 +79,12 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "throw an AssertionError for a non-perimeter edge" in {
-    an [AssertionError] should be thrownBy TilingAlt.calculateNewPolygonCoords(
-      square,
-      Polygon(4),
-      1--3 // Diagonal, not on perimeter
-    )
+    an [AssertionError] should be thrownBy 
+      square.calculateNewPolygonCoords(Polygon(4), 1--3) // Diagonal, not on perimeter
   }
 
   "The addPolygon method" should "add a square to another square" in {
-    val result = TilingAlt.addPolygon(square, Polygon(4), 3--4)
+    val result = square.addPolygon(Polygon(4), 3--4)
     result.isRight shouldBe true
     val twoSquares = result.getOrElse(fail("Expected a TilingAlt"))
 
@@ -116,7 +104,7 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "add a triangle to a square" in {
-    val result = TilingAlt.addPolygon(square, Polygon(3), 1--2)
+    val result = square.addPolygon(Polygon(3), 1--2)
     result.isRight shouldBe true
     val squareAndTriangle = result.getOrElse(fail("Expected a TilingAlt"))
 
@@ -135,7 +123,7 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "return an error when adding to a non-perimeter edge" in {
-    val result = TilingAlt.addPolygon(square, Polygon(4), 1--3)
+    val result = square.addPolygon(Polygon(4), 1--3)
     result.isLeft shouldBe true
     result.left.getOrElse(fail("Expected an error message")) shouldBe "Perimeter edge not found."
   }
@@ -144,10 +132,10 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
     TilingAlt.fromPolygon(12)
 
   val dodecagonAndTriangle: TilingAlt =
-    TilingAlt.addPolygon(dodecagon, Polygon(3), 1 -- 2).toOption.get
+    dodecagon.addPolygon(Polygon(3), 1--2).toOption.get
 
   it should "add a dodecagon sharing 2 perimeter edges to a triangle and another dodecagon" in {
-    val result = TilingAlt.addPolygon(dodecagonAndTriangle, Polygon(12), 1--13)
+    val result = dodecagonAndTriangle.addPolygon(Polygon(12), 1--13)
     result.isRight shouldBe true
     val t31212 = result.getOrElse(fail("Expected a TilingAlt"))
 
@@ -157,7 +145,7 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "add a dodecagon sharing 2 perimeter edges to another dodecagon and a triangle" in {
-    val result = TilingAlt.addPolygon(dodecagonAndTriangle, Polygon(12), 1--12)
+    val result = dodecagonAndTriangle.addPolygon(Polygon(12), 1--12)
     result.isRight shouldBe true
     val t31212 = result.getOrElse(fail("Expected a TilingAlt"))
 
@@ -167,14 +155,12 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   }
 
   val twoDodecagonsAndTriangle: TilingAlt =
-    TilingAlt.addPolygon(
-      TilingAlt.addPolygon(dodecagon, Polygon(3), 1 -- 2).toOption.get,
-      Polygon(12),
-      1 -- 13
-    ).toOption.get
+    dodecagon
+      .addPolygon(Polygon(3), 1--2).toOption.get
+      .addPolygon(Polygon(12), 1--13).toOption.get
 
   it should "add a dodecagon sharing 3 perimeter edges to a triangle and other two dodecagons" in {
-    val result = TilingAlt.addPolygon(twoDodecagonsAndTriangle, Polygon(12), 2--13)
+    val result = twoDodecagonsAndTriangle.addPolygon(Polygon(12), 2--13)
     result.isRight shouldBe true
     val t3121212 = result.getOrElse(fail("Expected a TilingAlt"))
 
@@ -184,7 +170,7 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "add a dodecagon sharing 3 perimeter edges to a dodecagon and a triangle and another dodecagon" in {
-    val result = TilingAlt.addPolygon(twoDodecagonsAndTriangle, Polygon(12), 2--3)
+    val result = twoDodecagonsAndTriangle.addPolygon(Polygon(12), 2--3)
     result.isRight shouldBe true
     val t3121212 = result.getOrElse(fail("Expected a TilingAlt"))
 
