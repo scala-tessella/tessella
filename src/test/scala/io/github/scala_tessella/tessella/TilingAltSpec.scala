@@ -143,25 +143,52 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   val dodecagon: TilingAlt =
     TilingAlt.fromPolygon(12)
 
-  it should "add a dodecagon to a triangle and another dodecagon" in {
-    val dodecagonAndTriangle = TilingAlt.addPolygon(dodecagon, Polygon(3), 1--2).toOption.get
+  val dodecagonAndTriangle: TilingAlt =
+    TilingAlt.addPolygon(dodecagon, Polygon(3), 1 -- 2).toOption.get
+
+  it should "add a dodecagon sharing 2 perimeter edges to a triangle and another dodecagon" in {
     val result = TilingAlt.addPolygon(dodecagonAndTriangle, Polygon(12), 1--13)
     result.isRight shouldBe true
     val t31212 = result.getOrElse(fail("Expected a TilingAlt"))
 
     t31212.edges should have size 24
+    t31212.perimeter should contain theSameElementsInOrderAs
+      Vector(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13)
   }
 
-  it should "add a dodecagon to a triangle and other two dodecagons" in {
-    val twoDodecagonsAndTriangle =
-      TilingAlt.addPolygon(
-        TilingAlt.addPolygon(dodecagon, Polygon(3),1--2).toOption.get,
-        Polygon(12),
-        1--13
-      ).toOption.get
+  it should "add a dodecagon sharing 2 perimeter edges to another dodecagon and a triangle" in {
+    val result = TilingAlt.addPolygon(dodecagonAndTriangle, Polygon(12), 1--12)
+    result.isRight shouldBe true
+    val t31212 = result.getOrElse(fail("Expected a TilingAlt"))
+
+    t31212.edges should have size 24
+    t31212.perimeter should contain theSameElementsInOrderAs
+      Vector(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 23, 22, 21, 20, 19, 18, 17, 16, 15, 13)
+  }
+
+  val twoDodecagonsAndTriangle: TilingAlt =
+    TilingAlt.addPolygon(
+      TilingAlt.addPolygon(dodecagon, Polygon(3), 1 -- 2).toOption.get,
+      Polygon(12),
+      1 -- 13
+    ).toOption.get
+
+  it should "add a dodecagon sharing 3 perimeter edges to a triangle and other two dodecagons" in {
     val result = TilingAlt.addPolygon(twoDodecagonsAndTriangle, Polygon(12), 2--13)
     result.isRight shouldBe true
     val t3121212 = result.getOrElse(fail("Expected a TilingAlt"))
 
     t3121212.edges should have size 33
+    t3121212.perimeter should contain theSameElementsInOrderAs
+      Vector(3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 22, 21, 20, 19, 18, 17, 16, 15, 14, 31, 30, 29, 28, 27, 26, 25, 24)
+  }
+
+  it should "add a dodecagon sharing 3 perimeter edges to a dodecagon and a triangle and another dodecagon" in {
+    val result = TilingAlt.addPolygon(twoDodecagonsAndTriangle, Polygon(12), 2--3)
+    result.isRight shouldBe true
+    val t3121212 = result.getOrElse(fail("Expected a TilingAlt"))
+
+    t3121212.edges should have size 33
+    t3121212.perimeter should contain theSameElementsInOrderAs
+      Vector(3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 22, 21, 20, 19, 18, 17, 16, 15, 14, 30, 29, 28, 27, 26, 25, 24, 23)
   }
