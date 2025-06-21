@@ -83,7 +83,6 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
     newPolygonPath should contain theSameElementsInOrderAs Vector(6, 5, 1, 4)
 
     newCoords should have size 2
-    println(newCoords(Node(5)))
     newCoords(Node(5)).almostEquals(Point(0.0, -1.0)) shouldBe true
     newCoords(Node(6)).almostEquals(Point(1.0, -1.0)) shouldBe true
   }
