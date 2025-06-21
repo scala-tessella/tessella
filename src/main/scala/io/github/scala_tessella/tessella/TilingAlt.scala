@@ -77,20 +77,15 @@ object TilingAlt:
    * @return A tuple containing the ordered path of the new polygon (nodes) and a `Coords` map
    *         for only the newly created vertices.
    */
-  def calculateNewPolygonCoords(
-                                         existingTiling: TilingAlt,
-                                         polygon: Polygon,
-                                         perimeterEdge: Edge
-                                       ): (Vector[Node], Coords) = {
-    val (n1, n2) = (perimeterEdge.lesserNode, perimeterEdge.greaterNode)
+  def calculateNewPolygonCoords(existingTiling: TilingAlt, polygon: Polygon, perimeterEdge: Edge): (Vector[Node], Coords) =
+    val (n1, n2) = perimeterEdge.pair
 
     // --- ALTERNATIVE 1: Determine orientation by perimeter traversal ---
 
     val (startNode, nextNode) =
-      existingTiling.perimeter.slidingO(2).find(p => (p.head == n1 && p.last == n2) || (p.head == n2 && p.last == n1)) match {
+      existingTiling.perimeter.slidingO(2).find(p => (p.head == n1 && p.last == n2) || (p.head == n2 && p.last == n1)) match
         case Some(pair) => (pair.head, pair.last) // Build on the reversed edge to go "outwards".
-        case None => throw new AssertionError(s"Edge $perimeterEdge not found on perimeter.")
-      }
+        case None       => throw new AssertionError(s"Edge $perimeterEdge not found on perimeter.")
 
 
     // --- ALTERNATIVE 2: Determine orientation by checking adjacent polygon's spatial location (commented out) ---
@@ -115,8 +110,6 @@ object TilingAlt:
     // 2. Generate the required number of new nodes for the polygon.
     val sides = polygon.toSides
     val newNodesCount = sides - 2
-    if (newNodesCount < 1) return (Vector(n2, n1, n2), Map.empty) // Special case for triangles
-
     val maxExistingNode = existingTiling.maxNode.toInt
     val newNodes = Vector.tabulate(newNodesCount)(i => Node(maxExistingNode + 1 + i))
 
@@ -139,7 +132,6 @@ object TilingAlt:
 
     val newPolygon = (Vector(startNode, nextNode) ++ newNodes).reverse
     (newPolygon, newCoords.toMap)
-  }
 
   /**
    * The incremental growth method. This is where the performance gain is.
