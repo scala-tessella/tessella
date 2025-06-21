@@ -137,11 +137,11 @@ object TilingAlt:
    * The incremental growth method. This is where the performance gain is.
    *
    * @param existingTiling The TilingAlt to grow from.
-   * @param polygonToAdd   Information about the new polygon.
+   * @param polygon        Information about the new polygon.
    * @param perimeterEdge  The perimeter edge the new polygon must be attached to.
    * @return               Either an error or the new, larger TilingAlt.
    */
-  def addPolygon(existingTiling: TilingAlt, polygonToAdd: Polygon, perimeterEdge: Edge): Either[String, TilingAlt] =
+  def addPolygon(existingTiling: TilingAlt, polygon: Polygon, perimeterEdge: Edge): Either[String, TilingAlt] =
 
     // 1. Perform VALIDATION using the existing tiling's data.
     //    - Check for overlaps, angle consistency, etc.
@@ -150,18 +150,20 @@ object TilingAlt:
     if !existingTiling.hasOnPerimeter(perimeterEdge) then
       return Left("Perimeter edge not found.")
 
-    val newPolygon =
-      ???
+    val (newPolygon, additionalCoords) = calculateNewPolygonCoords(existingTiling, polygon, perimeterEdge)
+
+    val additionalEdges = newPolygon.slidingO(2).map(x => Edge(x.head, x(1))).toList.withNodes(additionalCoords.keys.toList)
 
     // 2. Calculate the NEW properties INCREMENTALLY.
-    val newEdges = existingTiling.edges ++ ???//polygonToAdd.toPolygonEdges
-    val newPolygons = existingTiling.orientedPolygons :+ ??? // polygonToAdd
+    val newEdges = existingTiling.edges ++ additionalEdges
+    //polygonToAdd.toPolygonEdges
+    val newPolygons = existingTiling.orientedPolygons :+ newPolygon // polygonToAdd
 
     // Incrementally update coordinates
-    val newCoords = existingTiling.coordinates ++ calculateNewCoordinates(existingTiling, ??? /*polygonToAdd*/)
+    val newCoords = existingTiling.coordinates ++ additionalCoords
 
     // Incrementally update the perimeter
-    val newPerimeter = updatePerimeter(existingTiling.perimeter, ??? /*polygonToAdd*/)
+    val newPerimeter = updatePerimeter(existingTiling.perimeter, newPolygon)
 
     // 3. Create the new immutable instance using the private constructor or copy.
     //    All data passed in is guaranteed to be consistent by our logic.
@@ -188,10 +190,53 @@ object TilingAlt:
     // relative to the existing coordinates in `tiling.coordinates`.
     Map.empty // placeholder
 
-  private def updatePerimeter(currentPerimeter: Vector[Node], poly: Vector[Node]): Vector[Node] =
-    // The most complex part:
-    // 1. Find edges shared between currentPerimeter and poly.
-    // 2. Remove shared edges from the perimeter.
-    // 3. Add the new, outward-facing edges from poly to the perimeter.
-    // 4. Re-order the resulting edges to form the new RingPath.
-    currentPerimeter // placeholder
+private def updatePerimeter(currentPerimeter: Vector[Node], poly: Vector[Node]): Vector[Node] =
+  // The most complex part:
+  // 1. Find edges shared between currentPerimeter and poly.
+  // 2. Remove shared edges from the perimeter.
+  // 3. Add the new, outward-facing edges from poly to the perimeter.
+  // 4. Re-order the resulting edges to form the new RingPath.
+
+  // This implementation assumes that the polygons have a consistent winding order,
+  // so that shared edges appear in opposite directions, e.g., (A,B) in one and (B,A) in the other.
+  if (poly.isEmpty) {
+    return currentPerimeter
+  }
+  if (currentPerimeter.isEmpty) {
+    return poly
+  }
+
+  // Create lists of directed edges for both polygons.
+  val perimeterEdges = currentPerimeter.zip(currentPerimeter.tail :+ currentPerimeter.head)
+  val polyEdges = poly.zip(poly.tail :+ poly.head)
+
+  val polyEdgesSet = polyEdges.toSet
+  val perimeterEdgesSet = perimeterEdges.toSet
+
+  // Edges from the original perimeter that are not shared with the new polygon.
+  val remainingPerimeterEdges = perimeterEdges.filterNot(edge => polyEdgesSet.contains(edge.swap))
+
+  // Edges from the new polygon that are not shared with the original perimeter.
+  val newPolyEdges = polyEdges.filterNot(edge => perimeterEdgesSet.contains(edge.swap))
+
+  // The combination of these two sets gives the edges of the new perimeter.
+  val newPerimeterTotalEdges = remainingPerimeterEdges ++ newPolyEdges
+
+  if (newPerimeterTotalEdges.isEmpty) {
+    return Vector.empty
+  }
+
+  // Build a map to allow quick lookup of the next node in the path.
+  val edgeMap = newPerimeterTotalEdges.toMap
+
+  // Reconstruct the new perimeter node sequence by starting at an arbitrary node
+  // and following the path through the edge map.
+  val pathBuilder = Vector.newBuilder[Node]
+  var currentNode = newPerimeterTotalEdges.head._1
+
+  for (_ <- newPerimeterTotalEdges.indices) {
+    pathBuilder += currentNode
+    currentNode = edgeMap(currentNode)
+  }
+
+  pathBuilder.result()

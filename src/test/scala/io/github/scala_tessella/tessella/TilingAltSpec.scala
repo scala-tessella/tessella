@@ -95,3 +95,48 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
       1--3 // Diagonal, not on perimeter
     )
   }
+
+  "The addPolygon method" should "add a square to another square" in {
+    val result = TilingAlt.addPolygon(square, Polygon(4), 3--4)
+    result.isRight shouldBe true
+    val twoSquares = result.getOrElse(fail("Expected a TilingAlt"))
+
+    twoSquares.edges should have size 7
+    twoSquares.edges should contain theSameElementsAs List(1--2, 2--3, 3--4, 4--1, 4--5, 5--6, 6--3)
+
+    twoSquares.orientedPolygons should have size 2
+    twoSquares.orientedPolygons should contain(Vector(1, 2, 3, 4))
+    twoSquares.orientedPolygons should contain(Vector(6, 5, 4, 3))
+
+    twoSquares.perimeter should have size 6
+    twoSquares.perimeter should contain theSameElementsInOrderAs Vector(1, 2, 3, 6, 5, 4)
+
+    twoSquares.coordinates should have size 6
+    twoSquares.coordinates(Node(5)).almostEquals(Point(2.0, 0.0)) shouldBe true
+    twoSquares.coordinates(Node(6)).almostEquals(Point(2.0, 1.0)) shouldBe true
+  }
+
+  it should "add a triangle to a square" in {
+    val result = TilingAlt.addPolygon(square, Polygon(3), 1--2)
+    result.isRight shouldBe true
+    val squareAndTriangle = result.getOrElse(fail("Expected a TilingAlt"))
+
+    squareAndTriangle.edges should have size 6
+    squareAndTriangle.edges should contain theSameElementsAs List(1--2, 2--3, 3--4, 4--1, 2--5, 5--1)
+
+    squareAndTriangle.orientedPolygons should have size 2
+    squareAndTriangle.orientedPolygons should contain(Vector(1, 2, 3, 4))
+    squareAndTriangle.orientedPolygons should contain(Vector(5, 2, 1))
+
+    squareAndTriangle.perimeter should have size 5
+    squareAndTriangle.perimeter should contain theSameElementsInOrderAs Vector(2, 3, 4, 1, 5)
+
+    squareAndTriangle.coordinates should have size 5
+    squareAndTriangle.coordinates(Node(5)).almostEquals(Point(-0.8660254037844386, 0.5)) shouldBe true
+  }
+
+  it should "return an error when adding to a non-perimeter edge" in {
+    val result = TilingAlt.addPolygon(square, Polygon(4), 1--3)
+    result.isLeft shouldBe true
+    result.left.getOrElse(fail("Expected an error message")) shouldBe "Perimeter edge not found."
+  }
