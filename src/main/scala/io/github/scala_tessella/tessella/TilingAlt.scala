@@ -265,12 +265,12 @@ case class TilingAlt private (
 object TilingAlt:
 
   /**
-   * Creates an empty tiling. This is the starting point.
+   * Creates an empty tiling.
    */
   def empty: TilingAlt =
     TilingAlt(Nil, Nil, Vector.empty, Map.empty)
 
-  /** A tiling made of the edges of the given polygon
+  /** A tiling made of a single polygon.
    *
    * @param sides polygon or its number of sides
    * @throws IllegalArgumentException if sides <= 2
