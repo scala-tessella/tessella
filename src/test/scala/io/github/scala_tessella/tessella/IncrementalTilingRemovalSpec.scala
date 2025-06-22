@@ -9,13 +9,13 @@ import io.github.scala_tessella.ring_seq.RingSeq.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class TilingAltRemovalSpec extends AnyFlatSpec with Matchers:
+class IncrementalTilingRemovalSpec extends AnyFlatSpec with Matchers:
 
-  val square: TilingAlt =
-    TilingAlt.fromPolygon(4)
+  val square: IncrementalTiling =
+    IncrementalTiling.fromPolygon(4)
 
   // Helper tiling: two squares adjacent to each other.
-  val twoSquares: TilingAlt =
+  val twoSquares: IncrementalTiling =
     square.addPolygon(Polygon(4), 3--4).getOrElse(fail("Setup failed: could not create twoSquares"))
 
   "The removePolygon method" should "remove a polygon from a tiling, resulting in the original tiling" in {
@@ -55,8 +55,8 @@ class TilingAltRemovalSpec extends AnyFlatSpec with Matchers:
   }
 
   // Tiling where one square is completely surrounded by others
-  val enclosedSquareTiling: TilingAlt =
-    TilingAlt.fromPolygon(4) // Central square (1,2,3,4)
+  val enclosedSquareTiling: IncrementalTiling =
+    IncrementalTiling.fromPolygon(4) // Central square (1,2,3,4)
       .addPolygon(Polygon(4), 1--2).getOrElse(fail()) // Top square
       .addPolygon(Polygon(4), 2--3).getOrElse(fail()) // Right square
       .addPolygon(Polygon(4), 3--4).getOrElse(fail()) // Bottom square
@@ -71,8 +71,8 @@ class TilingAltRemovalSpec extends AnyFlatSpec with Matchers:
   }
 
   // Tiling for testing disconnected edges: a square with two triangles on opposite sides
-  val squareWithTwoTriangles: TilingAlt =
-    TilingAlt.fromPolygon(4)
+  val squareWithTwoTriangles: IncrementalTiling =
+    IncrementalTiling.fromPolygon(4)
       .addPolygon(Polygon(3), 1--2).getOrElse(fail())
       .addPolygon(Polygon(3), 3--4).getOrElse(fail())
 
@@ -84,8 +84,8 @@ class TilingAltRemovalSpec extends AnyFlatSpec with Matchers:
     result.left.getOrElse(fail()) shouldBe "Polygon sharing non-continuos edges with the perimeter. Cannot remove it."
   }
 
-  val threeTriangles: TilingAlt =
-    TilingAlt.fromPolygon(3)
+  val threeTriangles: IncrementalTiling =
+    IncrementalTiling.fromPolygon(3)
       .addPolygon(Polygon(3), 1--2).getOrElse(fail())
       .addPolygon(Polygon(3), 1--3).getOrElse(fail())
 
@@ -98,18 +98,18 @@ class TilingAltRemovalSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "remove the last polygon, resulting in an empty tiling" in {
-    val singleSquare = TilingAlt.fromPolygon(4)
+    val singleSquare = IncrementalTiling.fromPolygon(4)
     val result = singleSquare.removePolygon(Vector(1, 2, 3, 4).map(Node(_)))
     result.isRight shouldBe true
     val emptyTiling = result.getOrElse(fail())
-    emptyTiling shouldBe TilingAlt.empty
+    emptyTiling shouldBe IncrementalTiling.empty
   }
 
   // Setup for more complex tilings from the add specs
-  val dodecagon: TilingAlt =
-    TilingAlt.fromPolygon(12)
+  val dodecagon: IncrementalTiling =
+    IncrementalTiling.fromPolygon(12)
 
-  val dodecagonAndTriangle: TilingAlt =
+  val dodecagonAndTriangle: IncrementalTiling =
     dodecagon.addPolygon(Polygon(3), 1--2).getOrElse(fail())
 
   it should "remove a polygon sharing two edges with the perimeter" in {
@@ -127,7 +127,7 @@ class TilingAltRemovalSpec extends AnyFlatSpec with Matchers:
     originalDodecagon.perimeter.isRotationOf(dodecagon.perimeter) shouldBe true
   }
 
-  val twoDodecagonsAndTriangle: TilingAlt =
+  val twoDodecagonsAndTriangle: IncrementalTiling =
     dodecagonAndTriangle.addPolygon(Polygon(12), 1--13).getOrElse(fail())
 
   it should "remove a polygon from a complex tiling with multiple shared edges" in {
@@ -147,8 +147,8 @@ class TilingAltRemovalSpec extends AnyFlatSpec with Matchers:
     newTiling.perimeter should contain theSameElementsInOrderAs expectedPerimeter
   }
 
-  val cShape: TilingAlt =
-    TilingAlt.fromPolygon(4) // 1,2,3,4
+  val cShape: IncrementalTiling =
+    IncrementalTiling.fromPolygon(4) // 1,2,3,4
       .addPolygon(Polygon(4), 4--1).getOrElse(fail()) // 5,6,1,4
       .addPolygon(Polygon(4), 1--2).getOrElse(fail()) // 7,8,2,1
 

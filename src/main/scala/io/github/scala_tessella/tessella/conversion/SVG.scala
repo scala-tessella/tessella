@@ -391,7 +391,7 @@ object SVG extends ConverterSVG:
         tessellationGroup(showPerimeter, fillPolygons, labelledNodes, markStyle, showGrowth, showDual)
       )
       
-  extension (tilingAlt: TilingAlt)
+  extension (tilingAlt: IncrementalTiling)
 
     private def graphSVG: Option[Elem] =
       Option(graphGroup(tilingAlt.edges.map(edge =>

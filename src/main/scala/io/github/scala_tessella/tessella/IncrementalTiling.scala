@@ -9,15 +9,15 @@ import io.github.scala_tessella.ring_seq.RingSeq.*
 
 import scala.collection.mutable
 
-// The TilingAlt class is now a "dumb" data holder. Its primary role is to hold
+// The IncrementalTiling class is now a "dumb" data holder. Its primary role is to hold
 // consistent, pre-computed data. It's immutable.
-case class TilingAlt private (
+case class IncrementalTiling private(
                                edges: List[Edge],
                                orientedPolygons: List[Vector[Node]],
                                perimeter: Vector[Node],
                                coordinates: Coords
                              ):
-  // Methods on TilingAlt now simply return the pre-computed properties.
+  // Methods on IncrementalTiling now simply return the pre-computed properties.
   // No expensive calculations happen here.
   def getPerimeter: Vector[Node] = perimeter
   def getPolygons: List[Vector[Node]] = orientedPolygons
@@ -224,7 +224,7 @@ case class TilingAlt private (
    * @param perimeterEdge  The perimeter edge the new polygon must be attached to.
    * @return Either an error or the new, larger TilingAlt.
    */
-  def addPolygon(polygon: Polygon, perimeterEdge: Edge): Either[String, TilingAlt] =
+  def addPolygon(polygon: Polygon, perimeterEdge: Edge): Either[String, IncrementalTiling] =
 
     if !hasOnPerimeter(perimeterEdge) then
       return Left("Perimeter edge not found.")
@@ -242,7 +242,7 @@ case class TilingAlt private (
     val newPerimeter = updatePerimeterOnAddition(mergedPolygon)
 
     Right(
-      TilingAlt(
+      IncrementalTiling(
         newEdges,
         newPolygons,
         newPerimeter,
@@ -250,9 +250,9 @@ case class TilingAlt private (
       )
     )
 
-  def removePolygon(polygonPath: Vector[Node]): Either[String, TilingAlt] =
+  def removePolygon(polygonPath: Vector[Node]): Either[String, IncrementalTiling] =
     // When removing the last polygon, the new perimeter is empty.
-    if (polygonPath.toSet == perimeter.toSet) return Right(TilingAlt.empty)
+    if (polygonPath.toSet == perimeter.toSet) return Right(IncrementalTiling.empty)
 
     val (touchEdges, touchNodes) = perimeterTouchpoints(polygonPath)
     if touchEdges.isEmpty then
@@ -279,7 +279,7 @@ case class TilingAlt private (
     val newPerimeter = updatePerimeterOnRemoval(polygonPath)
 
     Right(
-      TilingAlt(
+      IncrementalTiling(
         newEdges,
         newPolygons,
         newPerimeter,
@@ -294,20 +294,20 @@ case class TilingAlt private (
 // The companion object becomes the "smart" factory and manager.
 // It contains all the logic for creating and growing tilings,
 // ensuring that any instance of TilingAlt is always valid and consistent.
-object TilingAlt:
+object IncrementalTiling:
 
   /**
    * Creates an empty tiling.
    */
-  def empty: TilingAlt =
-    TilingAlt(Nil, Nil, Vector.empty, Map.empty)
+  def empty: IncrementalTiling =
+    IncrementalTiling(Nil, Nil, Vector.empty, Map.empty)
 
   /** A tiling made of a single polygon.
    *
    * @param sides polygon or its number of sides
    * @throws IllegalArgumentException if sides <= 2
    */
-  def fromPolygon(sides: Polygon | Int): TilingAlt =
+  def fromPolygon(sides: Polygon | Int): IncrementalTiling =
     val validatedSides: Int =
       (sides: @unchecked) match
         case i: Int => Polygon(i).toSides
@@ -321,11 +321,11 @@ object TilingAlt:
     val initialCoords: Coords = initialPerimeter.zip(points).toMap
 
     // 2. Call the private constructor with the fully consistent data.
-    TilingAlt(initialEdges, initialPolygons, initialPerimeter, initialCoords)
+    IncrementalTiling(initialEdges, initialPolygons, initialPerimeter, initialCoords)
   //    fromTiling(Tiling.fromPolygon(sides))
 
-  def fromTiling(tiling: Tiling): TilingAlt =
-    TilingAlt(
+  def fromTiling(tiling: Tiling): IncrementalTiling =
+    IncrementalTiling(
       tiling.graphEdges,
       tiling.orientedPolygons.map(_.toPolygonPathNodes),
       tiling.perimeter.toRingNodes,

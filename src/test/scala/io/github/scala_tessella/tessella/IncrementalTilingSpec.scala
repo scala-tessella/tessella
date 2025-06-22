@@ -8,22 +8,22 @@ import conversion.SVG.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class TilingAltSpec extends AnyFlatSpec with Matchers:
+class IncrementalTilingSpec extends AnyFlatSpec with Matchers:
 
   "An empty TilingAlt" should "have no elements" in {
-    val emptyTiling = TilingAlt.empty
-    emptyTiling shouldBe a [TilingAlt]
+    val emptyTiling = IncrementalTiling.empty
+    emptyTiling shouldBe a [IncrementalTiling]
     emptyTiling.edges shouldBe empty
     emptyTiling.orientedPolygons shouldBe empty
     emptyTiling.perimeter shouldBe empty
     emptyTiling.coordinates shouldBe empty
   }
 
-  val square: TilingAlt =
-    TilingAlt.fromPolygon(4)
+  val square: IncrementalTiling =
+    IncrementalTiling.fromPolygon(4)
 
   "A TilingAlt from a polygon" should "be a single regular polygon" in {
-    square shouldBe a [TilingAlt]
+    square shouldBe a [IncrementalTiling]
     square.edges should have size 4
     square.edges should contain theSameElementsAs List(1--2, 2--3, 3--4, 4--1)
 
@@ -40,11 +40,11 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "be created either from a Polygon or an Int" in {
-    TilingAlt.fromPolygon(Polygon(6)) shouldBe TilingAlt.fromPolygon(6)
+    IncrementalTiling.fromPolygon(Polygon(6)) shouldBe IncrementalTiling.fromPolygon(6)
   }
 
   it should "throw an exception for polygons with less than 3 sides" in {
-    an [IllegalArgumentException] should be thrownBy TilingAlt.fromPolygon(2)
+    an [IllegalArgumentException] should be thrownBy IncrementalTiling.fromPolygon(2)
   }
 
   "The TilingAlt companion object" should "correctly calculate coords for a square added to a square" in {
@@ -129,10 +129,10 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
     result.left.getOrElse(fail("Expected an error message")) shouldBe "Perimeter edge not found."
   }
 
-  val dodecagon: TilingAlt =
-    TilingAlt.fromPolygon(12)
+  val dodecagon: IncrementalTiling =
+    IncrementalTiling.fromPolygon(12)
 
-  val dodecagonAndTriangle: TilingAlt =
+  val dodecagonAndTriangle: IncrementalTiling =
     dodecagon.addPolygon(Polygon(3), 1--2).toOption.get
 
   it should "add a dodecagon sharing 2 perimeter edges to a triangle and another dodecagon" in {
@@ -155,7 +155,7 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
       Vector(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 23, 22, 21, 20, 19, 18, 17, 16, 15, 13)
   }
 
-  val twoDodecagonsAndTriangle: TilingAlt =
+  val twoDodecagonsAndTriangle: IncrementalTiling =
     dodecagon
       .addPolygon(Polygon(3), 1--2).toOption.get
       .addPolygon(Polygon(12), 1--13).toOption.get
@@ -181,7 +181,7 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
   }
 
   // Tiling where one square is almost completely surrounded by others
-  val quasiEnclosedSquareTiling: TilingAlt =
+  val quasiEnclosedSquareTiling: IncrementalTiling =
     square // Central square (1,2,3,4)
       .addPolygon(Polygon(4), 1--2).getOrElse(fail())
       .addPolygon(Polygon(4), 2--3).getOrElse(fail())
@@ -201,7 +201,7 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
     enclosedSquareTiling.perimeter should have size 12
   }
 
-  val almostLoop: TilingAlt =
+  val almostLoop: IncrementalTiling =
     square
       .addPolygon(Polygon(4), 1--2).getOrElse(fail())
       .addPolygon(Polygon(4), 3--4).getOrElse(fail())
