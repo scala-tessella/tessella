@@ -225,7 +225,7 @@ case class TilingAlt private (
     val (touchEdges, touchNodes) = perimeterTouchpoints(polygonPath)
     if touchEdges.isEmpty then
       return Left("Polygon not sharing any edge with the perimeter. Cannot remove it.")
-    if touchEdges.nodes.diff(touchNodes).nonEmpty then
+    if touchNodes.diff(touchEdges.nodes).nonEmpty then
       return Left("Polygon sharing separate nodes with the perimeter. Cannot remove it.")  
     if !touchEdges.areContinuous then
       return Left("Polygon sharing non-continuos edges with the perimeter. Cannot remove it.")
@@ -235,14 +235,6 @@ case class TilingAlt private (
     // Edges of the removed polygon that were NOT on the perimeter.
 //    val subtractableEdges = polygonPath.toEdgesO.toList.diff(touchEdges)
     val newEdges = edges.diff(touchEdges)
-    println(
-      s"""
-         |polygonPath: $polygonPath
-         |touchEdges: $touchEdges
-         |touchNodes: $touchNodes
-         |newEdges: $newEdges
-         |""".stripMargin)
-
     // Nodes of the removed polygon that were NOT on the perimeter.
     val subtractableNodes = touchEdges.threadNodes
     val newCoords = coordinates -- subtractableNodes

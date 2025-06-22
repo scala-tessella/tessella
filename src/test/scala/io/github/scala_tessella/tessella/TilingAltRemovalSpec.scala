@@ -1,7 +1,10 @@
 package io.github.scala_tessella.tessella
 
-import io.github.scala_tessella.tessella.RegularPolygon.Polygon
-import io.github.scala_tessella.tessella.Topology.{--, Node}
+
+import RegularPolygon.Polygon
+import Topology.{--, Node}
+import conversion.SVG.*
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -47,7 +50,7 @@ class TilingAltRemovalSpec extends AnyFlatSpec with Matchers:
       val result = twoSquares.removePolygon(nonExistentPolygon)
 
       result.isLeft shouldBe true
-      result.left.getOrElse(fail()) shouldBe "Polygon not found."
+      result.left.getOrElse(fail()) shouldBe "Polygon sharing separate nodes with the perimeter. Cannot remove it."
     }
 
     // Tiling where one square is completely surrounded by others
@@ -78,4 +81,18 @@ class TilingAltRemovalSpec extends AnyFlatSpec with Matchers:
       val result = squareWithTwoTriangles.removePolygon(Vector(1, 2, 3, 4).map(Node(_)))
       result.isLeft shouldBe true
       result.left.getOrElse(fail()) shouldBe "Polygon sharing non-continuos edges with the perimeter. Cannot remove it."
+  }
+
+  val threeTriangles: TilingAlt =
+    TilingAlt.fromPolygon(3)
+      .addPolygon(Polygon(3), 1--2).getOrElse(fail())
+      .addPolygon(Polygon(3), 1--3).getOrElse(fail())
+
+  println(threeTriangles.toSVG())
+  it should "return an error if the polygon shares one node outside the shared edges with the perimeter" in {
+    // The square (1,2,3,4) touches the perimeter at edges 2--3 and 4--1.
+    // These two segments of the perimeter are separated by the triangles.
+    val result = threeTriangles.removePolygon(Vector(1, 2, 3).map(Node(_)))
+    result.isLeft shouldBe true
+    result.left.getOrElse(fail()) shouldBe "Polygon sharing separate nodes with the perimeter. Cannot remove it."
   }
