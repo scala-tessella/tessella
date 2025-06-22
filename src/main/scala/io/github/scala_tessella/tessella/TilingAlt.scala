@@ -5,7 +5,7 @@ import Geometry.Radian.TAU_2
 import RegularPolygon.Polygon
 import TilingCoordinates.{Coords, pointsFrom, toBox}
 import Topology.{Edge, Node, NodeOrdering}
-import io.github.scala_tessella.ring_seq.RingSeq.{rotationsAndReflections, slidingO}
+import io.github.scala_tessella.ring_seq.RingSeq.*
 
 import scala.collection.mutable
 
@@ -134,42 +134,31 @@ case class TilingAlt private (
     }
   }
 
-  private def updatePerimeter(currentPerimeter: Vector[Node], poly: Vector[Node]): Vector[Node] =
-    val perimeterEdges = currentPerimeter.toEdgesO.toList
-    val polyEdges = poly.toEdgesO.toList
+  private def updatePerimeter(poly: Vector[Node]): Vector[Node] =
+    val sharedNodes = perimeter.intersect(poly)
 
-    val sharedEdges = perimeterEdges.filter(edge => polyEdges.contains(edge))
-    val remainingPerimeterEdges = perimeterEdges.filterNot(sharedEdges.contains)
-    val newPolyEdges = polyEdges.filterNot(edge => sharedEdges.contains(edge))
+//    if (sharedNodes.size < 2) {
+//
+//      if (poly.toSet == perimeter.toSet) return Vector.empty // Polygon filled the only hole
+//      return perimeter
+//    }
 
-    val allNewPerimeterEdges = remainingPerimeterEdges ++ newPolyEdges
+    // Identify the segment of the perimeter to be replaced.
+    // This is the path between the first and last nodes shared with the new polygon.
+    val sharedNodesCount = sharedNodes.size
+    val orderedSharedNodes = perimeter.slidingO(sharedNodesCount).find(p => p.diff(sharedNodes).isEmpty).get
+    val startNode = orderedSharedNodes.head
+    val endNode = orderedSharedNodes.last
 
-    if (allNewPerimeterEdges.isEmpty) Vector.empty
-    else {
-      val adj = allNewPerimeterEdges.flatMap(e => List(e.lesserNode -> e.greaterNode, e.greaterNode -> e.lesserNode))
-        .groupMap(_._1)(_._2)
+    // Find the new path from the added polygon that connects the start and end nodes.
+    val newPolyEdges = poly.toEdgesO.toList.diff(perimeter.toEdgesO.toList)
+    val newPathSegment = newPolyEdges.shortestPath(startNode, endNode)
 
-      val path = mutable.ListBuffer.empty[Node]
-      val start = allNewPerimeterEdges.head.lesserNode
-      path += start
-      var current = start
-      var prev = start
+    val index = perimeter.indexOfSliceO(orderedSharedNodes)
+    val partial = perimeter.startAt(index).drop(sharedNodesCount)
 
-      var next = adj(current).head
-      path += next
-      prev = current
-      current = next
+    partial ++ newPathSegment
 
-      while (current != start) {
-        val candidates = adj(current)
-        next = if (candidates.head == prev) candidates.last else candidates.head
-        path += next
-        prev = current
-        current = next
-      }
-      path.init.toVector
-    }
-    
   /**
    * The incremental growth method. This is where the performance gain is.
    *
@@ -193,7 +182,7 @@ case class TilingAlt private (
     val newEdges = (edges ++ additionalEdges).distinct
     val newPolygons = orientedPolygons :+ mergedPolygon
     val newCoords = coordinates ++ finalAdditionalCoords
-    val newPerimeter = updatePerimeter(perimeter, mergedPolygon)
+    val newPerimeter = updatePerimeter(mergedPolygon)
 
     Right(
       TilingAlt(
@@ -228,7 +217,7 @@ case class TilingAlt private (
 
     // The new perimeter is formed by the old perimeter, with the `touchEdges` segment
     // replaced by the `subtractableEdges` segment. The existing updatePerimeter method correctly handles this.
-    val newPerimeter = updatePerimeter(perimeter, polygonPath)
+    val newPerimeter = updatePerimeter(polygonPath)
 
     Right(
       TilingAlt(

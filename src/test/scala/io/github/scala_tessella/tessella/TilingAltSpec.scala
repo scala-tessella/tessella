@@ -117,7 +117,7 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
     squareAndTriangle.orientedPolygons should contain(Vector(5, 2, 1))
 
     squareAndTriangle.perimeter should have size 5
-    squareAndTriangle.perimeter should contain theSameElementsInOrderAs Vector(2, 3, 4, 1, 5)
+    squareAndTriangle.perimeter should contain theSameElementsInOrderAs Vector(3, 4, 1, 5, 2)
 
     squareAndTriangle.coordinates should have size 5
     squareAndTriangle.coordinates(Node(5)).almostEquals(Point(-0.8660254037844386, 0.5)) shouldBe true
@@ -167,7 +167,7 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
 
     t3121212.edges should have size 33
     t3121212.perimeter should contain theSameElementsInOrderAs
-      Vector(3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 22, 21, 20, 19, 18, 17, 16, 15, 14, 31, 30, 29, 28, 27, 26, 25, 24)
+      Vector(4, 5, 6, 7, 8, 9, 10, 11, 12, 22, 21, 20, 19, 18, 17, 16, 15, 14, 31, 30, 29, 28, 27, 26, 25, 24, 3)
   }
 
   it should "add a dodecagon sharing 3 perimeter edges to a dodecagon and a triangle and another dodecagon" in {
@@ -177,7 +177,7 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
 
     t3121212.edges should have size 33
     t3121212.perimeter should contain theSameElementsInOrderAs
-      Vector(3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 22, 21, 20, 19, 18, 17, 16, 15, 14, 30, 29, 28, 27, 26, 25, 24, 23)
+      Vector(4, 5, 6, 7, 8, 9, 10, 11, 12, 22, 21, 20, 19, 18, 17, 16, 15, 14, 30, 29, 28, 27, 26, 25, 24, 23, 3)
   }
 
   // Tiling where one square is almost completely surrounded by others
