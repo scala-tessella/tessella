@@ -35,7 +35,7 @@ case class TilingAlt private (
   def perimeterOrientedPolygons: List[Vector[Node]] =
     val perimeterEdgeSet = perimeter.toEdgesO.toSet
     orientedPolygons.filter(_.toEdgesO.exists(perimeterEdgeSet.contains))
-    
+
   def perimeterPolygonsContain(polygonPath: Vector[Node]): Boolean =
     val pathRotationsAndReflections = polygonPath.rotationsAndReflections.toSet
     perimeterOrientedPolygons.exists(pathRotationsAndReflections.contains)
@@ -113,22 +113,55 @@ case class TilingAlt private (
     (newPolygon, newCoords.toMap)
 
   private def mergeCoincidentNodes(
-                                    polygon: Vector[Node],
+                                    newPolygon: Vector[Node],
                                     newCoords: Coords,
-                                    perimeterCoords: Coords
+                                    perimeterEdge: Edge
                                   ): (Vector[Node], Coords) = {
-    val substitutions = newCoords.toList.flatMap { case (newNode, newPoint) =>
-      perimeterCoords.find { case (_, perimeterPoint) =>
-        newPoint.almostEquals(perimeterPoint)
-      }.map { case (perimeterNode, _) =>
-        newNode -> perimeterNode
-      }
+    // Find all new nodes that are coincident with any node on the perimeter.
+    val allCoincidences = newCoords.toList.flatMap { case (newNode, newPoint) =>
+      perimeter.find { perimeterNode =>
+        newPoint.almostEquals(coordinates(perimeterNode)) && !perimeterEdge.nodes.contains(perimeterNode)
+      }.map(perimeterNode => newNode -> perimeterNode)
     }.toMap
 
+    if (allCoincidences.isEmpty) {
+      return (newPolygon, newCoords)
+    }
+
+    // From the perimeter edge, find the two nodes that define the attachment points, ordered by perimeter traversal.
+    val (p1, p2) =
+      if (perimeter.applyO(perimeter.indexOf(perimeterEdge.lesserNode) + 1) == perimeterEdge.greaterNode)
+        (perimeterEdge.lesserNode, perimeterEdge.greaterNode)
+      else
+        (perimeterEdge.greaterNode, perimeterEdge.lesserNode)
+
+    val p1Index = perimeter.indexOf(p1)
+    val p2Index = perimeter.indexOf(p2)
+
+    val matchedPerimeterNodes = allCoincidences.values.toSet
+
+    // Trace backwards from p1 to find a contiguous block of coincident nodes.
+    val contiguousFromP1 = LazyList.from(1).map(i => perimeter.applyO(p1Index - i))
+      .takeWhile(matchedPerimeterNodes.contains)
+      .toList
+
+    // Trace forwards from p2 to find a contiguous block of coincident nodes.
+    val contiguousFromP2 = LazyList.from(1).map(i => perimeter.applyO(p2Index + i))
+      .takeWhile(matchedPerimeterNodes.contains)
+      .toList
+
+    val validPerimeterNodes = (contiguousFromP1 ++ contiguousFromP2).toSet
+
+    // Only perform substitutions for the valid, contiguous nodes.
+    // A stricter future implementation might throw an error if (matchedPerimeterNodes -- validPerimeterNodes).nonEmpty
+    val substitutions = allCoincidences.filter { case (_, perimeterNode) =>
+      validPerimeterNodes.contains(perimeterNode)
+    }
+
     if (substitutions.isEmpty) {
-      (polygon, newCoords)
+      (newPolygon, newCoords)
     } else {
-      val mergedPolygon = polygon.map(node => substitutions.getOrElse(node, node))
+      val mergedPolygon = newPolygon.map(node => substitutions.getOrElse(node, node))
       val mergedCoords = newCoords -- substitutions.keys
       (mergedPolygon, mergedCoords)
     }
@@ -137,11 +170,11 @@ case class TilingAlt private (
   private def updatePerimeterOnAddition(poly: Vector[Node]): Vector[Node] =
     val sharedNodes = perimeter.intersect(poly)
 
-//    if (sharedNodes.size < 2) {
-//
-//      if (poly.toSet == perimeter.toSet) return Vector.empty // Polygon filled the only hole
-//      return perimeter
-//    }
+    //    if (sharedNodes.size < 2) {
+    //
+    //      if (poly.toSet == perimeter.toSet) return Vector.empty // Polygon filled the only hole
+    //      return perimeter
+    //    }
 
     // Identify the segment of the perimeter to be replaced.
     // This is the path between the first and last nodes shared with the new polygon.
@@ -198,9 +231,8 @@ case class TilingAlt private (
 
     val (initialPolygon, additionalCoords) = calculateNewPolygonCoords(polygon, perimeterEdge)
 
-    val perimeterCoords = coordinates.filter((node, _) => perimeter.contains(node))
     val (mergedPolygon, finalAdditionalCoords) =
-      mergeCoincidentNodes(initialPolygon, additionalCoords, perimeterCoords)
+      mergeCoincidentNodes(initialPolygon, additionalCoords, perimeterEdge)
 
     val additionalEdges = mergedPolygon.toEdgesO.toList.filterNot(edge => edge.pair._1 == edge.pair._2)
 
@@ -226,14 +258,14 @@ case class TilingAlt private (
     if touchEdges.isEmpty then
       return Left("Polygon not sharing any edge with the perimeter. Cannot remove it.")
     if touchNodes.diff(touchEdges.nodes).nonEmpty then
-      return Left("Polygon sharing separate nodes with the perimeter. Cannot remove it.")  
+      return Left("Polygon sharing separate nodes with the perimeter. Cannot remove it.")
     if !touchEdges.areContinuous then
       return Left("Polygon sharing non-continuos edges with the perimeter. Cannot remove it.")
     if !perimeterPolygonsContain(polygonPath) then
       return Left("Polygon not found.")
 
     // Edges of the removed polygon that were NOT on the perimeter.
-//    val subtractableEdges = polygonPath.toEdgesO.toList.diff(touchEdges)
+    //    val subtractableEdges = polygonPath.toEdgesO.toList.diff(touchEdges)
     val newEdges = edges.diff(touchEdges)
     // Nodes of the removed polygon that were NOT on the perimeter.
     val subtractableNodes = touchEdges.threadNodes

@@ -182,7 +182,7 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
 
   // Tiling where one square is almost completely surrounded by others
   val quasiEnclosedSquareTiling: TilingAlt =
-    TilingAlt.fromPolygon(4) // Central square (1,2,3,4)
+    square // Central square (1,2,3,4)
       .addPolygon(Polygon(4), 1--2).getOrElse(fail())
       .addPolygon(Polygon(4), 2--3).getOrElse(fail())
       .addPolygon(Polygon(4), 3--4).getOrElse(fail())
@@ -200,3 +200,22 @@ class TilingAltSpec extends AnyFlatSpec with Matchers:
 
     enclosedSquareTiling.perimeter should have size 12
   }
+
+  val almostLoop: TilingAlt =
+    square
+      .addPolygon(Polygon(4), 1--2).getOrElse(fail())
+      .addPolygon(Polygon(4), 3--4).getOrElse(fail())
+      .addPolygon(Polygon(4), 2--5).getOrElse(fail())
+      .addPolygon(Polygon(4), 3--8).getOrElse(fail())
+      .addPolygon(Polygon(4), 9--10).getOrElse(fail())
+      .addPolygon(Polygon(4), 11--12).getOrElse(fail())
+
+  it should "add 1 square to close a loop, with two edges at the same coordinates" in {
+    val result = almostLoop.addPolygon(Polygon(4), 9--13)
+    result.isRight shouldBe true
+    val loop = result.getOrElse(fail("Expected a TilingAlt"))
+    loop.coordinates(Node(16)).almostEquals(loop.coordinates(Node(18))) shouldBe true
+    loop.coordinates(Node(12)).almostEquals(loop.coordinates(Node(17))) shouldBe true
+    loop.perimeter should have size 18
+  }
+
