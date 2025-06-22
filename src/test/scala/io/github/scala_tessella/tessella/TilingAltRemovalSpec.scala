@@ -14,27 +14,33 @@ class TilingAltRemovalSpec extends AnyFlatSpec with Matchers:
   val twoSquares: TilingAlt =
     square.addPolygon(Polygon(4), 3--4).getOrElse(fail("Setup failed: could not create twoSquares"))
 
-//  "The removePolygon method" should "remove a polygon from a tiling, resulting in the original tiling" in {
-//      val removedPolygonPath = Vector(6, 5, 4, 3).map(Node(_)) // The second square
-//      val result = twoSquares.removePolygon(removedPolygonPath)
-//
-//      result.isRight shouldBe true
-//      val oneSquare = result.getOrElse(fail("Expected a TilingAlt after removal"))
-//
-//      // The result should be identical to the original single square
-//      oneSquare.edges should contain theSameElementsAs square.edges
-//      oneSquare.orientedPolygons.head should contain theSameElementsInOrderAs square.orientedPolygons.head
-//      oneSquare.perimeter should contain theSameElementsInOrderAs square.perimeter
-//      oneSquare.coordinates.keys should contain theSameElementsAs square.coordinates.keys
-//  }
-//
-//  it should "remove a polygon regardless of its path orientation" in {
-//      val removedPolygonPathReversed = Vector(3, 4, 5, 6).map(Node(_)) // Same polygon, different orientation
-//      val result = twoSquares.removePolygon(removedPolygonPathReversed)
-//
-//      result.isRight shouldBe true
-//      result.getOrElse(fail()).edges should have size 4
-//    }
+  "The removePolygon method" should "remove a polygon from a tiling, resulting in the original tiling" in {
+      val removedPolygonPath = Vector(6, 5, 4, 3).map(Node(_)) // The second square
+      val result = twoSquares.removePolygon(removedPolygonPath)
+
+      result.isRight shouldBe true
+      val oneSquare = result.getOrElse(fail("Expected a TilingAlt after removal"))
+
+      // The result should be identical to the original single square
+      oneSquare.edges should contain theSameElementsAs square.edges
+      oneSquare.orientedPolygons.head should contain theSameElementsInOrderAs square.orientedPolygons.head
+      oneSquare.perimeter should contain theSameElementsInOrderAs square.perimeter
+      oneSquare.coordinates.keys should contain theSameElementsAs square.coordinates.keys
+  }
+
+  it should "remove a polygon regardless of its path orientation" in {
+      val removedPolygonPathReversed = Vector(3, 4, 5, 6).map(Node(_)) // Same polygon, different orientation
+      val result = twoSquares.removePolygon(removedPolygonPathReversed)
+
+      result.isRight shouldBe true
+      val oneSquare = result.getOrElse(fail("Expected a TilingAlt after removal"))
+      result.getOrElse(fail()).edges should have size 4
+      // The result should be identical to the original single square
+      oneSquare.edges should contain theSameElementsAs square.edges
+      oneSquare.orientedPolygons.head should contain theSameElementsInOrderAs square.orientedPolygons.head
+      oneSquare.perimeter should contain theSameElementsInOrderAs square.perimeter
+      oneSquare.coordinates.keys should contain theSameElementsAs square.coordinates.keys
+  }
 
   it should "return an error if the polygon to remove is not found" in {
       val nonExistentPolygon = Vector(1, 5, 6, 7).map(Node(_))

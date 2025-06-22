@@ -134,7 +134,7 @@ case class TilingAlt private (
     }
   }
 
-  private def updatePerimeter(poly: Vector[Node]): Vector[Node] =
+  private def updatePerimeterOnAddition(poly: Vector[Node]): Vector[Node] =
     val sharedNodes = perimeter.intersect(poly)
 
 //    if (sharedNodes.size < 2) {
@@ -157,6 +157,34 @@ case class TilingAlt private (
     val index = perimeter.indexOfSliceO(orderedSharedNodes)
     val partial = perimeter.startAt(index).drop(sharedNodesCount)
 
+    partial ++ newPathSegment
+
+  private def updatePerimeterOnRemoval(poly: Vector[Node]): Vector[Node] =
+    // When removing the last polygon, the new perimeter is empty.
+    if (poly.toSet == perimeter.toSet) return Vector.empty
+
+    // 1. Find nodes shared between the perimeter and the polygon being removed.
+    val sharedNodes = perimeter.intersect(poly)
+
+    // 2. From the shared nodes, find the segment of the perimeter that will be replaced.
+    //    Validation should ensure these nodes are contiguous.
+    val sharedNodesCount = sharedNodes.size
+    val orderedSharedNodes = perimeter.slidingO(sharedNodesCount)
+      .find(p => p.toSet == sharedNodes.toSet)
+      .get
+    val startNode = orderedSharedNodes.head
+    val endNode = orderedSharedNodes.last
+
+    // 3. The new perimeter segment is formed by the edges of the removed polygon
+    //    that were *internal* to the tiling (i.e., not on the old perimeter).
+    val internalPolyEdges = poly.toEdgesO.toList.diff(perimeter.toEdgesO.toList)
+    val newPathSegment = internalPolyEdges.shortestPath(startNode, endNode)
+
+    // 4. Identify the part of the original perimeter that will be kept.
+    val index = perimeter.indexOfSliceO(orderedSharedNodes)
+    val partial = perimeter.startAt(index).drop(sharedNodesCount)
+
+    // 5. The new perimeter is the kept part plus the new segment.
     partial ++ newPathSegment
 
   /**
@@ -182,7 +210,7 @@ case class TilingAlt private (
     val newEdges = (edges ++ additionalEdges).distinct
     val newPolygons = orientedPolygons :+ mergedPolygon
     val newCoords = coordinates ++ finalAdditionalCoords
-    val newPerimeter = updatePerimeter(mergedPolygon)
+    val newPerimeter = updatePerimeterOnAddition(mergedPolygon)
 
     Right(
       TilingAlt(
@@ -205,11 +233,18 @@ case class TilingAlt private (
       return Left("Polygon not found.")
 
     // Edges of the removed polygon that were NOT on the perimeter.
-    val subtractableEdges = polygonPath.toEdgesO.toList.diff(touchEdges)
-    val newEdges = edges.diff(subtractableEdges)
+//    val subtractableEdges = polygonPath.toEdgesO.toList.diff(touchEdges)
+    val newEdges = edges.diff(touchEdges)
+    println(
+      s"""
+         |polygonPath: $polygonPath
+         |touchEdges: $touchEdges
+         |touchNodes: $touchNodes
+         |newEdges: $newEdges
+         |""".stripMargin)
 
     // Nodes of the removed polygon that were NOT on the perimeter.
-    val subtractableNodes = polygonPath.diff(touchNodes)
+    val subtractableNodes = touchEdges.threadNodes
     val newCoords = coordinates -- subtractableNodes
 
     val sortedPathNodes = polygonPath.sorted(NodeOrdering)
@@ -217,7 +252,7 @@ case class TilingAlt private (
 
     // The new perimeter is formed by the old perimeter, with the `touchEdges` segment
     // replaced by the `subtractableEdges` segment. The existing updatePerimeter method correctly handles this.
-    val newPerimeter = updatePerimeter(polygonPath)
+    val newPerimeter = updatePerimeterOnRemoval(polygonPath)
 
     Right(
       TilingAlt(
