@@ -160,9 +160,6 @@ case class TilingAlt private (
     partial ++ newPathSegment
 
   private def updatePerimeterOnRemoval(poly: Vector[Node]): Vector[Node] =
-    // When removing the last polygon, the new perimeter is empty.
-    if (poly.toSet == perimeter.toSet) return Vector.empty
-
     // 1. Find nodes shared between the perimeter and the polygon being removed.
     val sharedNodes = perimeter.intersect(poly)
 
@@ -222,6 +219,9 @@ case class TilingAlt private (
     )
 
   def removePolygon(polygonPath: Vector[Node]): Either[String, TilingAlt] =
+    // When removing the last polygon, the new perimeter is empty.
+    if (polygonPath.toSet == perimeter.toSet) return Right(TilingAlt.empty)
+
     val (touchEdges, touchNodes) = perimeterTouchpoints(polygonPath)
     if touchEdges.isEmpty then
       return Left("Polygon not sharing any edge with the perimeter. Cannot remove it.")
