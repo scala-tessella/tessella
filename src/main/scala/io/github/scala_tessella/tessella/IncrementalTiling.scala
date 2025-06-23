@@ -26,6 +26,9 @@ case class IncrementalTiling private(
   // You can still have other derived values, but the expensive ones are now vals.
   val perimeterLength: Int = perimeter.size
 
+  def isEmpty: Boolean =
+    edges.isEmpty
+
   def hasOnPerimeter(edge: Edge): Boolean =
     perimeter.toEdgesO.contains(edge)
 
