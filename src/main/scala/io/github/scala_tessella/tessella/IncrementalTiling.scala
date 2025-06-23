@@ -230,7 +230,7 @@ case class IncrementalTiling private(
   def addPolygon(polygon: Polygon, perimeterEdge: Edge): Either[String, IncrementalTiling] =
 
     if !hasOnPerimeter(perimeterEdge) then
-      return Left("Perimeter edge not found.")
+      return Left(s"Perimeter edge ${perimeterEdge.stringify} not found.")
 
     val (initialPolygon, additionalCoords) = calculateNewPolygonCoords(polygon, perimeterEdge)
 
