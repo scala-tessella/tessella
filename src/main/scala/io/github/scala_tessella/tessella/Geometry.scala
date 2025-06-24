@@ -261,6 +261,10 @@ object Geometry extends Accuracy:
     def almostEquals(that: LineSegment, accuracy: Double = ACCURACY): Boolean =
       this.point1.almostEquals(that.point1, accuracy) && this.point2.almostEquals(that.point2, accuracy)
 
+    def intersectsStrict(that: LineSegment): Boolean =
+      Point.ccw(this.point1, this.point2, that.point1) * Point.ccw(this.point1, this.point2, that.point2) < 0 &&
+        Point.ccw(that.point1, that.point2, this.point1) * Point.ccw(that.point1, that.point2, this.point2) < 0
+
     def intersects(that: LineSegment): Boolean =
       val e1p1: Point =
         this.point1

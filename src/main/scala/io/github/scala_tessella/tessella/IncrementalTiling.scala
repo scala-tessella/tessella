@@ -1,12 +1,11 @@
 package io.github.scala_tessella.tessella
 
-import Geometry.{Box, Point, Radian}
+import Geometry.{Box, LineSegment, Point, Radian}
 import Geometry.Radian.TAU_2
 import IncrementalTiling.Strictness
 import RegularPolygon.Polygon
 import TilingCoordinates.{Coords, pointsFrom, toBox}
 import Topology.{Edge, Node, NodeOrdering}
-
 import io.github.scala_tessella.ring_seq.RingSeq.*
 
 // The IncrementalTiling class is now a "dumb" data holder. Its primary role is to hold
@@ -236,10 +235,6 @@ case class IncrementalTiling private(
 
     val (initialPolygon, additionalCoords) = calculateNewPolygonCoords(polygon, perimeterEdge)
 
-    def segmentsIntersect(p1: Point, p2: Point, p3: Point, p4: Point): Boolean =
-      Point.ccw(p1, p2, p3) * Point.ccw(p1, p2, p4) < 0 &&
-        Point.ccw(p3, p4, p1) * Point.ccw(p3, p4, p2) < 0
-
     mergeCoincidentNodes(initialPolygon, additionalCoords, perimeterEdge, strictness)
       .flatMap((mergedPolygon, finalAdditionalCoords) =>
         val additionalEdges = mergedPolygon.toEdgesO.toList.diff(perimeter.toEdgesO.toList)
@@ -258,15 +253,12 @@ case class IncrementalTiling private(
           val enlargedNewPolygonBox = newPolygonBox.enlarge(1.0)
 
           // Filter the perimeter edges to check to only those whose own bounding box intersects the enlarged box
-          val nearbyPerimeterEdges = perimeterEdgesToCheck.filter { edge =>
-            val p1 = allCoords(edge.lesserNode)
-            val p2 = allCoords(edge.greaterNode)
-            val edgeBox = Box(Math.min(p1.x, p2.x), Math.max(p1.x, p2.x), Math.min(p1.y, p2.y), Math.max(p1.y, p2.y))
-
-            // Check for bounding box intersection
-            enlargedNewPolygonBox.x1 >= edgeBox.x0 && enlargedNewPolygonBox.x0 <= edgeBox.x1 &&
-              enlargedNewPolygonBox.y1 >= edgeBox.y0 && enlargedNewPolygonBox.y0 <= edgeBox.y1
-          }
+          val nearbyPerimeterEdges =
+            perimeterEdgesToCheck.filter { edge =>
+              val p1 = allCoords(edge.lesserNode)
+              val p2 = allCoords(edge.greaterNode)
+              LineSegment(p1, p2).hasEndpointIn(enlargedNewPolygonBox)
+            }
 
           val crossingExists =
             additionalEdges.exists { additionalEdge =>
@@ -275,7 +267,7 @@ case class IncrementalTiling private(
               nearbyPerimeterEdges.exists { perimeterEdge =>
                 val p3 = allCoords(perimeterEdge.lesserNode)
                 val p4 = allCoords(perimeterEdge.greaterNode)
-                segmentsIntersect(p1, p2, p3, p4)
+                LineSegment(p1, p2).intersectsStrict(LineSegment(p3, p4))
               }
             }
 
