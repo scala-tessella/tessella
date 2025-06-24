@@ -247,14 +247,32 @@ case class IncrementalTiling private(
         if strictness != Strictness.CROSSING && {
 
           val perimeterEdgesToCheck = perimeter.toEdgesO.toList.diff(mergedPolygon.toEdgesO.toList)
-
           val allCoords = coordinates ++ finalAdditionalCoords
+
+          // Create a bounding box for the new polygon's additional edges
+          val newPolygonPoints = additionalEdges.nodes.map(allCoords)
+          val newPolygonXs = newPolygonPoints.map(_.x)
+          val newPolygonYs = newPolygonPoints.map(_.y)
+          val newPolygonBox = Box(newPolygonXs.min, newPolygonXs.max, newPolygonYs.min, newPolygonYs.max)
+          // Enlarge the box by 1 unit to create a "safety margin"
+          val enlargedNewPolygonBox = newPolygonBox.enlarge(1.0)
+
+          // Filter the perimeter edges to check to only those whose own bounding box intersects the enlarged box
+          val nearbyPerimeterEdges = perimeterEdgesToCheck.filter { edge =>
+            val p1 = allCoords(edge.lesserNode)
+            val p2 = allCoords(edge.greaterNode)
+            val edgeBox = Box(Math.min(p1.x, p2.x), Math.max(p1.x, p2.x), Math.min(p1.y, p2.y), Math.max(p1.y, p2.y))
+
+            // Check for bounding box intersection
+            enlargedNewPolygonBox.x1 >= edgeBox.x0 && enlargedNewPolygonBox.x0 <= edgeBox.x1 &&
+              enlargedNewPolygonBox.y1 >= edgeBox.y0 && enlargedNewPolygonBox.y0 <= edgeBox.y1
+          }
 
           val crossingExists =
             additionalEdges.exists { additionalEdge =>
               val p1 = allCoords(additionalEdge.lesserNode)
               val p2 = allCoords(additionalEdge.greaterNode)
-              perimeterEdgesToCheck.exists { perimeterEdge =>
+              nearbyPerimeterEdges.exists { perimeterEdge =>
                 val p3 = allCoords(perimeterEdge.lesserNode)
                 val p4 = allCoords(perimeterEdge.greaterNode)
                 segmentsIntersect(p1, p2, p3, p4)
