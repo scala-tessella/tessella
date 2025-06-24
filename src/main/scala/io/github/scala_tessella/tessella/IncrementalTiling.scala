@@ -138,22 +138,18 @@ case class IncrementalTiling private(
       else
         (perimeterEdge.greaterNode, perimeterEdge.lesserNode)
 
-    val p1Index = perimeter.indexOf(p1)
-    val p2Index = perimeter.indexOf(p2)
-
     val matchedPerimeterNodes = allCoincidences.values.toSet
 
-    // Trace backwards from p1 to find a contiguous block of coincident nodes.
-    val contiguousFromP1 = LazyList.from(1).map(i => perimeter.applyO(p1Index - i))
-      .takeWhile(matchedPerimeterNodes.contains)
-      .toList
+    // Trace forwards or backwards from the given index to find a contiguous block of coincident nodes.
+    def contiguousFromIndex(index: Index, isForward: Boolean = true): List[Node] =
+      val increment: Int = if isForward then 1 else -1
+      LazyList.from(increment, increment).map(i => perimeter.applyO(index + i))
+        .takeWhile(matchedPerimeterNodes.contains)
+        .toList
 
-    // Trace forwards from p2 to find a contiguous block of coincident nodes.
-    val contiguousFromP2 = LazyList.from(1).map(i => perimeter.applyO(p2Index + i))
-      .takeWhile(matchedPerimeterNodes.contains)
-      .toList
-
-    val validPerimeterNodes = (contiguousFromP1 ++ contiguousFromP2).toSet
+    val validPerimeterNodes =
+      (contiguousFromIndex(perimeter.indexOf(p1), isForward = false)
+        ++ contiguousFromIndex(perimeter.indexOf(p2))).toSet
 
     // Only perform substitutions for the valid, contiguous nodes.
     // A stricter future implementation might throw an error if (matchedPerimeterNodes -- validPerimeterNodes).nonEmpty
