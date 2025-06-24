@@ -52,7 +52,7 @@ class IncrementalTilingRemovalSpec extends AnyFlatSpec with Matchers:
 
     result.isLeft shouldBe true
     result.left.getOrElse(fail()) shouldBe
-      "Invalid shared separate nodes: 1. Polygon with edges 1--5--6--7-- shares edges 5--6 with perimeter 1--2--3--6--5--4--."
+      "Invalid shared separate nodes: 1. Polygon with edges 1--5--6--7-- shares edges 5--6 with perimeter."
   }
 
   // Tiling where one square is completely surrounded by others
@@ -69,7 +69,7 @@ class IncrementalTilingRemovalSpec extends AnyFlatSpec with Matchers:
 
     result.isLeft shouldBe true
     result.left.getOrElse(fail()) shouldBe
-      "Polygon with edges 1--2--3--4-- doesn't share any with perimeter 6--5--2--8--7--3--10--9--4--12--11--1--."
+      "Polygon with edges 1--2--3--4-- doesn't share any with perimeter."
   }
 
   // Tiling for testing disconnected edges: a square with two triangles on opposite sides
@@ -83,7 +83,7 @@ class IncrementalTilingRemovalSpec extends AnyFlatSpec with Matchers:
     // These two segments of the perimeter are separated by the triangles.
     val result = squareWithTwoTriangles.removePolygon(Vector(1, 2, 3, 4).map(Node(_)))
     result.isLeft shouldBe true
-    result.left.getOrElse(fail()) shouldBe "Non-continuos shared edges. Polygon with edges 1--2--3--4-- shares edges 2--3, 1--4 with perimeter 1--5--2--3--6--4--."
+    result.left.getOrElse(fail()) shouldBe "Non-continuos shared edges. Polygon with edges 1--2--3--4-- shares edges 2--3, 1--4 with perimeter."
   }
 
   val threeTriangles: IncrementalTiling =
@@ -96,7 +96,7 @@ class IncrementalTilingRemovalSpec extends AnyFlatSpec with Matchers:
     // These two segments of the perimeter are separated by the triangles.
     val result = threeTriangles.removePolygon(Vector(1, 2, 3).map(Node(_)))
     result.isLeft shouldBe true
-    result.left.getOrElse(fail()) shouldBe "Invalid shared separate nodes: 1. Polygon with edges 1--2--3-- shares edges 2--3 with perimeter 4--2--3--5--1--."
+    result.left.getOrElse(fail()) shouldBe "Invalid shared separate nodes: 1. Polygon with edges 1--2--3-- shares edges 2--3 with perimeter."
   }
 
   it should "remove the last polygon, resulting in an empty tiling" in {

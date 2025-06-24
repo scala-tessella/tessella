@@ -6,6 +6,7 @@ import IncrementalTiling.Strictness
 import RegularPolygon.Polygon
 import TilingCoordinates.{Coords, pointsFrom, toBox}
 import Topology.{Edge, Node, NodeOrdering}
+
 import io.github.scala_tessella.ring_seq.RingSeq.*
 
 // The IncrementalTiling class is now a "dumb" data holder. Its primary role is to hold
@@ -166,37 +167,11 @@ case class IncrementalTiling private(
       val mergedCoords = newCoords -- substitutions.keys
       Right((mergedPolygon, mergedCoords))
 
-  private def updatePerimeterOnAddition(poly: Vector[Node]): Vector[Node] =
-    val sharedNodes = perimeter.intersect(poly)
-
-    //    if (sharedNodes.size < 2) {
-    //
-    //      if (poly.toSet == perimeter.toSet) return Vector.empty // Polygon filled the only hole
-    //      return perimeter
-    //    }
-
-    // Identify the segment of the perimeter to be replaced.
-    // This is the path between the first and last nodes shared with the new polygon.
-    val sharedNodesCount = sharedNodes.size
-    val orderedSharedNodes = perimeter.slidingO(sharedNodesCount).find(p => p.diff(sharedNodes).isEmpty).get
-    val startNode = orderedSharedNodes.head
-    val endNode = orderedSharedNodes.last
-
-    // Find the new path from the added polygon that connects the start and end nodes.
-    val newPolyEdges = poly.toEdgesO.toList.diff(perimeter.toEdgesO.toList)
-    val newPathSegment = newPolyEdges.shortestPath(startNode, endNode)
-
-    val index = perimeter.indexOfSliceO(orderedSharedNodes)
-    val partial = perimeter.startAt(index).drop(sharedNodesCount)
-
-    partial ++ newPathSegment
-
-  private def updatePerimeterOnRemoval(poly: Vector[Node]): Vector[Node] =
-    // 1. Find nodes shared between the perimeter and the polygon being removed.
+  private def updatePerimeter(poly: Vector[Node]): Vector[Node] =
+    // 1. Find nodes shared between the perimeter and the given polygon.
     val sharedNodes = perimeter.intersect(poly)
 
     // 2. From the shared nodes, find the segment of the perimeter that will be replaced.
-    //    Validation should ensure these nodes are contiguous.
     val sharedNodesCount = sharedNodes.size
     val orderedSharedNodes = perimeter.slidingO(sharedNodesCount)
       .find(p => p.toSet == sharedNodes.toSet)
@@ -204,10 +179,10 @@ case class IncrementalTiling private(
     val startNode = orderedSharedNodes.head
     val endNode = orderedSharedNodes.last
 
-    // 3. The new perimeter segment is formed by the edges of the removed polygon
-    //    that were *internal* to the tiling (i.e., not on the old perimeter).
-    val internalPolyEdges = poly.toEdgesO.toList.diff(perimeter.toEdgesO.toList)
-    val newPathSegment = internalPolyEdges.shortestPath(startNode, endNode)
+    // 3. The new perimeter segment is formed by the edges of the given polygon
+    //    that were not on the old perimeter.
+    val edgesNotOnPerimeter = poly.toEdgesO.toList.diff(perimeter.toEdgesO.toList)
+    val newPathSegment = edgesNotOnPerimeter.shortestPath(startNode, endNode)
 
     // 4. Identify the part of the original perimeter that will be kept.
     val index = perimeter.indexOfSliceO(orderedSharedNodes)
@@ -278,7 +253,7 @@ case class IncrementalTiling private(
           val newEdges = edges ++ additionalEdges
           val newPolygons = orientedPolygons :+ mergedPolygon
           val newCoords = coordinates ++ finalAdditionalCoords
-          val newPerimeter = updatePerimeterOnAddition(mergedPolygon)
+          val newPerimeter = updatePerimeter(mergedPolygon)
 
           Right(IncrementalTiling(newEdges, newPolygons, newPerimeter, newCoords))
       )
@@ -317,7 +292,7 @@ case class IncrementalTiling private(
 
     // The new perimeter is formed by the old perimeter, with the `touchEdges` segment
     // replaced by the `subtractableEdges` segment. The existing updatePerimeter method correctly handles this.
-    val newPerimeter = updatePerimeterOnRemoval(polygonPath)
+    val newPerimeter = updatePerimeter(polygonPath)
 
     Right(
       IncrementalTiling(
