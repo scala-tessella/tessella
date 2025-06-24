@@ -257,7 +257,7 @@ case class IncrementalTiling private(
     s"Polygon with edges ${polygonPath.stringify}--"
 
   private def errorDescription(polygonPath: Vector[Node], touchEdges: List[Edge]): String =
-    s"${polygonDescription(polygonPath)} shares edges ${touchEdges.map(_.stringify).mkString(", ")} with perimeter ${perimeter.stringify}--."
+    s"${polygonDescription(polygonPath)} shares edges ${touchEdges.map(_.stringify).mkString(", ")} with perimeter."
 
   def removePolygon(polygonPath: Vector[Node]): Either[String, IncrementalTiling] =
     // When removing the last polygon, the new perimeter is empty.
@@ -265,7 +265,7 @@ case class IncrementalTiling private(
 
     val (touchEdges, touchNodes) = perimeterTouchpoints(polygonPath)
     if touchEdges.isEmpty then
-      return Left(s"${polygonDescription(polygonPath)} doesn't share any with perimeter ${perimeter.stringify}--.")
+      return Left(s"${polygonDescription(polygonPath)} doesn't share any with perimeter.")
     val rogueTouchNodes =
       touchNodes.diff(touchEdges.nodes)
     if rogueTouchNodes.nonEmpty then
