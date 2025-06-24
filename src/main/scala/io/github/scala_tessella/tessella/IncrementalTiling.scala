@@ -62,33 +62,13 @@ case class IncrementalTiling private(
   def calculateNewPolygonCoords(polygon: Polygon, perimeterEdge: Edge): (Vector[Node], Coords) =
     val (n1, n2) = perimeterEdge.pair
 
-    // --- ALTERNATIVE 1: Determine orientation by perimeter traversal ---
+    // 1. Determine orientation by perimeter traversal
 
     val (startNode, nextNode) =
       perimeter.slidingO(2).find(p => (p.head == n1 && p.last == n2) || (p.head == n2 && p.last == n1)) match
         case Some(pair) => (pair.head, pair.last) // Build on the reversed edge to go "outwards".
         case None => throw new AssertionError(s"Edge $perimeterEdge not found on perimeter.")
 
-
-    // --- ALTERNATIVE 2: Determine orientation by checking adjacent polygon's spatial location (commented out) ---
-    /* val (startNode, nextNode) = {
-      // Find the polygon that already contains this edge. Because it's a perimeter edge, there is only one.
-      val adjacentPolygon = existingTiling.orientedPolygons
-        .find(p => p.slidingO(2).exists(pair => Edge(pair) == perimeterEdge))
-        .getOrElse(throw new IllegalStateException(s"No adjacent polygon found for perimeter edge $perimeterEdge"))
-  
-      // Find a third node in that polygon to determine its orientation relative to the edge.
-      val n1_index = adjacentPolygon.indexOf(n1)
-      val thirdNode = if (adjacentPolygon.applyO(n1_index + 1) == n2) adjacentPolygon.applyO(n1_index - 1) else adjacentPolygon.applyO(n1_index + 1)
-  
-      val coords = existingTiling.coordinates
-      val (p1, p2, p3) = (coords(n1), coords(n2), coords(thirdNode))
-  
-      // If the third point is to the "left" of the directed edge p1->p2, the new polygon should be constructed
-      // counter-clockwise from p2->p1 to build "outward". Otherwise, from p1->p2.
-      if (Point.ccw(p1, p2, p3) > 0) (n2, n1) else (n1, n2)
-    }
-    */
     // 2. Generate the required number of new nodes for the polygon.
     val sides = polygon.toSides
     val newNodesCount = sides - 2
@@ -293,15 +273,7 @@ case class IncrementalTiling private(
     // The new perimeter is formed by the old perimeter, with the `touchEdges` segment
     // replaced by the `subtractableEdges` segment. The existing updatePerimeter method correctly handles this.
     val newPerimeter = updatePerimeter(polygonPath)
-
-    Right(
-      IncrementalTiling(
-        newEdges,
-        newPolygons,
-        newPerimeter,
-        newCoords
-      )
-    )
+    Right(IncrementalTiling(newEdges, newPolygons, newPerimeter, newCoords))
 
   /** Finds the 2D box */
   def toBox: Box =
