@@ -238,9 +238,9 @@ case class IncrementalTiling private(
 
     mergeCoincidentNodes(initialPolygon, additionalCoords, perimeterEdge, strictness)
       .map((mergedPolygon, finalAdditionalCoords) =>
-        val additionalEdges = mergedPolygon.toEdgesO.toList.filterNot(edge => edge.pair._1 == edge.pair._2)
+        val additionalEdges = mergedPolygon.toEdgesO.toList.diff(perimeter.toEdgesO.toList)
 
-        val newEdges = (edges ++ additionalEdges).distinct
+        val newEdges = edges ++ additionalEdges
         val newPolygons = orientedPolygons :+ mergedPolygon
         val newCoords = coordinates ++ finalAdditionalCoords
         val newPerimeter = updatePerimeterOnAddition(mergedPolygon)
