@@ -2,11 +2,12 @@ package io.github.scala_tessella.tessella
 
 import Geometry.{Box, Point, Radian}
 import Geometry.Radian.TAU_2
+import IncrementalTiling.Strictness
 import RegularPolygon.Polygon
 import TilingCoordinates.{Coords, pointsFrom, toBox}
 import Topology.{Edge, Node, NodeOrdering}
+
 import io.github.scala_tessella.ring_seq.RingSeq.*
-import io.github.scala_tessella.tessella.IncrementalTiling.Strictness
 
 // The IncrementalTiling class is now a "dumb" data holder. Its primary role is to hold
 // consistent, pre-computed data. It's immutable.
