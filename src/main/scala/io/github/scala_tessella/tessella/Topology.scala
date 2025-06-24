@@ -67,6 +67,9 @@ object Topology:
     private def toEdgesRaw(f: Vector[Node] => Iterator[Vector[Node]]): Iterator[Edge] =
       f(nodes).map(Edge(_))
 
+    def stringify: String =
+      nodes.mkString("--")
+      
     /** Converts sequentially into edges
      *
      *  @throws IllegalArgumentException if nodes are equal or with an ordinal lesser than 1

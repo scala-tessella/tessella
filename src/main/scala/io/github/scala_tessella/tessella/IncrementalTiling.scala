@@ -253,19 +253,27 @@ case class IncrementalTiling private(
       )
     )
 
+  private def polygonDescription(polygonPath: Vector[Node]): String =
+    s"Polygon with edges ${polygonPath.stringify}--"
+
+  private def errorDescription(polygonPath: Vector[Node], touchEdges: List[Edge]): String =
+    s"${polygonDescription(polygonPath)} shares edges ${touchEdges.map(_.stringify).mkString(", ")} with perimeter ${perimeter.stringify}--."
+
   def removePolygon(polygonPath: Vector[Node]): Either[String, IncrementalTiling] =
     // When removing the last polygon, the new perimeter is empty.
     if (polygonPath.toSet == perimeter.toSet) return Right(IncrementalTiling.empty)
 
     val (touchEdges, touchNodes) = perimeterTouchpoints(polygonPath)
     if touchEdges.isEmpty then
-      return Left("Polygon not sharing any edge with the perimeter. Cannot remove it.")
-    if touchNodes.diff(touchEdges.nodes).nonEmpty then
-      return Left("Polygon sharing separate nodes with the perimeter. Cannot remove it.")
+      return Left(s"${polygonDescription(polygonPath)} doesn't share any with perimeter ${perimeter.stringify}--.")
+    val rogueTouchNodes =
+      touchNodes.diff(touchEdges.nodes)
+    if rogueTouchNodes.nonEmpty then
+      return Left(s"Invalid shared separate nodes: ${rogueTouchNodes.mkString(", ")}. ${errorDescription(polygonPath, touchEdges)}")
     if !touchEdges.areContinuous then
-      return Left("Polygon sharing non-continuos edges with the perimeter. Cannot remove it.")
+      return Left(s"Non-continuos shared edges. ${errorDescription(polygonPath, touchEdges)}")
     if !perimeterPolygonsContain(polygonPath) then
-      return Left("Polygon not found.")
+      return Left(s"Polygon does not exist. ${errorDescription(polygonPath, touchEdges)}")
 
     // Edges of the removed polygon that were NOT on the perimeter.
     //    val subtractableEdges = polygonPath.toEdgesO.toList.diff(touchEdges)
