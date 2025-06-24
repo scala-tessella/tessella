@@ -1,6 +1,8 @@
 package io.github.scala_tessella.tessella
 
 import io.github.scala_tessella.tessella.Geometry.Point
+import io.github.scala_tessella.tessella.IncrementalTiling.Strictness
+import io.github.scala_tessella.tessella.IncrementalTiling.Strictness
 import io.github.scala_tessella.tessella.RegularPolygon.Polygon
 import io.github.scala_tessella.tessella.Topology.{--, Edge, Node}
 import io.github.scala_tessella.tessella.conversion.SVG.*
@@ -138,12 +140,19 @@ class IncrementalTilingAdditionSpec extends AnyFlatSpec with Matchers:
       .addPolygon(Polygon(4), 9--10).getOrElse(fail())
       .addPolygon(Polygon(4), 11--12).getOrElse(fail())
 
-  it should "add 1 square to close a loop, with two edges at the same coordinates" in {
-    val result = almostLoop.addPolygon(Polygon(4), 9--13)
+  it should "add 1 square to close a loop, with two edges at the same coordinates, if Strictness.TOUCHING" in {
+    val result = almostLoop.addPolygon(Polygon(4), 9--13, Strictness.TOUCHING)
     result.isRight shouldBe true
     val loop = result.getOrElse(fail("Expected a TilingAlt"))
     loop.coordinates(Node(16)).almostEquals(loop.coordinates(Node(18))) shouldBe true
     loop.coordinates(Node(12)).almostEquals(loop.coordinates(Node(17))) shouldBe true
     loop.perimeter should have size 18
   }
+
+  it should "fail to add 1 square to close a loop, with two edges at the same coordinates" in {
+    val result = almostLoop.addPolygon(Polygon(4), 9--13)
+    result.isLeft shouldBe true
+    result.left.getOrElse(fail("Expected an error message")) shouldBe "Coincident nodes 12, 16 outside of the share edges."
+  }
+
 

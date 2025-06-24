@@ -6,8 +6,7 @@ import RegularPolygon.Polygon
 import TilingCoordinates.{Coords, pointsFrom, toBox}
 import Topology.{Edge, Node, NodeOrdering}
 import io.github.scala_tessella.ring_seq.RingSeq.*
-
-import scala.collection.mutable
+import io.github.scala_tessella.tessella.IncrementalTiling.Strictness
 
 // The IncrementalTiling class is now a "dumb" data holder. Its primary role is to hold
 // consistent, pre-computed data. It's immutable.
@@ -118,8 +117,9 @@ case class IncrementalTiling private(
   private def mergeCoincidentNodes(
                                     newPolygon: Vector[Node],
                                     newCoords: Coords,
-                                    perimeterEdge: Edge
-                                  ): (Vector[Node], Coords) = {
+                                    perimeterEdge: Edge,
+                                    strictness: Strictness
+                                  ): Either[String, (Vector[Node], Coords)] =
     // Find all new nodes that are coincident with any node on the perimeter.
     val allCoincidences = newCoords.toList.flatMap { case (newNode, newPoint) =>
       perimeter.find { perimeterNode =>
@@ -127,13 +127,12 @@ case class IncrementalTiling private(
       }.map(perimeterNode => newNode -> perimeterNode)
     }.toMap
 
-    if (allCoincidences.isEmpty) {
-      return (newPolygon, newCoords)
-    }
+    if allCoincidences.isEmpty then
+      return Right((newPolygon, newCoords))
 
     // From the perimeter edge, find the two nodes that define the attachment points, ordered by perimeter traversal.
     val (p1, p2) =
-      if (perimeter.applyO(perimeter.indexOf(perimeterEdge.lesserNode) + 1) == perimeterEdge.greaterNode)
+      if perimeter.applyO(perimeter.indexOf(perimeterEdge.lesserNode) + 1) == perimeterEdge.greaterNode then
         (perimeterEdge.lesserNode, perimeterEdge.greaterNode)
       else
         (perimeterEdge.greaterNode, perimeterEdge.lesserNode)
@@ -153,18 +152,19 @@ case class IncrementalTiling private(
 
     // Only perform substitutions for the valid, contiguous nodes.
     // A stricter future implementation might throw an error if (matchedPerimeterNodes -- validPerimeterNodes).nonEmpty
+    if strictness == Strictness.STRICT && (matchedPerimeterNodes -- validPerimeterNodes).nonEmpty then
+      val outsideNodes = matchedPerimeterNodes -- validPerimeterNodes
+      return Left(s"Coincident nodes ${outsideNodes.mkString(", ")} outside of the share edges.")
     val substitutions = allCoincidences.filter { case (_, perimeterNode) =>
       validPerimeterNodes.contains(perimeterNode)
     }
 
-    if (substitutions.isEmpty) {
-      (newPolygon, newCoords)
-    } else {
+    if substitutions.isEmpty then
+      Right((newPolygon, newCoords))
+    else
       val mergedPolygon = newPolygon.map(node => substitutions.getOrElse(node, node))
       val mergedCoords = newCoords -- substitutions.keys
-      (mergedPolygon, mergedCoords)
-    }
-  }
+      Right((mergedPolygon, mergedCoords))
 
   private def updatePerimeterOnAddition(poly: Vector[Node]): Vector[Node] =
     val sharedNodes = perimeter.intersect(poly)
@@ -221,33 +221,36 @@ case class IncrementalTiling private(
    *
    * @param polygon        Information about the new polygon.
    * @param perimeterEdge  The perimeter edge the new polygon must be attached to.
+   * @param strictness     Validation strictness
    * @return Either an error or the new, larger TilingAlt.
    */
-  def addPolygon(polygon: Polygon, perimeterEdge: Edge): Either[String, IncrementalTiling] =
+  def addPolygon(
+                  polygon: Polygon,
+                  perimeterEdge: Edge,
+                  strictness: Strictness = Strictness.STRICT
+                ): Either[String, IncrementalTiling] =
 
     if !hasOnPerimeter(perimeterEdge) then
       return Left(s"Perimeter edge ${perimeterEdge.stringify} not found.")
 
     val (initialPolygon, additionalCoords) = calculateNewPolygonCoords(polygon, perimeterEdge)
 
-    val (mergedPolygon, finalAdditionalCoords) =
-      mergeCoincidentNodes(initialPolygon, additionalCoords, perimeterEdge)
+    mergeCoincidentNodes(initialPolygon, additionalCoords, perimeterEdge, strictness)
+      .map((mergedPolygon, finalAdditionalCoords) =>
+        val additionalEdges = mergedPolygon.toEdgesO.toList.filterNot(edge => edge.pair._1 == edge.pair._2)
 
-    val additionalEdges = mergedPolygon.toEdgesO.toList.filterNot(edge => edge.pair._1 == edge.pair._2)
+        val newEdges = (edges ++ additionalEdges).distinct
+        val newPolygons = orientedPolygons :+ mergedPolygon
+        val newCoords = coordinates ++ finalAdditionalCoords
+        val newPerimeter = updatePerimeterOnAddition(mergedPolygon)
 
-    val newEdges = (edges ++ additionalEdges).distinct
-    val newPolygons = orientedPolygons :+ mergedPolygon
-    val newCoords = coordinates ++ finalAdditionalCoords
-    val newPerimeter = updatePerimeterOnAddition(mergedPolygon)
-
-    Right(
-      IncrementalTiling(
-        newEdges,
-        newPolygons,
-        newPerimeter,
-        newCoords
+        IncrementalTiling(
+          newEdges,
+          newPolygons,
+          newPerimeter,
+          newCoords
+        )
       )
-    )
 
   private def polygonDescription(polygonPath: Vector[Node]): String =
     s"Polygon with edges ${polygonPath.stringify}--"
@@ -338,3 +341,7 @@ object IncrementalTiling:
       tiling.perimeter.toRingNodes,
       tiling.coords
     )
+
+  enum Strictness:
+
+    case STRICT, TOUCHING, CROSSING
