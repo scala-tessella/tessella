@@ -236,21 +236,41 @@ case class IncrementalTiling private(
 
     val (initialPolygon, additionalCoords) = calculateNewPolygonCoords(polygon, perimeterEdge)
 
+    def segmentsIntersect(p1: Point, p2: Point, p3: Point, p4: Point): Boolean =
+      Point.ccw(p1, p2, p3) * Point.ccw(p1, p2, p4) < 0 &&
+        Point.ccw(p3, p4, p1) * Point.ccw(p3, p4, p2) < 0
+
     mergeCoincidentNodes(initialPolygon, additionalCoords, perimeterEdge, strictness)
-      .map((mergedPolygon, finalAdditionalCoords) =>
+      .flatMap((mergedPolygon, finalAdditionalCoords) =>
         val additionalEdges = mergedPolygon.toEdgesO.toList.diff(perimeter.toEdgesO.toList)
 
-        val newEdges = edges ++ additionalEdges
-        val newPolygons = orientedPolygons :+ mergedPolygon
-        val newCoords = coordinates ++ finalAdditionalCoords
-        val newPerimeter = updatePerimeterOnAddition(mergedPolygon)
+        if strictness != Strictness.CROSSING && {
 
-        IncrementalTiling(
-          newEdges,
-          newPolygons,
-          newPerimeter,
-          newCoords
-        )
+          val perimeterEdgesToCheck = perimeter.toEdgesO.toList.diff(mergedPolygon.toEdgesO.toList)
+
+          val allCoords = coordinates ++ finalAdditionalCoords
+
+          val crossingExists =
+            additionalEdges.exists { additionalEdge =>
+              val p1 = allCoords(additionalEdge.lesserNode)
+              val p2 = allCoords(additionalEdge.greaterNode)
+              perimeterEdgesToCheck.exists { perimeterEdge =>
+                val p3 = allCoords(perimeterEdge.lesserNode)
+                val p4 = allCoords(perimeterEdge.greaterNode)
+                segmentsIntersect(p1, p2, p3, p4)
+              }
+            }
+
+          crossingExists
+        } then
+          Left("Invalid addition: new polygon's edges cross perimeter.")
+        else
+          val newEdges = edges ++ additionalEdges
+          val newPolygons = orientedPolygons :+ mergedPolygon
+          val newCoords = coordinates ++ finalAdditionalCoords
+          val newPerimeter = updatePerimeterOnAddition(mergedPolygon)
+
+          Right(IncrementalTiling(newEdges, newPolygons, newPerimeter, newCoords))
       )
 
   private def polygonDescription(polygonPath: Vector[Node]): String =

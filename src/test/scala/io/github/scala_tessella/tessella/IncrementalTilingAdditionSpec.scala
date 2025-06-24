@@ -155,4 +155,16 @@ class IncrementalTilingAdditionSpec extends AnyFlatSpec with Matchers:
     result.left.getOrElse(fail("Expected an error message")) shouldBe "Coincident nodes 12, 16 outside of the share edges."
   }
 
+  "The addPolygon method with perimeter crossing" should "fail with STRICT" in {
+    val result = almostLoop.addPolygon(Polygon(6), 9--13, Strictness.STRICT)
+    result.isLeft shouldBe true
+    result.left.getOrElse(fail("Expected an error message")) shouldBe "Invalid addition: new polygon's edges cross perimeter."
+  }
+
+  it should "succeed with CROSSING" in {
+    val result = almostLoop.addPolygon(Polygon(6), 9--13, Strictness.CROSSING)
+    result.isRight shouldBe true
+  }
+
+
 
