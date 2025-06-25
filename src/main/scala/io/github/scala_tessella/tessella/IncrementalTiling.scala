@@ -1,6 +1,7 @@
 package io.github.scala_tessella.tessella
 
 import conversion.DOT.toDOT
+import utility.Utils.filterNotUnique
 import Geometry.{Box, LineSegment, Point, Radian}
 import Geometry.Radian.TAU_2
 import IncrementalTiling.Strictness
@@ -322,6 +323,39 @@ object IncrementalTiling:
       tiling.orientedPolygons.map(_.toPolygonPathNodes),
       tiling.perimeter.toRingNodes,
       tiling.coords
+    )
+
+  def withValidation(
+                      edges: List[Edge],
+                      orientedPolygons: List[Vector[Node]],
+                      perimeter: Vector[Node],
+                      coordinates: Coords
+                    ): Either[String, IncrementalTiling] =
+    val edgesFromPolygons: List[Edge] =
+      orientedPolygons.flatMap(_.toEdgesO)
+    val internalEdges =
+      edgesFromPolygons.filterNotUnique
+    val distinctEdgesFromPolygons =
+      edgesFromPolygons.toSet
+    val distinctEdges =
+      edges.toSet
+    if distinctEdges != distinctEdgesFromPolygons then
+      return Left("Edges don't match polygons")
+
+    val perimeterEdges =
+      perimeter.toEdgesO
+    val perimeterEdgesFromPolygons =
+      distinctEdges -- internalEdges.toList
+    if perimeterEdgesFromPolygons != perimeterEdges.toSet then
+      return Left("Perimeter edges don't match polygons")
+
+    Right(
+      IncrementalTiling(
+        edges = distinctEdges.toList,
+        orientedPolygons = orientedPolygons,
+        perimeter = perimeter,
+        coordinates = coordinates
+      )
     )
 
   enum Strictness:
