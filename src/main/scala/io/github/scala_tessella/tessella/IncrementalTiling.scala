@@ -1,5 +1,6 @@
 package io.github.scala_tessella.tessella
 
+import conversion.DOT.toDOT
 import Geometry.{Box, LineSegment, Point, Radian}
 import Geometry.Radian.TAU_2
 import IncrementalTiling.Strictness
@@ -278,6 +279,9 @@ case class IncrementalTiling private(
   /** Finds the 2D box */
   def toBox: Box =
     edges.toBox(coordinates)
+
+  def toDOT: String =
+    Graph(edges).toDOT()
 
 // The companion object becomes the "smart" factory and manager.
 // It contains all the logic for creating and growing tilings,
