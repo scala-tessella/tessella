@@ -14,11 +14,13 @@ import io.github.scala_tessella.ring_seq.RingSeq.*
 // The IncrementalTiling class is now a "dumb" data holder. Its primary role is to hold
 // consistent, pre-computed data. It's immutable.
 case class IncrementalTiling private(
-                               edges: List[Edge],
-                               orientedPolygons: List[Vector[Node]],
-                               perimeter: Vector[Node],
-                               coordinates: Coords
-                             ):
+                                      orientedPolygons: List[Vector[Node]],
+                                      perimeter: Vector[Node],
+                                      coordinates: Coords
+                                    ):
+  // Edges are derived from the polygons, ensuring consistency.
+  lazy val edges: List[Edge] = orientedPolygons.flatMap(_.toEdgesO).distinct
+
   // Methods on IncrementalTiling now simply return the pre-computed properties.
   // No expensive calculations happen here.
   def getPerimeter: Vector[Node] = perimeter
@@ -29,7 +31,7 @@ case class IncrementalTiling private(
   val perimeterLength: Int = perimeter.size
 
   def isEmpty: Boolean =
-    edges.isEmpty
+    orientedPolygons.isEmpty
 
   def hasOnPerimeter(edge: Edge): Boolean =
     perimeter.toEdgesO.contains(edge)
@@ -232,12 +234,11 @@ case class IncrementalTiling private(
         } then
           Left("Invalid addition: new polygon's edges cross perimeter.")
         else
-          val newEdges = edges ++ additionalEdges
           val newPolygons = orientedPolygons :+ mergedPolygon
           val newCoords = coordinates ++ finalAdditionalCoords
           val newPerimeter = updatePerimeter(mergedPolygon)
 
-          Right(IncrementalTiling(newEdges, newPolygons, newPerimeter, newCoords))
+          Right(IncrementalTiling(newPolygons, newPerimeter, newCoords))
       )
 
   private def polygonDescription(polygonPath: Vector[Node]): String =
@@ -262,9 +263,6 @@ case class IncrementalTiling private(
     if !perimeterPolygonsContain(polygonPath) then
       return Left(s"Polygon does not exist. ${errorDescription(polygonPath, touchEdges)}")
 
-    // Edges of the removed polygon that were NOT on the perimeter.
-    //    val subtractableEdges = polygonPath.toEdgesO.toList.diff(touchEdges)
-    val newEdges = edges.diff(touchEdges)
     // Nodes of the removed polygon that were NOT on the perimeter.
     val subtractableNodes = touchEdges.threadNodes
     val newCoords = coordinates -- subtractableNodes
@@ -275,7 +273,7 @@ case class IncrementalTiling private(
     // The new perimeter is formed by the old perimeter, with the `touchEdges` segment
     // replaced by the `subtractableEdges` segment. The existing updatePerimeter method correctly handles this.
     val newPerimeter = updatePerimeter(polygonPath)
-    Right(IncrementalTiling(newEdges, newPolygons, newPerimeter, newCoords))
+    Right(IncrementalTiling(newPolygons, newPerimeter, newCoords))
 
   /** Finds the 2D box */
   def toBox: Box =
@@ -293,7 +291,7 @@ object IncrementalTiling:
    * Creates an empty tiling.
    */
   def empty: IncrementalTiling =
-    IncrementalTiling(Nil, Nil, Vector.empty, Map.empty)
+    IncrementalTiling(Nil, Vector.empty, Map.empty)
 
   /** A tiling made of a single polygon.
    *
@@ -306,7 +304,6 @@ object IncrementalTiling:
         case i: Int => Polygon(i).toSides
     // 1. Calculate properties from scratch, ONLY for this initial case.
     val initialPerimeter: Vector[Node] = Vector.range(1, validatedSides + 1).map(Node(_))
-    val initialEdges: List[Edge] = initialPerimeter.toEdgesO.toList
     val initialPolygons: List[Vector[Node]] = List(initialPerimeter)
     val angle: Radian = Polygon(validatedSides).alpha
     val angles: Map[Node, Radian] = initialPerimeter.map(_ -> angle).toMap
@@ -314,19 +311,17 @@ object IncrementalTiling:
     val initialCoords: Coords = initialPerimeter.zip(points).toMap
 
     // 2. Call the private constructor with the fully consistent data.
-    IncrementalTiling(initialEdges, initialPolygons, initialPerimeter, initialCoords)
+    IncrementalTiling(initialPolygons, initialPerimeter, initialCoords)
   //    fromTiling(Tiling.fromPolygon(sides))
 
   def fromTiling(tiling: Tiling): IncrementalTiling =
     IncrementalTiling(
-      tiling.graphEdges,
       tiling.orientedPolygons.map(_.toPolygonPathNodes),
       tiling.perimeter.toRingNodes,
       tiling.coords
     )
 
   def withValidation(
-                      edges: List[Edge],
                       orientedPolygons: List[Vector[Node]],
                       perimeter: Vector[Node],
                       coordinates: Coords
@@ -337,21 +332,16 @@ object IncrementalTiling:
       edgesFromPolygons.filterNotUnique
     val distinctEdgesFromPolygons =
       edgesFromPolygons.toSet
-    val distinctEdges =
-      edges.toSet
-    if distinctEdges != distinctEdgesFromPolygons then
-      return Left("Edges don't match polygons")
 
     val perimeterEdges =
       perimeter.toEdgesO
     val perimeterEdgesFromPolygons =
-      distinctEdges -- internalEdges.toList
+      distinctEdgesFromPolygons -- internalEdges.toList
     if perimeterEdgesFromPolygons != perimeterEdges.toSet then
       return Left("Perimeter edges don't match polygons")
 
     Right(
       IncrementalTiling(
-        edges = distinctEdges.toList,
         orientedPolygons = orientedPolygons,
         perimeter = perimeter,
         coordinates = coordinates
