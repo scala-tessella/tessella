@@ -1,9 +1,9 @@
 package io.github.scala_tessella.tessella
 
 import conversion.DOT.toDOT
-import utility.Utils.filterNotUnique
+import utility.Utils.{filterNotUnique, filterUnique}
 import Geometry.{Box, LineSegment, Point, Radian}
-import Geometry.Radian.TAU_2
+import Geometry.Radian.{TAU, TAU_2}
 import IncrementalTiling.Strictness
 import RegularPolygon.Polygon
 import TilingCoordinates.{Coords, pointsFrom, toBox}
@@ -321,32 +321,80 @@ object IncrementalTiling:
       tiling.coords
     )
 
+  /**
+   * Creates an [[IncrementalTiling]] only after passing validation checks.
+   *
+   * @param orientedPolygons list of polygons as ordered nodes
+   * @param perimeter        ordered nodes of the perimeter
+   * @param coordinates      map of nodes to points
+   * @return an `Either` with a `String` error message or the created `IncrementalTiling`
+   */
   def withValidation(
                       orientedPolygons: List[Vector[Node]],
                       perimeter: Vector[Node],
-                      coordinates: Coords
-                    ): Either[String, IncrementalTiling] =
-    val edgesFromPolygons: List[Edge] =
-      orientedPolygons.flatMap(_.toEdgesO)
-    val internalEdges =
-      edgesFromPolygons.filterNotUnique
-    val distinctEdgesFromPolygons =
-      edgesFromPolygons.toSet
+                      coordinates: Coords): Either[String, IncrementalTiling] =
+    if orientedPolygons.isEmpty then
+      if perimeter.isEmpty && coordinates.isEmpty then Right(empty)
+      else Left("For empty polygons, perimeter and coordinates must also be empty.")
+    else
+      val tiling = IncrementalTiling(orientedPolygons, perimeter, coordinates)
+      for
+        _ <- validatePerimeter(tiling)
+        _ <- validateConnectivity(tiling)
+        _ <- validateCoordinates(tiling)
+      yield tiling
 
-    val perimeterEdges =
-      perimeter.toEdgesO
-    val perimeterEdgesFromPolygons =
-      distinctEdgesFromPolygons -- internalEdges.toList
-    if perimeterEdgesFromPolygons != perimeterEdges.toSet then
-      return Left("Perimeter edges don't match polygons")
-
-    Right(
-      IncrementalTiling(
-        orientedPolygons = orientedPolygons,
-        perimeter = perimeter,
-        coordinates = coordinates
-      )
+  private def validatePerimeter(tiling: IncrementalTiling): Either[String, Unit] =
+    val calculatedPerimeterEdges = filterUnique(tiling.orientedPolygons.flatMap(_.toEdgesO)).toSet
+    val givenPerimeterEdges = tiling.perimeter.toEdgesO.toSet
+    println(
+      s"""
+        |calculatedPerimeterEdges: $calculatedPerimeterEdges
+        |givenPerimeterEdges: $givenPerimeterEdges
+        |""".stripMargin)
+    Either.cond(
+      calculatedPerimeterEdges == givenPerimeterEdges,
+      (),
+      s"Perimeter edges are inconsistent. Given: $givenPerimeterEdges, Calculated: $calculatedPerimeterEdges"
     )
+
+  private def validateConnectivity(tiling: IncrementalTiling): Either[String, Unit] =
+    Either.cond(Graph(tiling.edges).isConnected, (), "The tiling graph is not connected.")
+
+  private def validateCoordinates(tiling: IncrementalTiling): Either[String, Unit] =
+    val allNodes = tiling.edges.flatMap(e => List(e.lesserNode, e.greaterNode)).toSet
+    val coordNodes = tiling.coordinates.keySet
+    if (allNodes != coordNodes)
+      return Left(s"Mismatch between graph nodes and coordinate nodes. Missing: ${allNodes -- coordNodes}, Extra: ${coordNodes -- allNodes}")
+
+    tiling.edges.foreach { edge =>
+      val p1 = tiling.coordinates(edge.lesserNode)
+      val p2 = tiling.coordinates(edge.greaterNode)
+      if Math.abs(p1.distanceTo(p2) - 1.0) > Geometry.ACCURACY then
+        return Left(s"Edge ${edge.stringify} has length not equal to 1.")
+    }
+
+    val points = tiling.coordinates.values.toList
+    if points.combinations(2).exists { case List(p1, p2) => p1.almostEquals(p2) } then
+      return Left("Found distinct nodes with almost identical coordinates.")
+
+    tiling.orientedPolygons.foreach { polygonPath =>
+      val polygon = Polygon(polygonPath.size)
+      val expectedAngle = polygon.alpha
+      for (i <- polygonPath.indices)
+        val pPrev = tiling.coordinates(polygonPath.applyO(i - 1))
+        val pCurr = tiling.coordinates(polygonPath.applyO(i))
+        val pNext = tiling.coordinates(polygonPath.applyO(i + 1))
+
+        val angle = pCurr.angleTo(pNext) - pCurr.angleTo(pPrev)
+        val normalizedAngle = if angle.toDouble < 0 then angle + TAU else angle
+
+        if Math.abs(normalizedAngle.toDouble - expectedAngle.toDouble) > Geometry.ACCURACY then
+          return Left(s"Invalid interior angle for polygon ${polygonPath.mkString(",")} at node ${polygonPath.applyO(i)}.")
+
+    }
+
+    Right(())
 
   enum Strictness:
 
