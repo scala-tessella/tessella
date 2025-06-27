@@ -369,7 +369,7 @@ object IncrementalTiling:
       for edge <- tiling.edges do
         val p1 = tiling.coordinates(edge.lesserNode)
         val p2 = tiling.coordinates(edge.greaterNode)
-        if Math.abs(p1.distanceTo(p2) - 1.0) > Geometry.ACCURACY then
+        if Math.abs(p1.distanceTo(p2) - 1.0) > Geometry.LESSER_ACCURACY then
           break(Left(s"Edge ${edge.stringify} has length not equal to 1."))
 
       // this is ok only if Strictness is STRICT
@@ -388,7 +388,7 @@ object IncrementalTiling:
           val angle = pCurr.angleTo(pNext) - pCurr.angleTo(pPrev)
           val normalizedAngle = if angle.toDouble < 0 then angle + TAU else angle
 
-          if Math.abs(normalizedAngle.toDouble - expectedAngle.toDouble) > Geometry.ACCURACY then
+          if Math.abs(normalizedAngle.toDouble - expectedAngle.toDouble) > Geometry.LESSER_ACCURACY then
             break(Left(s"Invalid interior angle for polygon ${polygonPath.mkString(",")} at node ${polygonPath.applyO(i)}."))
 
       Right(())
