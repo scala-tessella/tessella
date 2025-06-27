@@ -19,7 +19,7 @@ class IncrementalTilingRemovalSpec extends AnyFlatSpec with Matchers:
     square.addPolygon(Polygon(4), 3--4).getOrElse(fail("Setup failed: could not create twoSquares"))
 
   "The removePolygon method" should "remove a polygon from a tiling, resulting in the original tiling" in {
-    val removedPolygonPath = Vector(6, 5, 4, 3).map(Node(_)) // The second square
+    val removedPolygonPath = Vector(5, 6, 4, 3).map(Node(_)) // The second square
     val result = twoSquares.removePolygon(removedPolygonPath)
 
     result.isRight shouldBe true
@@ -33,7 +33,7 @@ class IncrementalTilingRemovalSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "remove a polygon regardless of its path orientation" in {
-    val removedPolygonPathReversed = Vector(3, 4, 5, 6).map(Node(_)) // Same polygon, different orientation
+    val removedPolygonPathReversed = Vector(3, 4, 6, 5).map(Node(_)) // Same polygon, different orientation
     val result = twoSquares.removePolygon(removedPolygonPathReversed)
 
     result.isRight shouldBe true
@@ -142,7 +142,7 @@ class IncrementalTilingRemovalSpec extends AnyFlatSpec with Matchers:
     // Expected perimeter after removing the triangle:
     val expectedPerimeter =
       Vector(3, 4, 5, 6, 7, 8, 9, 10, 11, 12) ++
-        Vector(22, 21, 20, 19, 18, 17, 16, 15, 14, 13)
+        Vector(14, 15, 16, 17, 18, 19, 20, 21, 22, 13)
         ++ Vector(1, 2)
 
     newTiling.orientedPolygons.size shouldBe 2
@@ -150,18 +150,18 @@ class IncrementalTilingRemovalSpec extends AnyFlatSpec with Matchers:
   }
 
   val cShape: IncrementalTiling =
-    IncrementalTiling.fromPolygon(4) // 1,2,3,4
+    square // 1,2,3,4
       .addPolygon(Polygon(4), 4--1).getOrElse(fail()) // 5,6,1,4
       .addPolygon(Polygon(4), 1--2).getOrElse(fail()) // 7,8,2,1
 
   it should "remove a polygon from a more complex shape (C-shape)" in {
-    val polygonToRemove = Vector(6, 5, 1, 4).map(Node(_))
+    val polygonToRemove = Vector(5, 6, 1, 4).map(Node(_))
     val result = cShape.removePolygon(polygonToRemove)
     println(result)
     result.isRight shouldBe true
     val resultingTiling = result.getOrElse(fail())
 
-    resultingTiling.edges should contain theSameElementsAs List(1--2, 2--3, 3--4, 4--1, 7--8, 2--7, 1--8)
+    resultingTiling.edges should contain theSameElementsAs List(1--2, 2--3, 3--4, 4--1, 7--8, 2--8, 1--7)
     resultingTiling.orientedPolygons.map(_.toSet) should contain theSameElementsAs List(Set(1, 2, 3, 4), Set(8, 7, 2, 1))
-    resultingTiling.perimeter should contain theSameElementsInOrderAs Vector(8, 7, 2, 3, 4, 1)
+    resultingTiling.perimeter should contain theSameElementsInOrderAs Vector(7, 8, 2, 3, 4, 1)
   }

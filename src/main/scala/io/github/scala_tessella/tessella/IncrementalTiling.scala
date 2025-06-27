@@ -75,8 +75,7 @@ case class IncrementalTiling private(
     // 2. Generate the required number of new nodes for the polygon.
     val sides = polygon.toSides
     val newNodesCount = sides - 2
-    val maxExistingNode = maxNode.toInt
-    val newNodes = Vector.tabulate(newNodesCount)(i => Node(maxExistingNode + 1 + i))
+    val newNodes = Vector.tabulate(newNodesCount)(i => Node(-(1 + i)))
 
     // 3. Iteratively calculate the coordinates of the new nodes.
     val alpha = polygon.alpha
@@ -104,6 +103,20 @@ case class IncrementalTiling private(
                                     perimeterEdge: Edge,
                                     strictness: Strictness
                                   ): Either[String, (Vector[Node], Coords)] =
+
+    def renumber(polygon: Vector[Node], coords: Coords): (Vector[Node], Coords) = {
+      val maxExistingNode = maxNode.toInt
+      val newNodesToRenumber = coords.keys.toVector.sortBy(_.toInt)
+      val renumbering = newNodesToRenumber.zipWithIndex.map { case (oldNode, index) =>
+        oldNode -> Node(maxExistingNode + 1 + index)
+      }.toMap
+      val renumberedPolygon = polygon.map(node => renumbering.getOrElse(node, node))
+      val renumberedCoords = coords.map { case (oldNode, point) =>
+        renumbering.getOrElse(oldNode, oldNode) -> point
+      }
+      (renumberedPolygon, renumberedCoords)
+    }
+
     // Find all new nodes that are coincident with any node on the perimeter.
     val allCoincidences = newCoords.toList.flatMap { case (newNode, newPoint) =>
       perimeter.find { perimeterNode =>
@@ -112,7 +125,7 @@ case class IncrementalTiling private(
     }.toMap
 
     if allCoincidences.isEmpty then
-      return Right((newPolygon, newCoords))
+      return Right(renumber(newPolygon, newCoords))
 
     // From the perimeter edge, find the two nodes that define the attachment points, ordered by perimeter traversal.
     val (p1, p2) =
@@ -144,11 +157,11 @@ case class IncrementalTiling private(
     }
 
     if substitutions.isEmpty then
-      Right((newPolygon, newCoords))
+      Right(renumber(newPolygon, newCoords))
     else
       val mergedPolygon = newPolygon.map(node => substitutions.getOrElse(node, node))
       val mergedCoords = newCoords -- substitutions.keys
-      Right((mergedPolygon, mergedCoords))
+      Right(renumber(mergedPolygon, mergedCoords))
 
   private def updatePerimeter(poly: Vector[Node]): Vector[Node] =
     // 1. Find nodes shared between the perimeter and the given polygon.

@@ -94,15 +94,14 @@ class IncrementalTilingValidationSpec extends AnyFlatSpec with Matchers:
     square
       .addPolygon(Polygon(4), 1--2).getOrElse(fail())
       .addPolygon(Polygon(4), 3--4).getOrElse(fail())
-      .addPolygon(Polygon(4), 2--5).getOrElse(fail())
-      .addPolygon(Polygon(4), 3--8).getOrElse(fail())
+      .addPolygon(Polygon(4), 2--6).getOrElse(fail())
+      .addPolygon(Polygon(4), 3--7).getOrElse(fail())
       .addPolygon(Polygon(4), 9--10).getOrElse(fail())
       .addPolygon(Polygon(4), 11--12).getOrElse(fail())
 
   val touching: IncrementalTiling =
     almostLoop
-      .addPolygon(Polygon(4), 9--13, Strictness.TOUCHING).getOrElse(fail())
-
+      .addPolygon(Polygon(4), 10--14, Strictness.TOUCHING).getOrElse(fail())
 
   it should "NOT return an error for touching edges" in {
     val result = IncrementalTiling.maybe(touching.orientedPolygons, touching.perimeter, touching.coordinates)
@@ -111,7 +110,7 @@ class IncrementalTilingValidationSpec extends AnyFlatSpec with Matchers:
 
   val crossing: IncrementalTiling =
     almostLoop
-      .addPolygon(Polygon(6), 9--13, Strictness.CROSSING).getOrElse(fail())
+      .addPolygon(Polygon(6), 10--14, Strictness.CROSSING).getOrElse(fail())
       
   it should "NOT return an error for crossing edges" in {
     val result = IncrementalTiling.maybe(crossing.orientedPolygons, crossing.perimeter, crossing.coordinates)

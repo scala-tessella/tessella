@@ -4,7 +4,7 @@ import io.github.scala_tessella.tessella.Geometry.Point
 import io.github.scala_tessella.tessella.IncrementalTiling.Strictness
 import io.github.scala_tessella.tessella.IncrementalTiling.Strictness
 import io.github.scala_tessella.tessella.RegularPolygon.Polygon
-import io.github.scala_tessella.tessella.Topology.{--, Edge, Node}
+import io.github.scala_tessella.tessella.Topology.{--, Edge, Node, NodeOrdering}
 import io.github.scala_tessella.tessella.conversion.SVG.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -20,18 +20,18 @@ class IncrementalTilingAdditionSpec extends AnyFlatSpec with Matchers:
     val twoSquares = result.getOrElse(fail("Expected a TilingAlt"))
 
     twoSquares.edges should have size 7
-    twoSquares.edges should contain theSameElementsAs List(1--2, 2--3, 3--4, 4--1, 4--5, 5--6, 6--3)
+    twoSquares.edges should contain theSameElementsAs List(1--2, 2--3, 3--4, 4--1, 5--6, 4--6, 3--5)
 
     twoSquares.orientedPolygons should have size 2
     twoSquares.orientedPolygons should contain(Vector(1, 2, 3, 4))
-    twoSquares.orientedPolygons should contain(Vector(6, 5, 4, 3))
+    twoSquares.orientedPolygons should contain(Vector(5, 6, 4, 3))
 
     twoSquares.perimeter should have size 6
-    twoSquares.perimeter should contain theSameElementsInOrderAs Vector(1, 2, 3, 6, 5, 4)
+    twoSquares.perimeter should contain theSameElementsInOrderAs Vector(1, 2, 3, 5, 6, 4)
 
     twoSquares.coordinates should have size 6
-    twoSquares.coordinates(Node(5)).almostEquals(Point(2.0, 0.0)) shouldBe true
-    twoSquares.coordinates(Node(6)).almostEquals(Point(2.0, 1.0)) shouldBe true
+    twoSquares.coordinates(Node(6)).almostEquals(Point(2.0, 0.0)) shouldBe true
+    twoSquares.coordinates(Node(5)).almostEquals(Point(2.0, 1.0)) shouldBe true
   }
 
   it should "add a triangle to a square" in {
@@ -72,7 +72,7 @@ class IncrementalTilingAdditionSpec extends AnyFlatSpec with Matchers:
 
     t31212.edges should have size 24
     t31212.perimeter should contain theSameElementsInOrderAs
-      Vector(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13)
+      Vector(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 13)
   }
 
   it should "add a dodecagon sharing 2 perimeter edges to another dodecagon and a triangle" in {
@@ -82,7 +82,7 @@ class IncrementalTilingAdditionSpec extends AnyFlatSpec with Matchers:
 
     t31212.edges should have size 24
     t31212.perimeter should contain theSameElementsInOrderAs
-      Vector(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 23, 22, 21, 20, 19, 18, 17, 16, 15, 13)
+      Vector(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 13)
   }
 
   val twoDodecagonsAndTriangle: IncrementalTiling =
@@ -97,7 +97,7 @@ class IncrementalTilingAdditionSpec extends AnyFlatSpec with Matchers:
 
     t3121212.edges should have size 33
     t3121212.perimeter should contain theSameElementsInOrderAs
-      Vector(4, 5, 6, 7, 8, 9, 10, 11, 12, 22, 21, 20, 19, 18, 17, 16, 15, 14, 31, 30, 29, 28, 27, 26, 25, 24, 3)
+      Vector(4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 3)
   }
 
   it should "add a dodecagon sharing 3 perimeter edges to a dodecagon and a triangle and another dodecagon" in {
@@ -107,7 +107,7 @@ class IncrementalTilingAdditionSpec extends AnyFlatSpec with Matchers:
 
     t3121212.edges should have size 33
     t3121212.perimeter should contain theSameElementsInOrderAs
-      Vector(4, 5, 6, 7, 8, 9, 10, 11, 12, 22, 21, 20, 19, 18, 17, 16, 15, 14, 30, 29, 28, 27, 26, 25, 24, 23, 3)
+      Vector(4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 3)
   }
 
   // Tiling where one square is almost completely surrounded by others
@@ -135,36 +135,51 @@ class IncrementalTilingAdditionSpec extends AnyFlatSpec with Matchers:
     square
       .addPolygon(Polygon(4), 1--2).getOrElse(fail())
       .addPolygon(Polygon(4), 3--4).getOrElse(fail())
-      .addPolygon(Polygon(4), 2--5).getOrElse(fail())
-      .addPolygon(Polygon(4), 3--8).getOrElse(fail())
+      .addPolygon(Polygon(4), 2--6).getOrElse(fail())
+      .addPolygon(Polygon(4), 3--7).getOrElse(fail())
       .addPolygon(Polygon(4), 9--10).getOrElse(fail())
       .addPolygon(Polygon(4), 11--12).getOrElse(fail())
 
   it should "add 1 square to close a loop, with two edges at the same coordinates, if Strictness.TOUCHING" in {
-    val result = almostLoop.addPolygon(Polygon(4), 9--13, Strictness.TOUCHING)
+    val result = almostLoop.addPolygon(Polygon(4), 10--14, Strictness.TOUCHING)
     result.isRight shouldBe true
     val loop = result.getOrElse(fail("Expected a TilingAlt"))
-    loop.coordinates(Node(16)).almostEquals(loop.coordinates(Node(18))) shouldBe true
-    loop.coordinates(Node(12)).almostEquals(loop.coordinates(Node(17))) shouldBe true
+    loop.coordinates(Node(11)).almostEquals(loop.coordinates(Node(18))) shouldBe true
+    loop.coordinates(Node(15)).almostEquals(loop.coordinates(Node(17))) shouldBe true
     loop.perimeter should have size 18
   }
 
   it should "fail to add 1 square to close a loop, with two edges at the same coordinates" in {
-    val result = almostLoop.addPolygon(Polygon(4), 9--13)
+    val result = almostLoop.addPolygon(Polygon(4), 10--14)
     result.isLeft shouldBe true
-    result.left.getOrElse(fail("Expected an error message")) shouldBe "Coincident nodes 12, 16 outside of the share edges."
+    result.left.getOrElse(fail("Expected an error message")) shouldBe "Coincident nodes 11, 15 outside of the share edges."
   }
 
   "The addPolygon method with perimeter crossing" should "fail with STRICT" in {
-    val result = almostLoop.addPolygon(Polygon(6), 9--13, Strictness.STRICT)
+    val result = almostLoop.addPolygon(Polygon(6), 10--14, Strictness.STRICT)
     result.isLeft shouldBe true
     result.left.getOrElse(fail("Expected an error message")) shouldBe "Invalid addition: new polygon's edges cross perimeter."
   }
 
   it should "succeed with CROSSING" in {
-    val result = almostLoop.addPolygon(Polygon(6), 9--13, Strictness.CROSSING)
+    val result = almostLoop.addPolygon(Polygon(6), 10--14, Strictness.CROSSING)
     result.isRight shouldBe true
   }
 
+  val twoHexagons: IncrementalTiling =
+    IncrementalTiling.fromPolygon(6)
+      .addPolygon(Polygon(6), 1--2).getOrElse(fail())
 
+  "The addPolygon method" should "follow the node numbering without gaps" in {
+    val result = twoHexagons.addPolygon(Polygon(6), 1--7)
+    result.isRight shouldBe true
+    val nodes = result.getOrElse(fail()).edges.nodes
+    nodes should have size nodes.max(NodeOrdering).toInt
+  }
 
+  it should "follow it even when the polygon is added to the other edge" in {
+    val result = twoHexagons.addPolygon(Polygon(6), 1--6)
+    result.isRight shouldBe true
+    val nodes = result.getOrElse(fail()).edges.nodes
+    nodes should have size nodes.max(NodeOrdering).toInt
+  }

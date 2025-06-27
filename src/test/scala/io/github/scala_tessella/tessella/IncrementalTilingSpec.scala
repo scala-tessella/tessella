@@ -52,32 +52,32 @@ class IncrementalTilingSpec extends AnyFlatSpec with Matchers:
     val (newPolygonPath, newCoords) =
       square.calculateNewPolygonCoords(Polygon(4), 3--4)
 
-    newPolygonPath should contain theSameElementsInOrderAs Vector(6, 5, 4, 3)
+    newPolygonPath should contain theSameElementsInOrderAs Vector(-2, -1, 4, 3)
 
     newCoords should have size 2
-    newCoords(Node(5)).almostEquals(Point(2.0, 0.0)) shouldBe true
-    newCoords(Node(6)).almostEquals(Point(2.0, 1.0)) shouldBe true
+    newCoords(Node(-1)).almostEquals(Point(2.0, 0.0)) shouldBe true
+    newCoords(Node(-2)).almostEquals(Point(2.0, 1.0)) shouldBe true
   }
 
   it should "correctly calculate coords for a triangle added to a square" in {
     val (newPolygonPath, newCoords) =
       square.calculateNewPolygonCoords(Polygon(3), 1--2)
 
-    newPolygonPath should contain theSameElementsInOrderAs Vector(5, 2, 1)
+    newPolygonPath should contain theSameElementsInOrderAs Vector(-1, 2, 1)
 
     newCoords should have size 1
-    newCoords(Node(5)).almostEquals(Point(-0.8660254037844386, 0.5)) shouldBe true
+    newCoords(Node(-1)).almostEquals(Point(-0.8660254037844386, 0.5)) shouldBe true
   }
 
   it should "handle building on a reversed perimeter edge" in {
     val (newPolygonPath, newCoords) =
       square.calculateNewPolygonCoords(Polygon(4), 4--1)
 
-    newPolygonPath should contain theSameElementsInOrderAs Vector(6, 5, 1, 4)
+    newPolygonPath should contain theSameElementsInOrderAs Vector(-2, -1, 1, 4)
 
     newCoords should have size 2
-    newCoords(Node(5)).almostEquals(Point(0.0, -1.0)) shouldBe true
-    newCoords(Node(6)).almostEquals(Point(1.0, -1.0)) shouldBe true
+    newCoords(Node(-1)).almostEquals(Point(0.0, -1.0)) shouldBe true
+    newCoords(Node(-2)).almostEquals(Point(1.0, -1.0)) shouldBe true
   }
 
   it should "throw an AssertionError for a non-perimeter edge" in {
