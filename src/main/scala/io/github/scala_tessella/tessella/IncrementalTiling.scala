@@ -356,40 +356,41 @@ object IncrementalTiling:
   private def validateConnectivity(tiling: IncrementalTiling): Either[String, Unit] =
     Either.cond(Graph(tiling.edges).isConnected, (), "The tiling graph is not connected.")
 
+
   private def validateCoordinates(tiling: IncrementalTiling): Either[String, Unit] =
-    val allNodes = tiling.edges.flatMap(e => List(e.lesserNode, e.greaterNode)).toSet
-    val coordNodes = tiling.coordinates.keySet
-    if (allNodes != coordNodes)
-      return Left(s"Mismatch between graph nodes and coordinate nodes. Missing: ${allNodes -- coordNodes}, Extra: ${coordNodes -- allNodes}")
+    import scala.util.boundary, boundary.break
 
-    tiling.edges.foreach { edge =>
-      val p1 = tiling.coordinates(edge.lesserNode)
-      val p2 = tiling.coordinates(edge.greaterNode)
-      if Math.abs(p1.distanceTo(p2) - 1.0) > Geometry.ACCURACY then
-        return Left(s"Edge ${edge.stringify} has length not equal to 1.")
-    }
+    boundary:
+      val allNodes = tiling.edges.flatMap(e => List(e.lesserNode, e.greaterNode)).toSet
+      val coordNodes = tiling.coordinates.keySet
+      if allNodes != coordNodes then
+        break(Left(s"Mismatch between graph nodes and coordinate nodes. Missing: ${allNodes -- coordNodes}, Extra: ${coordNodes -- allNodes}"))
 
-    val points = tiling.coordinates.values.toList
-    if points.combinations(2).exists { case List(p1, p2) => p1.almostEquals(p2) } then
-      return Left("Found distinct nodes with almost identical coordinates.")
+      for edge <- tiling.edges do
+        val p1 = tiling.coordinates(edge.lesserNode)
+        val p2 = tiling.coordinates(edge.greaterNode)
+        if Math.abs(p1.distanceTo(p2) - 1.0) > Geometry.ACCURACY then
+          break(Left(s"Edge ${edge.stringify} has length not equal to 1."))
 
-    tiling.orientedPolygons.foreach { polygonPath =>
-      val polygon = Polygon(polygonPath.size)
-      val expectedAngle = polygon.alpha
-      for (i <- polygonPath.indices)
-        val pPrev = tiling.coordinates(polygonPath.applyO(i - 1))
-        val pCurr = tiling.coordinates(polygonPath.applyO(i))
-        val pNext = tiling.coordinates(polygonPath.applyO(i + 1))
+      val points = tiling.coordinates.values.toList
+      if points.combinations(2).exists(p => p.head.almostEquals(p.last)) then
+        break(Left("Found distinct nodes with almost identical coordinates."))
 
-        val angle = pCurr.angleTo(pNext) - pCurr.angleTo(pPrev)
-        val normalizedAngle = if angle.toDouble < 0 then angle + TAU else angle
+      for polygonPath <- tiling.orientedPolygons do
+        val polygon = Polygon(polygonPath.size)
+        val expectedAngle = polygon.alpha
+        for i <- polygonPath.indices do
+          val pPrev = tiling.coordinates(polygonPath.applyO(i - 1))
+          val pCurr = tiling.coordinates(polygonPath.applyO(i))
+          val pNext = tiling.coordinates(polygonPath.applyO(i + 1))
 
-        if Math.abs(normalizedAngle.toDouble - expectedAngle.toDouble) > Geometry.ACCURACY then
-          return Left(s"Invalid interior angle for polygon ${polygonPath.mkString(",")} at node ${polygonPath.applyO(i)}.")
+          val angle = pCurr.angleTo(pNext) - pCurr.angleTo(pPrev)
+          val normalizedAngle = if angle.toDouble < 0 then angle + TAU else angle
 
-    }
+          if Math.abs(normalizedAngle.toDouble - expectedAngle.toDouble) > Geometry.ACCURACY then
+            break(Left(s"Invalid interior angle for polygon ${polygonPath.mkString(",")} at node ${polygonPath.applyO(i)}."))
 
-    Right(())
+      Right(())
 
   enum Strictness:
 
