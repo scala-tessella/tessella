@@ -2,13 +2,12 @@ package io.github.scala_tessella.tessella
 
 import conversion.DOT.toDOT
 import utility.Utils.{filterNotUnique, filterUnique}
-import Geometry.{Box, LineSegment, Point, Radian}
+import Geometry.{Box, LESSER_ACCURACY, LineSegment, Point, Radian}
 import Geometry.Radian.{TAU, TAU_2}
 import IncrementalTiling.Strictness
 import RegularPolygon.Polygon
 import TilingCoordinates.{Coords, pointsFrom, toBox}
 import Topology.{Edge, Node, NodeOrdering}
-
 import io.github.scala_tessella.ring_seq.RingSeq.*
 
 // The IncrementalTiling class is now a "dumb" data holder. Its primary role is to hold
@@ -108,7 +107,7 @@ case class IncrementalTiling private(
     // Find all new nodes that are coincident with any node on the perimeter.
     val allCoincidences = newCoords.toList.flatMap { case (newNode, newPoint) =>
       perimeter.find { perimeterNode =>
-        newPoint.almostEquals(coordinates(perimeterNode)) && !perimeterEdge.nodes.contains(perimeterNode)
+        newPoint.almostEquals(coordinates(perimeterNode), LESSER_ACCURACY) && !perimeterEdge.nodes.contains(perimeterNode)
       }.map(perimeterNode => newNode -> perimeterNode)
     }.toMap
 
