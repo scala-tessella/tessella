@@ -372,9 +372,10 @@ object IncrementalTiling:
         if Math.abs(p1.distanceTo(p2) - 1.0) > Geometry.ACCURACY then
           break(Left(s"Edge ${edge.stringify} has length not equal to 1."))
 
-      val points = tiling.coordinates.values.toList
-      if points.combinations(2).exists(p => p.head.almostEquals(p.last)) then
-        break(Left("Found distinct nodes with almost identical coordinates."))
+      // this is ok only if Strictness is STRICT
+//      val points = tiling.coordinates.values.toList
+//      if points.combinations(2).exists(p => p.head.almostEquals(p.last)) then
+//        break(Left("Found distinct nodes with almost identical coordinates."))
 
       for polygonPath <- tiling.orientedPolygons do
         val polygon = Polygon(polygonPath.size)

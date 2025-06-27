@@ -1,7 +1,9 @@
 package io.github.scala_tessella.tessella
 
 import io.github.scala_tessella.tessella.Geometry.Point
-import io.github.scala_tessella.tessella.Topology.Node
+import io.github.scala_tessella.tessella.IncrementalTiling.Strictness
+import io.github.scala_tessella.tessella.RegularPolygon.Polygon
+import io.github.scala_tessella.tessella.Topology.{--, Node}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -88,14 +90,32 @@ class IncrementalTilingValidationSpec extends AnyFlatSpec with Matchers:
     result.left.getOrElse(fail()) shouldBe "Edge 2--3 has length not equal to 1."
   }
 
-  it should "return an error for overlapping nodes" in {
-    // Move Node(3) to the coordinates of Node(1), creating overlapping nodes.
-    val overlappingCoords = square.coordinates.updated(Node(3), square.coordinates(Node(1)))
-    // This setup serendipitously maintains edge lengths of 1 for the square's edges.
-    // It will pass the edge length check but fail on the overlapping nodes check.
-    val result = IncrementalTiling.maybe(square.orientedPolygons, square.perimeter, overlappingCoords)
-    result.isLeft shouldBe true
-    result.left.getOrElse(fail()) shouldBe "Found distinct nodes with almost identical coordinates."
+  val almostLoop: IncrementalTiling =
+    square
+      .addPolygon(Polygon(4), 1--2).getOrElse(fail())
+      .addPolygon(Polygon(4), 3--4).getOrElse(fail())
+      .addPolygon(Polygon(4), 2--5).getOrElse(fail())
+      .addPolygon(Polygon(4), 3--8).getOrElse(fail())
+      .addPolygon(Polygon(4), 9--10).getOrElse(fail())
+      .addPolygon(Polygon(4), 11--12).getOrElse(fail())
+
+  val touching: IncrementalTiling =
+    almostLoop
+      .addPolygon(Polygon(4), 9--13, Strictness.TOUCHING).getOrElse(fail())
+
+
+  it should "NOT return an error for touching edges" in {
+    val result = IncrementalTiling.maybe(touching.orientedPolygons, touching.perimeter, touching.coordinates)
+    result.isLeft shouldBe false
+  }
+
+  val crossing: IncrementalTiling =
+    almostLoop
+      .addPolygon(Polygon(6), 9--13, Strictness.CROSSING).getOrElse(fail())
+      
+  it should "NOT return an error for crossing edges" in {
+    val result = IncrementalTiling.maybe(crossing.orientedPolygons, crossing.perimeter, crossing.coordinates)
+    result.isLeft shouldBe false
   }
 
   it should "return an error for incorrect interior angles" in {
