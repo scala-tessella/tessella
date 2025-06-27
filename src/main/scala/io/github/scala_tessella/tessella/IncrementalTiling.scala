@@ -329,10 +329,10 @@ object IncrementalTiling:
    * @param coordinates      map of nodes to points
    * @return an `Either` with a `String` error message or the created `IncrementalTiling`
    */
-  def withValidation(
-                      orientedPolygons: List[Vector[Node]],
-                      perimeter: Vector[Node],
-                      coordinates: Coords): Either[String, IncrementalTiling] =
+  def maybe(
+             orientedPolygons: List[Vector[Node]],
+             perimeter: Vector[Node],
+             coordinates: Coords): Either[String, IncrementalTiling] =
     if orientedPolygons.isEmpty then
       if perimeter.isEmpty && coordinates.isEmpty then Right(empty)
       else Left("For empty polygons, perimeter and coordinates must also be empty.")
@@ -347,11 +347,6 @@ object IncrementalTiling:
   private def validatePerimeter(tiling: IncrementalTiling): Either[String, Unit] =
     val calculatedPerimeterEdges = filterUnique(tiling.orientedPolygons.flatMap(_.toEdgesO)).toSet
     val givenPerimeterEdges = tiling.perimeter.toEdgesO.toSet
-    println(
-      s"""
-        |calculatedPerimeterEdges: $calculatedPerimeterEdges
-        |givenPerimeterEdges: $givenPerimeterEdges
-        |""".stripMargin)
     Either.cond(
       calculatedPerimeterEdges == givenPerimeterEdges,
       (),
