@@ -133,6 +133,13 @@ class GeometrySpec extends AnyFlatSpec with Helper with should.Matchers:
     LineSegment(Point(1, 2), Point(4, 6)).length shouldBe 5.0
   }
 
+  it can "calculate its midpoint" in {
+    LineSegment(Point(0, 0), Point(2, 4)).midPoint shouldBe Point(1, 2)
+    LineSegment(Point(-1, -1), Point(3, 3)).midPoint shouldBe Point(1, 1)
+    LineSegment(Point(3, 3), Point(-1, -1)).midPoint shouldBe Point(1, 1)
+    LineSegment(Point(1, 1), Point(2, 2)).midPoint shouldBe Point(1.5, 1.5)
+  }
+
   it can "intersect with another one (X shape)" in {
     segment.intersects(intersecting) shouldBe true
     intersecting.intersects(segment) shouldBe true
