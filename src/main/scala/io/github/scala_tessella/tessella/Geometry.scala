@@ -241,7 +241,7 @@ object Geometry extends Accuracy:
 //      LineSegment2D(point1.toPoint2D, point2.toPoint2D)
 
     def midPoint: Point =
-      Point(point1.x + dx / 2, point1.y + dy / 2)
+      Point((point1.x + point2.x) / 2, (point1.y + point2.y) / 2)
 
     def length: Double =
       Math.hypot(dx, dy)
