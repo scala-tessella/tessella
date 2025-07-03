@@ -52,7 +52,7 @@ class IncrementalTilingRemovalSpec extends AnyFlatSpec with Matchers:
 
     result.isLeft shouldBe true
     result.left.getOrElse(fail()) shouldBe
-      "Invalid shared separate nodes: 1. Polygon with edges 1--5--6--7-- shares edges 5--6 with perimeter."
+      "Invalid shared separate node 1. Polygon with edges 1--5--6--7-- shares edge 5--6 with perimeter."
   }
 
   // Tiling where one square is completely surrounded by others
@@ -96,7 +96,7 @@ class IncrementalTilingRemovalSpec extends AnyFlatSpec with Matchers:
     // These two segments of the perimeter are separated by the triangles.
     val result = threeTriangles.removePolygon(Vector(1, 2, 3).map(Node(_)))
     result.isLeft shouldBe true
-    result.left.getOrElse(fail()) shouldBe "Invalid shared separate nodes: 1. Polygon with edges 1--2--3-- shares edges 2--3 with perimeter."
+    result.left.getOrElse(fail()) shouldBe "Invalid shared separate node 1. Polygon with edges 1--2--3-- shares edge 2--3 with perimeter."
   }
 
   it should "remove the last polygon, resulting in an empty tiling" in {

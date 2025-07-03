@@ -152,7 +152,7 @@ class IncrementalTilingAdditionSpec extends AnyFlatSpec with Matchers:
   it should "fail to add 1 square to close a loop, with two edges at the same coordinates" in {
     val result = almostLoop.addPolygon(Polygon(4), 10--14)
     result.isLeft shouldBe true
-    result.left.getOrElse(fail("Expected an error message")) shouldBe "Coincident nodes 11, 15 outside of the share edges."
+    result.left.getOrElse(fail("Expected an error message")) shouldBe "Coincident nodes 11, 15 outside of the shared edges."
   }
 
   "The addPolygon method with perimeter crossing" should "fail with STRICT" in {

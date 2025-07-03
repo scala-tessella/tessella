@@ -97,6 +97,9 @@ case class IncrementalTiling private(
     val newPolygon = (Vector(startNode, nextNode) ++ newNodes).reverse
     (newPolygon, newCoords.toMap)
 
+  private def pluralTexts(singular: String, plural: String, count: Int, isSingular: Int => Boolean = _ == 1): String =
+    if isSingular(count) then singular else plural
+
   private def mergeCoincidentNodes(
                                     newPolygon: Vector[Node],
                                     newCoords: Coords,
@@ -151,7 +154,7 @@ case class IncrementalTiling private(
     // A stricter future implementation might throw an error if (matchedPerimeterNodes -- validPerimeterNodes).nonEmpty
     if strictness == Strictness.STRICT && (matchedPerimeterNodes -- validPerimeterNodes).nonEmpty then
       val outsideNodes = matchedPerimeterNodes -- validPerimeterNodes
-      return Left(s"Coincident nodes ${outsideNodes.mkString(", ")} outside of the shared edges.")
+      return Left(s"Coincident ${pluralTexts("node", "nodes", outsideNodes.size)} ${outsideNodes.mkString(", ")} outside of the shared edges.")
     val substitutions = allCoincidences.filter { case (_, perimeterNode) =>
       validPerimeterNodes.contains(perimeterNode)
     }
@@ -257,7 +260,7 @@ case class IncrementalTiling private(
     s"Polygon with edges ${polygonPath.stringify}--"
 
   private def errorDescription(polygonPath: Vector[Node], touchEdges: List[Edge]): String =
-    s"${polygonDescription(polygonPath)} shares edges ${touchEdges.map(_.stringify).mkString(", ")} with perimeter."
+    s"${polygonDescription(polygonPath)} shares ${pluralTexts("edge", "edges", touchEdges.size)} ${touchEdges.map(_.stringify).mkString(", ")} with perimeter."
 
   def removePolygon(polygonPath: Vector[Node]): Either[String, IncrementalTiling] =
     // When removing the last polygon, the new perimeter is empty.
@@ -269,9 +272,9 @@ case class IncrementalTiling private(
     val rogueTouchNodes =
       touchNodes.diff(touchEdges.nodes)
     if rogueTouchNodes.nonEmpty then
-      return Left(s"Invalid shared separate nodes: ${rogueTouchNodes.mkString(", ")}. ${errorDescription(polygonPath, touchEdges)}")
+      return Left(s"Invalid shared separate ${pluralTexts("node", "nodes", rogueTouchNodes.size)} ${rogueTouchNodes.mkString(", ")}. ${errorDescription(polygonPath, touchEdges)}")
     if !touchEdges.areContinuous then
-      return Left(s"Non-continuos shared edges. ${errorDescription(polygonPath, touchEdges)}")
+      return Left(s"Non-continuos shared ${pluralTexts("edge", "edges", touchEdges.size)}. ${errorDescription(polygonPath, touchEdges)}")
     if !perimeterPolygonsContain(polygonPath) then
       return Left(s"Polygon does not exist. ${errorDescription(polygonPath, touchEdges)}")
 
