@@ -151,7 +151,7 @@ case class IncrementalTiling private(
     // A stricter future implementation might throw an error if (matchedPerimeterNodes -- validPerimeterNodes).nonEmpty
     if strictness == Strictness.STRICT && (matchedPerimeterNodes -- validPerimeterNodes).nonEmpty then
       val outsideNodes = matchedPerimeterNodes -- validPerimeterNodes
-      return Left(s"Coincident nodes ${outsideNodes.mkString(", ")} outside of the share edges.")
+      return Left(s"Coincident nodes ${outsideNodes.mkString(", ")} outside of the shared edges.")
     val substitutions = allCoincidences.filter { case (_, perimeterNode) =>
       validPerimeterNodes.contains(perimeterNode)
     }
