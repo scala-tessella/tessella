@@ -96,6 +96,9 @@ object SpireGeometry:
     def minus(that: SpirePoint): SpirePoint =
       SpirePoint(this.x - that.x, this.y - that.y)
 
+    def scale(factor: Real): SpirePoint =
+      SpirePoint(x * factor, y * factor)
+
     /** Rotates the point by a given angle around the origin. */
     def rotate(theta: SpireRadian): SpirePoint = {
       val cot = spire.math.cos(theta)
@@ -163,6 +166,9 @@ object SpireGeometry:
     /** The length of the line segment. */
     lazy val length: Real =
       spire.math.sqrt((p2.x - p1.x).pow(2) + (p2.y - p1.y).pow(2))
+
+    def midPoint: SpirePoint =
+      SpirePoint((p1.x + p2.x) / 2, (p1.y + p2.y) / 2)
 
     /** The horizontal angle of the line segment. */
     def horizontalAngle: SpireRadian =
@@ -268,4 +274,3 @@ object SpireGeometry:
       nodes.scanLeft((SpirePoint(1, 0), AngleDegree(180)))({
         case ((point, acc), node) => (point.plusPolarUnit(acc.toSpireRadian), acc + angles(node) + AngleDegree(180))
       }).map((point, _) => point).tail
-
