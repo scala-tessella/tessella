@@ -10,7 +10,9 @@ import scala.annotation.targetName
  * This object provides an alternative to [[Geometry]], using Spire's numeric types like [[spire.math.Real]]
  * to avoid floating-point inaccuracies.
  */
-object SpireGeometry {
+object SpireGeometry:
+
+  val ACCURACY = 1.0E-12
 
   opaque type AngleDegree = Rational
 
@@ -76,11 +78,11 @@ object SpireGeometry {
     def /(i: Int): SpireRadian = r.toReal / i
 
     /** Tests whether this `SpireRadian` is approximately equal to another, within a given accuracy. */
-    def almostEquals(that: SpireRadian, accuracy: Double = 1.0E-12): Boolean =
+    def almostEquals(that: SpireRadian, accuracy: Double = ACCURACY): Boolean =
       (r - that).abs < Real(accuracy)
 
   /** A point in the plane defined by its 2 Cartesian coordinates x and y using [[spire.math.Real]]. */
-  case class SpirePoint(x: Real, y: Real) {
+  case class SpirePoint(x: Real, y: Real):
 
     /** Sum of two points */
     def plus(that: SpirePoint): SpirePoint =
@@ -98,7 +100,7 @@ object SpireGeometry {
     }
 
     /** Tests whether this `SpirePoint` is approximately equal to another, within a given accuracy. */
-    def almostEquals(that: SpirePoint, accuracy: Double = 1.0E-12): Boolean =
+    def almostEquals(that: SpirePoint, accuracy: Double = ACCURACY): Boolean =
       (this.x - that.x).abs < Real(accuracy) && (this.y - that.y).abs < Real(accuracy)
 
     /** New point moved by polar coordinates */
@@ -124,7 +126,6 @@ object SpireGeometry {
     /** New point flipped vertically around the x-axis */
     def flipVertically: SpirePoint =
       SpirePoint(x, -y)
-  }
 
   object SpirePoint:
     /** Creates a point at origin (0,0) */
@@ -140,23 +141,21 @@ object SpireGeometry {
      *         and 0 if the points are collinear and p2 is on the segment [p0, p1].
      *         The collinear logic is adapted from the original `Geometry.ccw` method.
      */
-    def ccw(p0: SpirePoint, p1: SpirePoint, p2: SpirePoint): Int = {
+    def ccw(p0: SpirePoint, p1: SpirePoint, p2: SpirePoint): Int =
       val dx1 = p1.x - p0.x
       val dy1 = p1.y - p0.y
       val dx2 = p2.x - p0.x
       val dy2 = p2.y - p0.y
       val crossProduct = dx1 * dy2 - dy1 * dx2
-      if (crossProduct > 0) 1
-      else if (crossProduct < 0) -1
-      else {
-        if (dx1 * dx2 >= 0 && dy1 * dy2 >= 0) {
-          if ((dx1 * dx1 + dy1 * dy1) < (dx2 * dx2 + dy2 * dy2)) 1 else 0
-        } else -1
-      }
-    }
+      if crossProduct > 0 then 1
+      else if crossProduct < 0 then -1
+      else
+        if dx1 * dx2 >= 0 && dy1 * dy2 >= 0 then
+          if (dx1 * dx1 + dy1 * dy1) < (dx2 * dx2 + dy2 * dy2) then 1 else 0
+        else -1
 
   /** A line segment in the plane defined by its 2 endpoints using [[spire.math.Real]]. */
-  case class SpireLineSegment(p1: SpirePoint, p2: SpirePoint) {
+  case class SpireLineSegment(p1: SpirePoint, p2: SpirePoint):
     /** The length of the line segment. */
     lazy val length: Real =
       spire.math.sqrt((p2.x - p1.x).pow(2) + (p2.y - p1.y).pow(2))
@@ -164,26 +163,23 @@ object SpireGeometry {
     /** The horizontal angle of the line segment. */
     def horizontalAngle: SpireRadian =
       spire.math.atan2(p2.y - p1.y, p2.x - p1.x)
-  }
 
   /** 2x2 matrix for linear transformations */
-  case class Matrix2x2(m00: Real, m01: Real, m10: Real, m11: Real) {
+  case class Matrix2x2(m00: Real, m01: Real, m10: Real, m11: Real):
     /** Determinant of the matrix */
     def determinant: Real =
       m00 * m11 - m01 * m10
 
     /** Inverse of the matrix, if it exists */
-    def inverse: Option[Matrix2x2] = {
+    def inverse: Option[Matrix2x2] =
       val det = determinant
-      if (det.abs < Real(1.0E-12)) None
-      else {
+      if det.abs < Real(ACCURACY) then None
+      else
         val invDet = Real(1) / det
         Some(Matrix2x2(
           m11 * invDet, -m01 * invDet,
           -m10 * invDet, m00 * invDet
         ))
-      }
-    }
 
     /** Matrix multiplication with another 2x2 matrix */
     def multiply(other: Matrix2x2): Matrix2x2 =
@@ -202,24 +198,19 @@ object SpireGeometry {
       )
 
     /** Tests whether this `Matrix2x2` is approximately equal to another, within a given accuracy. */
-    def almostEquals(that: Matrix2x2, accuracy: Double = 1.0E-12): Boolean =
+    def almostEquals(that: Matrix2x2, accuracy: Double = ACCURACY): Boolean =
       (this.m00 - that.m00).abs < Real(accuracy) &&
         (this.m01 - that.m01).abs < Real(accuracy) &&
         (this.m10 - that.m10).abs < Real(accuracy) &&
         (this.m11 - that.m11).abs < Real(accuracy)
-  }
 
-  object Matrix2x2 {
+  object Matrix2x2:
     /** Creates a matrix from two column vectors. */
     def fromColumns(c1: SpirePoint, c2: SpirePoint): Matrix2x2 =
       Matrix2x2(c1.x, c2.x, c1.y, c2.y)
 
     /** Finds the transformation matrix that maps vector pair (v1, v2) to (u1, u2). */
-    def findTransform(v1: SpirePoint, v2: SpirePoint, u1: SpirePoint, u2: SpirePoint): Option[Matrix2x2] = {
+    def findTransform(v1: SpirePoint, v2: SpirePoint, u1: SpirePoint, u2: SpirePoint): Option[Matrix2x2] =
       val m1 = Matrix2x2.fromColumns(v1, v2)
       val m2 = Matrix2x2.fromColumns(u1, u2)
       m1.inverse.map(m2.multiply)
-    }
-  }
-
-}
