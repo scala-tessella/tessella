@@ -2,10 +2,11 @@ package io.github.scala_tessella.tessella
 package conversion
 
 import ConverterSVG.*
-import Geometry.{LineSegment, Point, RegularPolygon2D}
+import Geometry.{Box, LineSegment, Point, RegularPolygon2D}
 import SVG.LabelledNodes.PERIMETER_ONLY
 import SVG.MarkStyle.NONE
 import SharedML.*
+import SpireGeometry.{SpireBox, SpirePoint}
 import RegularPolygon.Vertex
 import Topology.{Edge, Node, NodeOrdering}
 import TilingUniformity.groupUniformsNestedComplete
@@ -391,11 +392,21 @@ object SVG extends ConverterSVG:
         tessellationGroup(showPerimeter, fillPolygons, labelledNodes, markStyle, showGrowth, showDual)
       )
       
+  extension (spirePoint: SpirePoint)
+  
+    def toPoint: Point =
+      Point(spirePoint.x.toDouble, spirePoint.y.toDouble)
+
+  extension (spireBox: SpireBox)
+
+    def toBox: Box =
+      Box(spireBox.x0.toDouble, spireBox.x1.toDouble, spireBox.y0.toDouble, spireBox.y1.toDouble)
+
   extension (tilingAlt: IncrementalTiling)
 
     private def graphSVG: Option[Elem] =
       Option(graphGroup(tilingAlt.edges.map(edge =>
-        line(tilingAlt.coordinates(edge.lesserNode), tilingAlt.coordinates(edge.greaterNode))
+        line(tilingAlt.coordinates(edge.lesserNode).toPoint, tilingAlt.coordinates(edge.greaterNode).toPoint)
       )))
 
     def tessellationGroup(): Elem =
@@ -409,7 +420,7 @@ object SVG extends ConverterSVG:
 
     /** `svg` element with metadata and `viewBox` fitting the tiling */
     def toViewBox(elems: Elem*): Elem =
-      svg(tilingAlt.toBox, elems :+ signatureMetadata *).addAttributes(rdfAttributes *)
+      svg(tilingAlt.toBox.toBox, elems :+ signatureMetadata *).addAttributes(rdfAttributes *)
 
     def toSVG(): Elem =
       toViewBox(

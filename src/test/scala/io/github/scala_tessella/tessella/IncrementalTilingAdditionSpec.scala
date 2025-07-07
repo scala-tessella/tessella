@@ -1,11 +1,13 @@
 package io.github.scala_tessella.tessella
 
-import io.github.scala_tessella.tessella.Geometry.Point
-import io.github.scala_tessella.tessella.IncrementalTiling.Strictness
-import io.github.scala_tessella.tessella.IncrementalTiling.Strictness
-import io.github.scala_tessella.tessella.RegularPolygon.Polygon
-import io.github.scala_tessella.tessella.Topology.{--, Edge, Node, NodeOrdering}
-import io.github.scala_tessella.tessella.conversion.SVG.*
+import Geometry.Point
+import IncrementalTiling.Strictness
+import IncrementalTiling.Strictness
+import RegularPolygon.Polygon
+import Topology.{--, Edge, Node, NodeOrdering}
+import conversion.SVG.*
+import SpireGeometry.*
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -30,8 +32,8 @@ class IncrementalTilingAdditionSpec extends AnyFlatSpec with Matchers:
     twoSquares.perimeter should contain theSameElementsInOrderAs Vector(1, 2, 3, 5, 6, 4)
 
     twoSquares.coordinates should have size 6
-    twoSquares.coordinates(Node(6)).almostEquals(Point(2.0, 0.0)) shouldBe true
-    twoSquares.coordinates(Node(5)).almostEquals(Point(2.0, 1.0)) shouldBe true
+    twoSquares.coordinates(Node(6)).almostEquals(SpirePoint(2.0, 0.0)) shouldBe true
+    twoSquares.coordinates(Node(5)).almostEquals(SpirePoint(2.0, 1.0)) shouldBe true
   }
 
   it should "add a triangle to a square" in {
@@ -50,7 +52,7 @@ class IncrementalTilingAdditionSpec extends AnyFlatSpec with Matchers:
     squareAndTriangle.perimeter should contain theSameElementsInOrderAs Vector(3, 4, 1, 5, 2)
 
     squareAndTriangle.coordinates should have size 5
-    squareAndTriangle.coordinates(Node(5)).almostEquals(Point(-0.8660254037844386, 0.5)) shouldBe true
+    squareAndTriangle.coordinates(Node(5)).almostEquals(SpirePoint(-0.8660254037844386, 0.5)) shouldBe true
   }
 
   it should "return an error when adding to a non-perimeter edge" in {

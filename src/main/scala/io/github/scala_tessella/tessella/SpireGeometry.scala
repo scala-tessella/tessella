@@ -1,7 +1,11 @@
 package io.github.scala_tessella.tessella
 
-import spire.math.{Real, Rational, Algebraic}
+import io.github.scala_tessella.tessella.Topology.{Edge, Node}
+
+import spire.math.{Real, Rational}
 import spire.implicits.*
+import spire.compat.ordering
+
 import scala.annotation.targetName
 
 /**
@@ -163,6 +167,14 @@ object SpireGeometry:
     /** The horizontal angle of the line segment. */
     def horizontalAngle: SpireRadian =
       spire.math.atan2(p2.y - p1.y, p2.x - p1.x)
+    
+  /** Checks if at least one endpoint is contained in the given box */
+    def hasEndpointIn(box: SpireBox): Boolean =
+      box.contains(p1) || box.contains(p2)
+
+    def intersectsStrict(that: SpireLineSegment): Boolean =
+      SpirePoint.ccw(this.p1, this.p2, that.p1) * SpirePoint.ccw(this.p1, this.p2, that.p2) < 0 &&
+        SpirePoint.ccw(that.p1, that.p2, this.p1) * SpirePoint.ccw(that.p1, that.p2, this.p2) < 0
 
   /** 2x2 matrix for linear transformations */
   case class Matrix2x2(m00: Real, m01: Real, m10: Real, m11: Real):
@@ -214,3 +226,46 @@ object SpireGeometry:
       val m1 = Matrix2x2.fromColumns(v1, v2)
       val m2 = Matrix2x2.fromColumns(u1, u2)
       m1.inverse.map(m2.multiply)
+
+  case class SpireBox(x0: Real, x1: Real, y0: Real, y1: Real):
+
+    def contains(point: SpirePoint): Boolean =
+      if point.x < x0 then false
+      else if point.y < y0 then false
+      else if point.x > x1 then false
+      else !(point.y > y1)
+
+    def enlarge(r: Real): SpireBox =
+      SpireBox(x0 - r, x1 + r, y0 - r, y1 + r)
+
+    def width: Real =
+      x1 - x0
+
+    def height: Real =
+      y1 - y0
+
+  type SpireCoords = Map[Node, SpirePoint]
+
+  extension (edges: List[Edge])
+
+    /** Creates a bounding `Box` containing all edges with the given coordinates
+     *
+     * @param coords      map with the points of each node
+     * @param enlargement extra space at each side
+     */
+    def toBox(coords: SpireCoords, enlargement: Real = 0): SpireBox =
+      val points: List[SpirePoint] =
+        edges.nodes.map(coords)
+      val xs: List[Real] =
+        points.map(_.x)
+      val ys: List[Real] =
+        points.map(_.y)
+      SpireBox(xs.min - enlargement, xs.max + enlargement, ys.min - enlargement, ys.max + enlargement)
+
+  extension (nodes: Vector[Node])
+
+    def pointsFrom(angles: Map[Node, AngleDegree]): Vector[SpirePoint] =
+      nodes.scanLeft((SpirePoint(1, 0), AngleDegree(180)))({
+        case ((point, acc), node) => (point.plusPolarUnit(acc.toSpireRadian), acc + angles(node) + AngleDegree(180))
+      }).map((point, _) => point).tail
+

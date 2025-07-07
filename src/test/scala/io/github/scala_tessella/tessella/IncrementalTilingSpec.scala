@@ -4,6 +4,7 @@ import Geometry.Point
 import RegularPolygon.Polygon
 import Topology.{--, Edge, Node}
 import conversion.SVG.*
+import SpireGeometry.*
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -34,10 +35,10 @@ class IncrementalTilingSpec extends AnyFlatSpec with Matchers:
     square.perimeter should contain theSameElementsInOrderAs Vector(1, 2, 3, 4)
 
     square.coordinates should have size 4
-    square.coordinates(Node(1)).almostEquals(Point(0.0, 0.0)) shouldBe true
-    square.coordinates(Node(2)).almostEquals(Point(0.0, 1.0)) shouldBe true
-    square.coordinates(Node(3)).almostEquals(Point(1.0, 1.0)) shouldBe true
-    square.coordinates(Node(4)).almostEquals(Point(1.0, 0.0)) shouldBe true
+    square.coordinates(Node(1)).almostEquals(SpirePoint(0.0, 0.0)) shouldBe true
+    square.coordinates(Node(2)).almostEquals(SpirePoint(0.0, 1.0)) shouldBe true
+    square.coordinates(Node(3)).almostEquals(SpirePoint(1.0, 1.0)) shouldBe true
+    square.coordinates(Node(4)).almostEquals(SpirePoint(1.0, 0.0)) shouldBe true
   }
 
   it should "be created either from a Polygon or an Int" in {
@@ -55,8 +56,8 @@ class IncrementalTilingSpec extends AnyFlatSpec with Matchers:
     newPolygonPath should contain theSameElementsInOrderAs Vector(-2, -1, 4, 3)
 
     newCoords should have size 2
-    newCoords(Node(-1)).almostEquals(Point(2.0, 0.0)) shouldBe true
-    newCoords(Node(-2)).almostEquals(Point(2.0, 1.0)) shouldBe true
+    newCoords(Node(-1)).almostEquals(SpirePoint(2.0, 0.0)) shouldBe true
+    newCoords(Node(-2)).almostEquals(SpirePoint(2.0, 1.0)) shouldBe true
   }
 
   it should "correctly calculate coords for a triangle added to a square" in {
@@ -66,7 +67,7 @@ class IncrementalTilingSpec extends AnyFlatSpec with Matchers:
     newPolygonPath should contain theSameElementsInOrderAs Vector(-1, 2, 1)
 
     newCoords should have size 1
-    newCoords(Node(-1)).almostEquals(Point(-0.8660254037844386, 0.5)) shouldBe true
+    newCoords(Node(-1)).almostEquals(SpirePoint(-0.8660254037844386, 0.5)) shouldBe true
   }
 
   it should "handle building on a reversed perimeter edge" in {
@@ -76,8 +77,8 @@ class IncrementalTilingSpec extends AnyFlatSpec with Matchers:
     newPolygonPath should contain theSameElementsInOrderAs Vector(-2, -1, 1, 4)
 
     newCoords should have size 2
-    newCoords(Node(-1)).almostEquals(Point(0.0, -1.0)) shouldBe true
-    newCoords(Node(-2)).almostEquals(Point(1.0, -1.0)) shouldBe true
+    newCoords(Node(-1)).almostEquals(SpirePoint(0.0, -1.0)) shouldBe true
+    newCoords(Node(-2)).almostEquals(SpirePoint(1.0, -1.0)) shouldBe true
   }
 
   it should "throw an AssertionError for a non-perimeter edge" in {

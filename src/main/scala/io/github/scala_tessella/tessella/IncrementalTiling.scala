@@ -1,21 +1,27 @@
 package io.github.scala_tessella.tessella
 
 import conversion.DOT.toDOT
-import utility.Utils.{filterNotUnique, filterUnique}
-import Geometry.{Box, LESSER_ACCURACY, LineSegment, Point, Radian}
-import Geometry.Radian.{TAU, TAU_2}
+import utility.Utils.filterUnique
+//import Geometry.{Box, LESSER_ACCURACY, LineSegment, Point, Radian}
+//import Geometry.Radian.{TAU, TAU_2}
 import IncrementalTiling.Strictness
 import RegularPolygon.Polygon
-import TilingCoordinates.{Coords, pointsFrom, toBox}
+import SpireGeometry.*
+import SpireGeometry.AngleDegree
+import SpireGeometry.SpireRadian.{TAU, TAU_2}
+//import TilingCoordinates.{Coords, pointsFrom, toBox}
 import Topology.{Edge, Node, NodeOrdering}
+
 import io.github.scala_tessella.ring_seq.RingSeq.*
+import spire.implicits.*
+import spire.compat.ordering
 
 // The IncrementalTiling class is now a "dumb" data holder. Its primary role is to hold
 // consistent, pre-computed data. It's immutable.
 case class IncrementalTiling private(
                                       orientedPolygons: List[Vector[Node]],
                                       perimeter: Vector[Node],
-                                      coordinates: Coords
+                                      coordinates: SpireCoords
                                     ):
   // Edges are derived from the polygons, ensuring consistency.
   lazy val edges: List[Edge] = orientedPolygons.flatMap(_.toEdgesO).distinct
@@ -24,7 +30,7 @@ case class IncrementalTiling private(
   // No expensive calculations happen here.
   def getPerimeter: Vector[Node] = perimeter
   def getPolygons: List[Vector[Node]] = orientedPolygons
-  def getCoords: Coords = coordinates
+  def getCoords: SpireCoords = coordinates
 
   // You can still have other derived values, but the expensive ones are now vals.
   val perimeterLength: Int = perimeter.size
@@ -62,7 +68,7 @@ case class IncrementalTiling private(
    * @return A tuple containing the ordered path of the new polygon (nodes) and a `Coords` map
    *         for only the newly created vertices.
    */
-  def calculateNewPolygonCoords(polygon: Polygon, perimeterEdge: Edge): (Vector[Node], Coords) =
+  def calculateNewPolygonCoords(polygon: Polygon, perimeterEdge: Edge): (Vector[Node], SpireCoords) =
     val (n1, n2) = perimeterEdge.pair
 
     // 1. Determine orientation by perimeter traversal
@@ -78,14 +84,14 @@ case class IncrementalTiling private(
     val newNodes = Vector.tabulate(newNodesCount)(i => Node(-(1 + i)))
 
     // 3. Iteratively calculate the coordinates of the new nodes.
-    val alpha = polygon.alpha
+    val alpha: AngleDegree = polygon.alphaDegrees
     val coords = coordinates
-    val turnAngle = TAU_2 - alpha // The angle to turn at each vertex for a CCW traversal.
+    val turnAngle: SpireRadian = (AngleDegree(180) - alpha).toSpireRadian // The angle to turn at each vertex for a CCW traversal.
 
     var currentAngle = coords(startNode).angleTo(coords(nextNode))
     var currentPoint = coords(nextNode)
 
-    val newCoords = collection.mutable.Map.empty[Node, Point]
+    val newCoords = collection.mutable.Map.empty[Node, SpirePoint]
 
     for (newNode <- newNodes) {
       currentAngle += turnAngle
@@ -102,12 +108,12 @@ case class IncrementalTiling private(
 
   private def mergeCoincidentNodes(
                                     newPolygon: Vector[Node],
-                                    newCoords: Coords,
+                                    newCoords: SpireCoords,
                                     perimeterEdge: Edge,
                                     strictness: Strictness
-                                  ): Either[String, (Vector[Node], Coords)] =
+                                  ): Either[String, (Vector[Node], SpireCoords)] =
 
-    def renumber(polygon: Vector[Node], coords: Coords): (Vector[Node], Coords) = {
+    def renumber(polygon: Vector[Node], coords: SpireCoords): (Vector[Node], SpireCoords) = {
       val maxExistingNode = maxNode.toInt
       val newNodesToRenumber = coords.keys.toVector.sortBy(_.toInt)
       val renumbering = newNodesToRenumber.zipWithIndex.map { case (oldNode, index) =>
@@ -123,7 +129,7 @@ case class IncrementalTiling private(
     // Find all new nodes that are coincident with any node on the perimeter.
     val allCoincidences = newCoords.toList.flatMap { case (newNode, newPoint) =>
       perimeter.find { perimeterNode =>
-        newPoint.almostEquals(coordinates(perimeterNode), LESSER_ACCURACY) && !perimeterEdge.nodes.contains(perimeterNode)
+        newPoint.almostEquals(coordinates(perimeterNode), ACCURACY) && !perimeterEdge.nodes.contains(perimeterNode)
       }.map(perimeterNode => newNode -> perimeterNode)
     }.toMap
 
@@ -222,7 +228,7 @@ case class IncrementalTiling private(
           val newPolygonPoints = additionalEdges.nodes.map(allCoords)
           val newPolygonXs = newPolygonPoints.map(_.x)
           val newPolygonYs = newPolygonPoints.map(_.y)
-          val newPolygonBox = Box(newPolygonXs.min, newPolygonXs.max, newPolygonYs.min, newPolygonYs.max)
+          val newPolygonBox = SpireBox(newPolygonXs.min, newPolygonXs.max, newPolygonYs.min, newPolygonYs.max)
           // Enlarge the box by 1 unit to create a "safety margin"
           val enlargedNewPolygonBox = newPolygonBox.enlarge(1.0)
 
@@ -231,7 +237,7 @@ case class IncrementalTiling private(
             perimeterEdgesToCheck.filter { edge =>
               val p1 = allCoords(edge.lesserNode)
               val p2 = allCoords(edge.greaterNode)
-              LineSegment(p1, p2).hasEndpointIn(enlargedNewPolygonBox)
+              SpireLineSegment(p1, p2).hasEndpointIn(enlargedNewPolygonBox)
             }
 
           val crossingExists =
@@ -241,7 +247,7 @@ case class IncrementalTiling private(
               nearbyPerimeterEdges.exists { perimeterEdge =>
                 val p3 = allCoords(perimeterEdge.lesserNode)
                 val p4 = allCoords(perimeterEdge.greaterNode)
-                LineSegment(p1, p2).intersectsStrict(LineSegment(p3, p4))
+                SpireLineSegment(p1, p2).intersectsStrict(SpireLineSegment(p3, p4))
               }
             }
 
@@ -291,7 +297,7 @@ case class IncrementalTiling private(
     Right(IncrementalTiling(newPolygons, newPerimeter, newCoords))
 
   /** Finds the 2D box */
-  def toBox: Box =
+  def toBox: SpireBox =
     edges.toBox(coordinates)
 
   def toDOT: String =
@@ -320,10 +326,10 @@ object IncrementalTiling:
     // 1. Calculate properties from scratch, ONLY for this initial case.
     val initialPerimeter: Vector[Node] = Vector.range(1, validatedSides + 1).map(Node(_))
     val initialPolygons: List[Vector[Node]] = List(initialPerimeter)
-    val angle: Radian = Polygon(validatedSides).alpha
-    val angles: Map[Node, Radian] = initialPerimeter.map(_ -> angle).toMap
-    val points: Vector[Point] = initialPerimeter.pointsFrom(angles)
-    val initialCoords: Coords = initialPerimeter.zip(points).toMap
+    val angle: AngleDegree = Polygon(validatedSides).alphaDegrees
+    val angles: Map[Node, AngleDegree] = initialPerimeter.map(_ -> angle).toMap
+    val points: Vector[SpirePoint] = initialPerimeter.pointsFrom(angles)
+    val initialCoords: SpireCoords = initialPerimeter.zip(points).toMap
 
     // 2. Call the private constructor with the fully consistent data.
     IncrementalTiling(initialPolygons, initialPerimeter, initialCoords)
@@ -333,7 +339,7 @@ object IncrementalTiling:
     IncrementalTiling(
       tiling.orientedPolygons.map(_.toPolygonPathNodes),
       tiling.perimeter.toRingNodes,
-      tiling.coords
+      tiling.coords.map((node, coord) => node -> SpirePoint(coord.x, coord.y))
     )
 
   /**
@@ -347,7 +353,7 @@ object IncrementalTiling:
   def maybe(
              orientedPolygons: List[Vector[Node]],
              perimeter: Vector[Node],
-             coordinates: Coords): Either[String, IncrementalTiling] =
+             coordinates: SpireCoords): Either[String, IncrementalTiling] =
     if orientedPolygons.isEmpty then
       if perimeter.isEmpty && coordinates.isEmpty then Right(empty)
       else Left("For empty polygons, perimeter and coordinates must also be empty.")
@@ -384,7 +390,7 @@ object IncrementalTiling:
       for edge <- tiling.edges do
         val p1 = tiling.coordinates(edge.lesserNode)
         val p2 = tiling.coordinates(edge.greaterNode)
-        if Math.abs(p1.distanceTo(p2) - 1.0) > Geometry.LESSER_ACCURACY then
+        if (p1.distanceTo(p2) - 1.0).abs > ACCURACY then
           break(Left(s"Edge ${edge.stringify} has length not equal to 1."))
 
       // this is ok only if Strictness is STRICT
@@ -394,16 +400,16 @@ object IncrementalTiling:
 
       for polygonPath <- tiling.orientedPolygons do
         val polygon = Polygon(polygonPath.size)
-        val expectedAngle = polygon.alpha
+        val expectedAngle = polygon.alphaDegrees.toSpireRadian
         for i <- polygonPath.indices do
           val pPrev = tiling.coordinates(polygonPath.applyO(i - 1))
           val pCurr = tiling.coordinates(polygonPath.applyO(i))
           val pNext = tiling.coordinates(polygonPath.applyO(i + 1))
 
           val angle = pCurr.angleTo(pNext) - pCurr.angleTo(pPrev)
-          val normalizedAngle = if angle.toDouble < 0 then angle + TAU else angle
+          val normalizedAngle = if angle.toReal < 0 then angle + TAU else angle
 
-          if Math.abs(normalizedAngle.toDouble - expectedAngle.toDouble) > Geometry.LESSER_ACCURACY then
+          if (normalizedAngle - expectedAngle).toReal.abs > ACCURACY then
             break(Left(s"Invalid interior angle for polygon ${polygonPath.mkString(",")} at node ${polygonPath.applyO(i)}."))
 
       Right(())

@@ -1,9 +1,11 @@
 package io.github.scala_tessella.tessella
 
-import io.github.scala_tessella.tessella.Geometry.Point
-import io.github.scala_tessella.tessella.IncrementalTiling.Strictness
-import io.github.scala_tessella.tessella.RegularPolygon.Polygon
-import io.github.scala_tessella.tessella.Topology.{--, Node}
+import Geometry.Point
+import IncrementalTiling.Strictness
+import RegularPolygon.Polygon
+import Topology.{--, Node}
+import SpireGeometry.*
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -31,7 +33,7 @@ class IncrementalTilingValidationSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "return an error for an empty tiling with non-empty coordinates" in {
-    val result = IncrementalTiling.maybe(Nil, Vector.empty, Map(Node(1) -> Point(0, 0)))
+    val result = IncrementalTiling.maybe(Nil, Vector.empty, Map(Node(1) -> SpirePoint(0, 0)))
     result.isLeft shouldBe true
     result.left.getOrElse(fail()) shouldBe "For empty polygons, perimeter and coordinates must also be empty."
   }
@@ -48,16 +50,16 @@ class IncrementalTilingValidationSpec extends AnyFlatSpec with Matchers:
     val square2Poly = Vector(5, 6, 7, 8).map(Node.apply)
     val polys = List(square1Poly, square2Poly)
     val square1Coords = Map(
-      Node(1) -> Point(0, 0),
-      Node(2) -> Point(0, 1),
-      Node(3) -> Point(1, 1),
-      Node(4) -> Point(1, 0)
+      Node(1) -> SpirePoint(0, 0),
+      Node(2) -> SpirePoint(0, 1),
+      Node(3) -> SpirePoint(1, 1),
+      Node(4) -> SpirePoint(1, 0)
     )
     val square2Coords = Map(
-      Node(5) -> Point(2, 0),
-      Node(6) -> Point(2, 1),
-      Node(7) -> Point(3, 1),
-      Node(8) -> Point(3, 0)
+      Node(5) -> SpirePoint(2, 0),
+      Node(6) -> SpirePoint(2, 1),
+      Node(7) -> SpirePoint(3, 1),
+      Node(8) -> SpirePoint(3, 0)
     )
     val coords = square1Coords ++ square2Coords
     // For a disconnected tiling, the perimeter cannot be represented by a single vector of nodes,
@@ -77,14 +79,14 @@ class IncrementalTilingValidationSpec extends AnyFlatSpec with Matchers:
   }
 
   it should "return an error for extra node coordinates" in {
-    val extraCoords = square.coordinates + (Node(5) -> Point(2, 2))
+    val extraCoords = square.coordinates + (Node(5) -> SpirePoint(2, 2))
     val result = IncrementalTiling.maybe(square.orientedPolygons, square.perimeter, extraCoords)
     result.isLeft shouldBe true
     result.left.getOrElse(fail()) shouldBe "Mismatch between graph nodes and coordinate nodes. Missing: Set(), Extra: Set(5)"
   }
 
   it should "return an error for incorrect edge lengths" in {
-    val wrongLengthCoords = square.coordinates.updated(Node(3), Point(1.0, 2.0)) // Edge 2--3 will have length > 1
+    val wrongLengthCoords = square.coordinates.updated(Node(3), SpirePoint(1.0, 2.0)) // Edge 2--3 will have length > 1
     val result = IncrementalTiling.maybe(square.orientedPolygons, square.perimeter, wrongLengthCoords)
     result.isLeft shouldBe true
     result.left.getOrElse(fail()) shouldBe "Edge 2--3 has length not equal to 1."
@@ -121,10 +123,10 @@ class IncrementalTilingValidationSpec extends AnyFlatSpec with Matchers:
     val rhombusPoly = Vector(1, 2, 3, 4).map(Node.apply)
     val rhombusPerimeter = rhombusPoly
     val rhombusCoords = Map(
-      Node(1) -> Point(0.0, 0.0),
-      Node(2) -> Point(1.0, 0.0),
-      Node(3) -> Point(1.5, math.sqrt(3.0) / 2.0),
-      Node(4) -> Point(0.5, math.sqrt(3.0) / 2.0)
+      Node(1) -> SpirePoint(0.0, 0.0),
+      Node(2) -> SpirePoint(1.0, 0.0),
+      Node(3) -> SpirePoint(1.5, math.sqrt(3.0) / 2.0),
+      Node(4) -> SpirePoint(0.5, math.sqrt(3.0) / 2.0)
     )
     // All edge lengths are 1.0, but the interior angles are 60 and 120 degrees.
     // The validation expects 90-degree angles for a 4-sided polygon.

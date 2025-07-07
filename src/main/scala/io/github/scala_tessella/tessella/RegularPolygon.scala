@@ -4,6 +4,9 @@ import Geometry.Radian
 import Geometry.Radian.{TAU, TAU_2}
 import utility.Utils.{mapByValue, originalsOnly, toMap2}
 import io.github.scala_tessella.ring_seq.RingSeq.*
+import io.github.scala_tessella.tessella.SpireGeometry.AngleDegree
+
+import spire.math.Rational
 
 import scala.annotation.targetName
 import scala.math.Ordered.orderingToOrdered
@@ -43,6 +46,9 @@ object RegularPolygon:
     /** Measure of each interior angle. */
     def alpha: Radian =
       TAU_2 * (sides - 2) / sides
+      
+    def alphaDegrees: AngleDegree =
+      AngleDegree(Rational(180) * (sides - 2) / sides)
 
     /** Measure of the area with unit side. */
     def area: Double =
