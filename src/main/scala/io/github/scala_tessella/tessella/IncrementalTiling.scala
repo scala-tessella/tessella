@@ -89,7 +89,7 @@ case class IncrementalTiling private(
 
     // 3. Iteratively calculate the coordinates of the new nodes.
     val alpha: AngleDegree = polygon.alphaDegree
-    val turnAngle: BigRadian = (AngleDegree(Rational(180)) - alpha).toBigRadian // The angle to turn at each vertex for a CCW traversal.
+    val turnAngle: BigRadian = (AngleDegree(180) - alpha).toBigRadian // The angle to turn at each vertex for a CCW traversal.
 
     var currentPoint = coordinates(nextNode)
     var currentAngle = coordinates(startNode).angleTo(currentPoint)

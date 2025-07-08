@@ -24,6 +24,9 @@ object BigDecimalGeometry:
     def apply(r: Rational): AngleDegree =
       r
 
+    def apply(i: Int): AngleDegree =
+      Rational(i)
+
   extension (d: AngleDegree)
 
     def toRational: Rational =
@@ -167,6 +170,6 @@ object BigDecimalGeometry:
   extension (nodes: Vector[Node])
 
     def pointsFrom(angles: Map[Node, AngleDegree]): Vector[BigPoint] =
-      nodes.scanLeft((BigPoint(1, 0), AngleDegree(Rational(180))))({
-        case ((point, acc), node) => (point.plusPolarUnit(acc.toBigRadian), acc + angles(node) + AngleDegree(Rational(180)))
+      nodes.scanLeft((BigPoint(1, 0), AngleDegree(180)))({
+        case ((point, acc), node) => (point.plusPolarUnit(acc.toBigRadian), acc + angles(node) + AngleDegree(180))
       }).map((point, _) => point).tail
