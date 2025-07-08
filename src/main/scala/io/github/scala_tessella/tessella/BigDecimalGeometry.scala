@@ -1,6 +1,6 @@
 package io.github.scala_tessella.tessella
 
-import io.github.scala_tessella.tessella.Geometry.Point
+import io.github.scala_tessella.tessella.Geometry.{Point, Radian}
 import io.github.scala_tessella.tessella.Topology.{Edge, Node}
 
 import spire.math.Rational
@@ -35,6 +35,9 @@ object BigDecimalGeometry:
     def toBigRadian: BigRadian =
       BigDecimal(spire.math.pi) * (d / 180).toDouble
 
+    def toRadian: Radian =
+      Radian(Radian.TAU.toDouble * (d / 180).toDouble)
+
     def inverted: AngleDegree =
       -d
 
@@ -45,6 +48,14 @@ object BigDecimalGeometry:
     @targetName("minusDegree")
     def -(that: AngleDegree): AngleDegree =
       d.toRational - that
+
+    @targetName("timesInt")
+    def *(int: Int): AngleDegree =
+      d.toRational * int
+
+    @targetName("divideInt")
+    def /(int: Int): AngleDegree =
+      d.toRational / int
 
   /** Standard unit of angular measure, represented by a [[spire.math.BigDecimal]]. */
   opaque type BigRadian = BigDecimal
