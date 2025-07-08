@@ -1,5 +1,6 @@
 package io.github.scala_tessella.tessella
 
+import io.github.scala_tessella.tessella.Geometry.Point
 import io.github.scala_tessella.tessella.Topology.{Edge, Node}
 
 import spire.math.{Real, Rational}
@@ -88,6 +89,9 @@ object SpireGeometry:
   /** A point in the plane defined by its 2 Cartesian coordinates x and y using [[spire.math.Real]]. */
   case class SpirePoint(x: Real, y: Real):
 
+    def toPoint: Point =
+      Point(x.toDouble, y.toDouble)
+      
     /** Sum of two points */
     def plus(that: SpirePoint): SpirePoint =
       SpirePoint(this.x + that.x, this.y + that.y)

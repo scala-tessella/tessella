@@ -6,12 +6,12 @@ import Geometry.{Box, LineSegment, Point, RegularPolygon2D}
 import SVG.LabelledNodes.PERIMETER_ONLY
 import SVG.MarkStyle.NONE
 import SharedML.*
-import SpireGeometry.{SpireBox, SpirePoint}
 import RegularPolygon.Vertex
 import Topology.{Edge, Node, NodeOrdering}
 import TilingUniformity.groupUniformsNestedComplete
 import utility.Utils.toCouple
 import io.github.scala_tessella.ring_seq.RingSeq.Index
+import io.github.scala_tessella.tessella.BigDecimalGeometry.BigBox
 
 import scala.xml.Elem
 
@@ -391,16 +391,11 @@ object SVG extends ConverterSVG:
       toViewBox(
         tessellationGroup(showPerimeter, fillPolygons, labelledNodes, markStyle, showGrowth, showDual)
       )
-      
-  extension (spirePoint: SpirePoint)
-  
-    def toPoint: Point =
-      Point(spirePoint.x.toDouble, spirePoint.y.toDouble)
 
-  extension (spireBox: SpireBox)
+  extension (bigBox: BigBox)
 
     def toBox: Box =
-      Box(spireBox.x0.toDouble, spireBox.x1.toDouble, spireBox.y0.toDouble, spireBox.y1.toDouble)
+      Box(bigBox.x0.toDouble, bigBox.x1.toDouble, bigBox.y0.toDouble, bigBox.y1.toDouble)
 
   extension (tilingAlt: IncrementalTiling)
 

@@ -67,6 +67,9 @@ object Geometry extends Accuracy:
     def minus(that: Point): Point =
       Point(this.x - that.x, this.y - that.y)
 
+    def scale(factor: Double): Point =
+      Point(x * factor, y * factor)
+
     def rotate(theta: Radian): Point =
       val cot: Double =
         Math.cos(theta)
