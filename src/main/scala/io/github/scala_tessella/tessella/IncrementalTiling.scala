@@ -14,6 +14,7 @@ import BigDecimalGeometry.*
 import Topology.{Edge, Node, NodeOrdering}
 
 import io.github.scala_tessella.ring_seq.RingSeq.*
+import spire.math.Rational
 import spire.implicits.*
 //import spire.compat.ordering
 //import scala.math.Ordered.orderingToOrdered
@@ -87,12 +88,11 @@ case class IncrementalTiling private(
     val newNodes = Vector.tabulate(newNodesCount)(i => Node(-(1 + i)))
 
     // 3. Iteratively calculate the coordinates of the new nodes.
-    val alpha: BigRadian = polygon.alphaBig
-    val coords = coordinates
-    val turnAngle: BigRadian = BigRadian.TAU_2 - alpha // The angle to turn at each vertex for a CCW traversal.
+    val alpha: AngleDegree = polygon.alphaDegree
+    val turnAngle: BigRadian = (AngleDegree(Rational(180)) - alpha).toBigRadian // The angle to turn at each vertex for a CCW traversal.
 
-    var currentAngle = coords(startNode).angleTo(coords(nextNode))
-    var currentPoint = coords(nextNode)
+    var currentPoint = coordinates(nextNode)
+    var currentAngle = coordinates(startNode).angleTo(currentPoint)
 
     val newCoords = collection.mutable.Map.empty[Node, BigPoint]
 
@@ -329,8 +329,8 @@ object IncrementalTiling:
     // 1. Calculate properties from scratch, ONLY for this initial case.
     val initialPerimeter: Vector[Node] = Vector.range(1, validatedSides + 1).map(Node(_))
     val initialPolygons: List[Vector[Node]] = List(initialPerimeter)
-    val angle: BigRadian = Polygon(validatedSides).alphaBig
-    val angles: Map[Node, BigRadian] = initialPerimeter.map(_ -> angle).toMap
+    val angle: AngleDegree = Polygon(validatedSides).alphaDegree
+    val angles: Map[Node, AngleDegree] = initialPerimeter.map(_ -> angle).toMap
     val points: Vector[BigPoint] = initialPerimeter.pointsFrom(angles)
     val initialCoords: BigCoords = initialPerimeter.zip(points).toMap
 
@@ -403,13 +403,13 @@ object IncrementalTiling:
 
       for polygonPath <- tiling.orientedPolygons do
         val polygon = Polygon(polygonPath.size)
-        val expectedAngle: BigRadian = polygon.alphaBig
+        val expectedAngle: BigRadian = polygon.alphaDegree.toBigRadian
         for i <- polygonPath.indices do
           val pPrev = tiling.coordinates(polygonPath.applyO(i - 1))
           val pCurr = tiling.coordinates(polygonPath.applyO(i))
           val pNext = tiling.coordinates(polygonPath.applyO(i + 1))
 
-          val angle = pCurr.angleTo(pNext) - pCurr.angleTo(pPrev)
+          val angle: BigRadian = pCurr.angleTo(pNext) - pCurr.angleTo(pPrev)
           val normalizedAngle: BigRadian = if angle.toBigDecimal < 0 then angle + BigRadian.TAU else angle
 
           if (normalizedAngle - expectedAngle).toBigDecimal.abs > ACCURACY then

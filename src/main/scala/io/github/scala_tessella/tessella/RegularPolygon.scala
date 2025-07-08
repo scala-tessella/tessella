@@ -3,10 +3,10 @@ package io.github.scala_tessella.tessella
 import Geometry.Radian
 import Geometry.Radian.{TAU, TAU_2}
 import utility.Utils.{mapByValue, originalsOnly, toMap2}
-import io.github.scala_tessella.tessella.BigDecimalGeometry.BigRadian
+import BigDecimalGeometry.{AngleDegree, BigRadian}
 
 import io.github.scala_tessella.ring_seq.RingSeq.*
-
+import spire.math.Rational
 import scala.annotation.targetName
 import scala.math.Ordered.orderingToOrdered
 import scala.math.Ordering.Implicits.seqOrdering
@@ -45,7 +45,10 @@ object RegularPolygon:
     /** Measure of each interior angle. */
     def alpha: Radian =
       TAU_2 * (sides - 2) / sides
-      
+
+    def alphaDegree: AngleDegree =
+      AngleDegree(Rational(180) * (sides - 2) / sides)
+
     def alphaBig: BigRadian =
       BigRadian.TAU_2 * (sides - 2) / sides
 

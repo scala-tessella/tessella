@@ -3,6 +3,7 @@ package io.github.scala_tessella.tessella
 import io.github.scala_tessella.tessella.Geometry.Point
 import io.github.scala_tessella.tessella.Topology.{Edge, Node}
 
+import spire.math.Rational
 import spire.implicits.*
 import scala.annotation.targetName
 
@@ -16,31 +17,31 @@ object BigDecimalGeometry:
 
   val ACCURACY = 1.0E-12
 
-//  opaque type AngleDegree = Rational
-//
-//  object AngleDegree:
-//
-//    def apply(r: Rational): AngleDegree =
-//      r
-//
-//  extension (d: AngleDegree)
-//
-//    def toRational: Rational =
-//      d
-//
-//    def toSpireRadian: SpireRadian =
-//      BigDecimal(d.toReal) * BigDecimal.pi / 180
-//
-//    def inverted: AngleDegree =
-//      -d
-//
-//    @targetName("plusDegree")
-//    def +(that: AngleDegree): AngleDegree =
-//      d.toRational + that
-//
-//    @targetName("minusDegree")
-//    def -(that: AngleDegree): AngleDegree =
-//      d.toRational - that
+  opaque type AngleDegree = Rational
+
+  object AngleDegree:
+
+    def apply(r: Rational): AngleDegree =
+      r
+
+  extension (d: AngleDegree)
+
+    def toRational: Rational =
+      d
+
+    def toBigRadian: BigRadian =
+      BigDecimal(spire.math.pi) * (d / 180).toDouble
+
+    def inverted: AngleDegree =
+      -d
+
+    @targetName("plusDegree")
+    def +(that: AngleDegree): AngleDegree =
+      d.toRational + that
+
+    @targetName("minusDegree")
+    def -(that: AngleDegree): AngleDegree =
+      d.toRational - that
 
   /** Standard unit of angular measure, represented by a [[spire.math.BigDecimal]]. */
   opaque type BigRadian = BigDecimal
@@ -165,7 +166,7 @@ object BigDecimalGeometry:
 
   extension (nodes: Vector[Node])
 
-    def pointsFrom(angles: Map[Node, BigRadian]): Vector[BigPoint] =
-      nodes.scanLeft((BigPoint(1, 0), BigRadian.TAU_2))({
-        case ((point, acc), node) => (point.plusPolarUnit(acc), acc + angles(node) + BigRadian.TAU_2)
+    def pointsFrom(angles: Map[Node, AngleDegree]): Vector[BigPoint] =
+      nodes.scanLeft((BigPoint(1, 0), AngleDegree(Rational(180))))({
+        case ((point, acc), node) => (point.plusPolarUnit(acc.toBigRadian), acc + angles(node) + AngleDegree(Rational(180)))
       }).map((point, _) => point).tail
