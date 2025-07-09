@@ -47,7 +47,7 @@ object RegularPolygon:
       TAU_2 * (sides - 2) / sides
 
     def alphaDegree: AngleDegree =
-      AngleDegree(180 * (sides - 2) / sides)
+      AngleDegree(180) * (sides - 2) / sides
 
     def alphaBig: BigRadian =
       BigRadian.TAU_2 * (sides - 2) / sides
