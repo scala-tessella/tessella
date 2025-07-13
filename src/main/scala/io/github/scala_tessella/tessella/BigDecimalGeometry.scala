@@ -36,7 +36,7 @@ object BigDecimalGeometry:
       BigDecimal(spire.math.pi) * (d / 180).toDouble
 
     def toRadian: Radian =
-      Radian(Radian.TAU.toDouble * (d / 180).toDouble)
+      Radian(Radian.TAU_2.toDouble * (d / 180).toDouble)
 
     def inverted: AngleDegree =
       -d
