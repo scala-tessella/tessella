@@ -2,7 +2,8 @@
   "name": "Tessella Editor",
   "short_name": "Tessella",
   "description": "A web-based editor for creating and exploring tessellations.",
-  "start_url": "/",
+  "start_url": "/tessella/editor/",
+  "scope": "/tessella/editor/",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
