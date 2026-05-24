@@ -1,3 +1,5 @@
+⚠️ This library is now superseded, please use the new and improved [scala-tessella/dcel](https://github.com/scala-tessella/dcel) that can model simple irregular polygons with sides of unit length (or multiple). Check also [tessell.art](https://tessell.art) for a more comprehensive look at the status of the whole project.
+
 # Tilings by regular polygons
 
 [![tessella Scala version support](https://index.scala-lang.org/scala-tessella/tessella/tessella/latest.svg?platform=jvm)](https://index.scala-lang.org/scala-tessella/tessella/tessella)
