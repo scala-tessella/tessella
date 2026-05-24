@@ -49,15 +49,9 @@ Tiling.fromPolygon(7).graphNodes // List(1, 2, 3, 4, 5, 6, 7)
 Tiling.fromPolygon(4).area // 1.0
 ```
 
-## Documentation
-
-### Scaladoc
-
-The Scaladoc API documentation can be browsed and searched [here](https://scala-tessella.github.io/tessella/api/io/github/scala_tessella/tessella.html).
-
 ### Website
 
-Check the [Tessella website](https://scala-tessella.github.io/tessella/) for more info.
+Check the [tessell.art website](https://tessell.art) for more info.
 
 ## Deprecation warning 
 
